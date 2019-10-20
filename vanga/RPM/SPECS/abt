@@ -1,0 +1,4 @@
+pkgName='vanga'
+specFile='vanga.spec'
+jiraKey='VNG'
+vcsModules[$vcsModule]=$modBuild
