@@ -99,3 +99,4 @@ install(DIRECTORY etc/ DESTINATION etc/
   FILES_MATCHING
   PATTERN "*.template"
   PATTERN ".*" EXCLUDE)
+

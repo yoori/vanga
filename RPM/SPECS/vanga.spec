@@ -47,7 +47,7 @@ pushd build
 make install DESTDIR=%{buildroot}%{__inst_root}
 popd
 
-find %{buildroot}%{__inst_root}
+%{__ln_s} -f -T %{__inst_root}/lib/libVangaDTree.so %{buildroot}%{__inst_root}/lib/libDTree.so
 
 %files -n %{name}
 %defattr(777,root,root)

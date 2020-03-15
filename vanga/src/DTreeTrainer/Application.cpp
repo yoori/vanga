@@ -222,7 +222,7 @@ Application_::main(int& argc, char** argv)
   Gears::AppUtils::Option<unsigned long> opt_threads(1);
   Gears::AppUtils::Option<unsigned long> opt_train_bags_number(10);
   Gears::AppUtils::Option<unsigned long> opt_test_bags_number(3);
-  Gears::AppUtils::Option<double> opt_add_tree_coef(1.0);
+  //Gears::AppUtils::Option<double> opt_add_tree_coef(1.0);
   Gears::AppUtils::Option<double> opt_alpha_coef(1.0);
   Gears::AppUtils::StringOption opt_feature_dictionary;
   Gears::AppUtils::StringOption opt_feature_name_dictionary;
@@ -314,9 +314,11 @@ Application_::main(int& argc, char** argv)
     Gears::AppUtils::equal_name("train-strategy") ||
     Gears::AppUtils::short_name("ts"),
     opt_train_strategy);
+  /*
   args.add(
     Gears::AppUtils::equal_name("add-coef"),
     opt_add_tree_coef);
+  */
   args.add(
     Gears::AppUtils::equal_name("filter-features"),
     opt_filter_features);

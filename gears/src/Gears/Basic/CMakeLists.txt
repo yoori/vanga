@@ -3,6 +3,13 @@ project(Gears)
 # projects executable name
 set(TARGET_NAME GearsBasic)
 
+file(GLOB_RECURSE _HPP_HEADERS "*.hpp")
+file(GLOB_RECURSE _TPP_HEADERS "*.tpp")
+
+set(_PUBLIC_HEADERS
+  ${_HPP_HEADERS}
+  ${_TPP_HEADERS})
+
 set(
   GEARSBASIC_SOURCE_FILES
     Rand.cpp
@@ -17,4 +24,6 @@ set(
 
 add_library(${TARGET_NAME} SHARED ${GEARSBASIC_SOURCE_FILES})
 
-INSTALL(TARGETS ${TARGET_NAME} DESTINATION lib)
+set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${_PUBLIC_HEADERS}")
+
+INSTALL(TARGETS ${TARGET_NAME} LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/Gears/Basic/)

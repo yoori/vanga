@@ -5,6 +5,13 @@ find_package(BISON REQUIRED)
 
 set(TARGET_NAME GearsPlainParser)
 
+file(GLOB_RECURSE _HPP_HEADERS "*.hpp")
+file(GLOB_RECURSE _TPP_HEADERS "*.tpp")
+
+set(_PUBLIC_HEADERS
+  ${_HPP_HEADERS}
+  ${_TPP_HEADERS})
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_BINARY_DIR}/gears)
 
@@ -23,4 +30,7 @@ set(
 
 add_library(${TARGET_NAME} SHARED ${GEARSPLAINPARSER_SOURCE_FILES})
 
-INSTALL(TARGETS ${TARGET_NAME} DESTINATION lib)
+set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${_PUBLIC_HEADERS}")
+
+
+INSTALL(TARGETS ${TARGET_NAME} DESTINATION lib PUBLIC_HEADER DESTINATION include/Gears/Plain/Parsing/)
