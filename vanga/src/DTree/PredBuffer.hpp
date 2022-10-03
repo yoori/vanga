@@ -91,7 +91,7 @@ namespace Vanga
     release_(Gears::IntrusivePtr<Buffer<ValueType> >& buffer);
 
   protected:
-    SyncPolicy::Mutex lock_;
+    SyncPolicy lock_;
     std::vector<Gears::IntrusivePtr<Buffer<ValueType> > > pred_buffers_;
   };
 

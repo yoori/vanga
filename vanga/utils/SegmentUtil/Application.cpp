@@ -191,7 +191,7 @@ open_storage(
   Gears::ActiveObject_var& activator,
   const char* filename,
   unsigned long level0_size)
-  throw (Gears::Exception)
+  /*throw (Gears::Exception)*/
 {
   std::string root;
   std::string prefix;
@@ -351,7 +351,7 @@ Application_::make_profile_(
   const char* filename,
   const char* columns,
   unsigned long level0_size)
-  throw (Gears::Exception)
+  /*throw (Gears::Exception)*/
 {
   // parse column heads
   std::vector<std::string> values;
@@ -554,7 +554,7 @@ Application_::request_profile_(
   bool svm_format,
   std::unordered_set<unsigned long>* filter_features,
   unsigned long dimension)
-  throw (Gears::Exception)
+  /*throw (Gears::Exception)*/
 {
   // parse column heads
   std::vector<std::string> values;
@@ -794,7 +794,7 @@ void
 Application_::print_profile_(
   const char* user_id,
   const char* filename)
-  throw (Gears::Exception)
+  /*throw (Gears::Exception)*/
 {
   Gears::ActiveObject_var activator;
   auto user_map = open_storage(activator, filename, 5);
@@ -847,7 +847,7 @@ Application_::print_profile_from_buf_(
 
 void
 Application_::main(int& argc, char** argv)
-  throw(Gears::Exception)
+  /*throw(Gears::Exception)*/
 {
   Gears::AppUtils::CheckOption opt_help;
   Gears::AppUtils::CheckOption opt_plain;

@@ -45,7 +45,7 @@ public:
   ~Application_() throw();
 
   void
-  main(int& argc, char** argv) throw(Gears::Exception);
+  main(int& argc, char** argv) /*throw(Gears::Exception)*/;
 
 protected:
   DECLARE_GEARS_EXCEPTION(Exception, Gears::DescriptiveException);

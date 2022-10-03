@@ -104,7 +104,7 @@ public:
 
   void
   main(int& argc, char** argv)
-    throw(Gears::Exception);
+    /*throw(Gears::Exception)*/;
 
 protected:
   /*

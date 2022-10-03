@@ -219,7 +219,7 @@ namespace Vanga
   template<typename LabelType>
   void
   SVM<LabelType>::save(std::ostream& out) const
-    throw(Exception)
+    /*throw(Exception)*/
   {
     for(auto group_it = grouped_rows.begin(); group_it != grouped_rows.end(); ++group_it)
     {
@@ -635,7 +635,7 @@ namespace Vanga
   template<typename LabelType>
   Gears::IntrusivePtr<SVM<LabelType> >
   SVM<LabelType>::load(std::istream& in, unsigned long lines)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     unsigned long line_i = 0;
     Gears::IntrusivePtr<SVM<LabelType> > svm(new SVM<LabelType>());

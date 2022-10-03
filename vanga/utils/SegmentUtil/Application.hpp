@@ -42,7 +42,7 @@ public:
 
   virtual ~Application_() throw();
 
-  void main(int& argc, char** argv) throw(Gears::Exception);
+  void main(int& argc, char** argv) /*throw(Gears::Exception)*/;
 
 protected:
   typedef std::map<std::string, std::vector<uint32_t> > Dictionary;
@@ -73,7 +73,7 @@ protected:
   print_profile_(
     const char* user_id,
     const char* filename)
-    throw (Gears::Exception);
+    /*throw (Gears::Exception)*/;
 
   void
   print_profile_from_buf_(
@@ -87,7 +87,7 @@ protected:
     const char* filename,
     const char* columns,
     unsigned long level0_size)
-    throw (Gears::Exception);
+    /*throw (Gears::Exception)*/;
 
   void
   request_profile_(
@@ -100,7 +100,7 @@ protected:
     bool svm_format,
     std::unordered_set<unsigned long>* filter_features,
     unsigned long dimension)
-    throw (Gears::Exception);
+    /*throw (Gears::Exception)*/;
 
   void
   parse_hashes_(

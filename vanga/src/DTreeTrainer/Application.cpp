@@ -207,7 +207,7 @@ Application_::deep_print_(
 
 void
 Application_::main(int& argc, char** argv)
-  throw(Gears::Exception)
+  /*throw(Gears::Exception)*/
 {
   Gears::AppUtils::CheckOption opt_help;
   Gears::AppUtils::Option<unsigned long> opt_max_features(10);

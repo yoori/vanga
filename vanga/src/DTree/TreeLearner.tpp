@@ -39,7 +39,7 @@ namespace Vanga
     const double GAIN_ABS_PENALTY = 0.0001;
 
     const bool GAIN_TRACE = false;
-    const bool SELF_CHECK_ = true;
+    const bool SELF_CHECK_ = false;
 
     const double DEPTH_PINALTY_STEP = 0.000001;
   }

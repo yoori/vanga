@@ -448,7 +448,7 @@ Application_::correlate_(
 
 void
 Application_::main(int& argc, char** argv)
-  throw(Gears::Exception)
+  /*throw(Gears::Exception)*/
 {
   Gears::AppUtils::CheckOption opt_help;
   Gears::AppUtils::Option<double> opt_max_corr_coef(0.99);

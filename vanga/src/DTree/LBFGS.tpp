@@ -42,6 +42,7 @@ namespace Vanga
     /* gamma = s*sqrt((theta/s)**2 - (du/s) * (dv/s)) */
     double a = theta / s;
     double gamma = s * sqrt(a * a - (du / s) * (dv / s));
+    assert(!std::isnan(gamma));
     if(v < u)
     {
       gamma = -gamma;

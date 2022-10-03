@@ -178,7 +178,7 @@ namespace Vanga
 
     static Gears::IntrusivePtr<SVM<LabelType> >
     load(std::istream& in, unsigned long lines = 0)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     static Row_var
     load_line(
@@ -187,7 +187,7 @@ namespace Vanga
 
     void
     save(std::ostream& out) const
-      throw(Exception);
+      /*throw(Exception)*/;
 
     static void
     save_line(

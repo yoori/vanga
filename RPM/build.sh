@@ -1,7 +1,6 @@
 #!/bin/bash
 
 VERSION=$1
-UNIXCOMMONSDIR=$2
 
 # script require 'sudo rpm' for install RPM packages
 # create build/RPMS folder - all built packages will be duplicated here
