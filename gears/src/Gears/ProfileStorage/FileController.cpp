@@ -31,20 +31,20 @@
 namespace Gears
 {
   // StatImpl
-  StatImpl::Counters::Counters() throw ()
+  StatImpl::Counters::Counters() noexcept
     : count(0),
       sum_size(0)
   {}
 
   Time
-  StatImpl::Counters::avg_time() const throw()
+  StatImpl::Counters::avg_time() const noexcept
   {
     return count > 0 ?
       sum_time / count : Time::ZERO;
   }
 
   void
-  StatImpl::Counters::print(std::ostream& out) const throw()
+  StatImpl::Counters::print(std::ostream& out) const noexcept
   {
     out << "max_time = " << max_time <<
       ", avg_time = " << avg_time() <<
@@ -54,14 +54,14 @@ namespace Gears
   }
 
   StatImpl::Counters
-  StatImpl::read_counters() const throw()
+  StatImpl::read_counters() const noexcept
   {
     SyncPolicy::ReadGuard lock(read_counters_.lock);
     return read_counters_;
   }
 
   StatImpl::Counters
-  StatImpl::write_counters() const throw()
+  StatImpl::write_counters() const noexcept
   {
     SyncPolicy::ReadGuard lock(write_counters_.lock);
     return write_counters_;
@@ -69,7 +69,7 @@ namespace Gears
 
   IntrusivePtr<StatImpl>
   StatImpl::reset()
-    throw()
+    noexcept
   {
     IntrusivePtr<StatImpl> res = new StatImpl();
 
@@ -95,7 +95,7 @@ namespace Gears
     const Time& start,
     const Time& stop,
     unsigned long size)
-    throw()
+    noexcept
   {
     add_time_(read_counters_, start, stop, size);
   }
@@ -105,7 +105,7 @@ namespace Gears
     const Time& start,
     const Time& stop,
     unsigned long size)
-    throw()
+    noexcept
   {
     add_time_(write_counters_, start, stop, size);
   }
@@ -116,7 +116,7 @@ namespace Gears
     const Time& start,
     const Time& stop,
     unsigned long size)
-    throw()
+    noexcept
   {
     const Time time = stop - start;
     SyncPolicy::WriteGuard lock(counters_holder.lock);
@@ -128,7 +128,7 @@ namespace Gears
 
   // PosixFileController::Device
   inline
-  PosixFileController::Device::Device() throw()
+  PosixFileController::Device::Device() noexcept
     : write_size_meter(0)
   {}
 
@@ -137,7 +137,7 @@ namespace Gears
     Stat* pread_stat,
     uint64_t min_free_space,
     unsigned long free_space_check_size_period)
-    throw()
+    noexcept
     : allocator_(new AlignBufAllocator()),
       min_free_space_(min_free_space),
       free_space_check_size_period_(
@@ -148,7 +148,7 @@ namespace Gears
   {}
 
   SmartMemBuf_var
-  PosixFileController::create_buffer() const throw()
+  PosixFileController::create_buffer() const noexcept
   {
     return new SmartMemBuf(allocator_.in());
   }
@@ -156,7 +156,7 @@ namespace Gears
   int
   PosixFileController::open(
     const char* file_name, int flags, mode_t mode)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     static const char* FUN = "PosixFileController::open()";
 
@@ -205,7 +205,7 @@ namespace Gears
   }
 
   void
-  PosixFileController::close(int fd) throw(Exception)
+  PosixFileController::close(int fd) /*throw(Exception)*/
   {
     if(control_devices_())
     {
@@ -219,7 +219,7 @@ namespace Gears
   ssize_t
   PosixFileController::pread(
     int fd, void* buf, unsigned long read_size, unsigned long fd_pos)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     if(stat_)
     {
@@ -237,7 +237,7 @@ namespace Gears
   ssize_t
   PosixFileController::read(
     int fd, void* buf, unsigned long read_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     if(stat_)
     {
@@ -255,7 +255,7 @@ namespace Gears
   ssize_t
   PosixFileController::write(
     int fd, const void* buf, unsigned long write_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     static const char* FUN = "PosixFileController::write()";
 
@@ -333,7 +333,7 @@ namespace Gears
   ssize_t
   PosixFileController::pread_(
     int fd, void* buf, unsigned long read_size, unsigned long fd_pos)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     ssize_t res = ::pread64(fd, buf, read_size, fd_pos);
 
@@ -350,7 +350,7 @@ namespace Gears
   ssize_t
   PosixFileController::read_(
     int fd, void* buf, unsigned long read_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     ssize_t res = ::read(fd, buf, read_size);
 
@@ -367,7 +367,7 @@ namespace Gears
   ssize_t
   PosixFileController::write_(
     int fd, const void* buf, unsigned long write_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     ssize_t res = ::write(fd, buf, write_size);
 
@@ -383,7 +383,7 @@ namespace Gears
 
   inline
   bool
-  PosixFileController::control_devices_() const throw()
+  PosixFileController::control_devices_() const noexcept
   {
     return min_free_space_ > 0;
   }
@@ -392,13 +392,13 @@ namespace Gears
   SSDFileController::SSDFileController(
     FileController* delegate_file_controller,
     unsigned long write_block_size)
-    throw()
+    noexcept
     : delegate_file_controller_(Gears::add_ref(delegate_file_controller)),
       write_block_size_(write_block_size)
   {}
 
   SmartMemBuf_var
-  SSDFileController::create_buffer() const throw()
+  SSDFileController::create_buffer() const noexcept
   {
     return delegate_file_controller_->create_buffer();
   }
@@ -406,13 +406,13 @@ namespace Gears
   int
   SSDFileController::open(
     const char* file_name, int flags, mode_t mode)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     return delegate_file_controller_->open(file_name, flags, mode);
   }
 
   void
-  SSDFileController::close(int fd) throw(Exception)
+  SSDFileController::close(int fd) /*throw(Exception)*/
   {
     delegate_file_controller_->close(fd);
   }
@@ -420,7 +420,7 @@ namespace Gears
   ssize_t
   SSDFileController::pread(
     int fd, void* buf, unsigned long read_size, unsigned long fd_pos)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     SyncPolicy::ReadGuard lock(operations_lock_);
     return delegate_file_controller_->pread(fd, buf, read_size, fd_pos);
@@ -429,7 +429,7 @@ namespace Gears
   ssize_t
   SSDFileController::read(
     int fd, void* buf, unsigned long read_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     SyncPolicy::ReadGuard lock(operations_lock_);
     return delegate_file_controller_->read(fd, buf, read_size);
@@ -438,7 +438,7 @@ namespace Gears
   ssize_t
   SSDFileController::write(
     int fd, const void* buf, unsigned long write_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     const unsigned long blocks_count = write_size / write_block_size_;
     for(unsigned long i = 0; i < blocks_count; ++i)

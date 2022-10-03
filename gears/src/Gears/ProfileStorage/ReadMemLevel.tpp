@@ -23,7 +23,7 @@ namespace Gears
   // MemLevelHolder
   template<typename KeyType>
   MemLevelHolder<KeyType>::MemLevelHolder()
-    throw()
+    noexcept
     : size_(0),
       area_size_(0),
       merge_free_size_(0)
@@ -33,7 +33,7 @@ namespace Gears
   CheckProfileResult
   MemLevelHolder<KeyType>::check_profile_i(
     const KeyType& key) const
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     CheckProfileResult result;
 
@@ -64,7 +64,7 @@ namespace Gears
   GetProfileResult
   MemLevelHolder<KeyType>::get_profile_i(
     const KeyType& key) const
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     GetProfileResult result;
 
@@ -85,7 +85,7 @@ namespace Gears
   template<typename KeyType>
   unsigned long
   MemLevelHolder<KeyType>::size_i() const
-    throw()
+    noexcept
   {
     return size_;
   }
@@ -93,7 +93,7 @@ namespace Gears
   template<typename KeyType>
   uint64_t
   MemLevelHolder<KeyType>::area_size_i() const
-    throw()
+    noexcept
   {
     return area_size_;
   }
@@ -101,7 +101,7 @@ namespace Gears
   template<typename KeyType>
   uint64_t
   MemLevelHolder<KeyType>::merge_free_size_i() const
-    throw()
+    noexcept
   {
     return merge_free_size_;
   }
@@ -109,7 +109,7 @@ namespace Gears
   template<typename KeyType>
   Gears::Time
   MemLevelHolder<KeyType>::min_access_time_i() const
-    throw()
+    noexcept
   {
     return min_access_time_;
   }
@@ -119,7 +119,7 @@ namespace Gears
   MemLevelHolder<KeyType>::get_first_i(
     KeyType& key,
     Gears::ConstSmartMemBuf_var& mem_buf) const
-    throw()
+    noexcept
   {
     typename ProfileHolderMap::const_iterator it = profiles_.begin();
     while(it != profiles_.end())
@@ -141,7 +141,7 @@ namespace Gears
   unsigned long
   MemLevelHolder<KeyType>::eval_area_size_(
     const ProfileHolder& holder)
-    throw()
+    noexcept
   {
     return sizeof(ProfileHolder) + (
       holder.mem_buf.in() ? holder.mem_buf->membuf().size() : 0);
@@ -151,7 +151,7 @@ namespace Gears
   template<typename KeyType>
   ReadMemLevel<KeyType>::KeyIteratorImpl::KeyIteratorImpl(
     const ReadMemLevel<KeyType>* read_mem_level)
-    throw()
+    noexcept
     : read_mem_level_(add_ref(read_mem_level)),
       profiles_it_(read_mem_level_->profiles_.end())
   {}
@@ -162,7 +162,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Gears::Time& access_time)
-    throw()
+    noexcept
   {
     if(profiles_it_ == read_mem_level_->profiles_.end())
     {
@@ -188,7 +188,7 @@ namespace Gears
   template<typename KeyType>
   ReadMemLevel<KeyType>::IteratorImpl::IteratorImpl(
     const ReadMemLevel<KeyType>* read_mem_level)
-    throw()
+    noexcept
     : read_mem_level_(add_ref(read_mem_level)),
       profiles_it_(read_mem_level_->profiles_.end())
   {}
@@ -199,7 +199,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Gears::Time& access_time)
-    throw()
+    noexcept
   {
     if(profiles_it_ == read_mem_level_->profiles_.end())
     {
@@ -224,7 +224,7 @@ namespace Gears
   template<typename KeyType>
   Gears::ConstSmartMemBuf_var
   ReadMemLevel<KeyType>::IteratorImpl::get_profile()
-    throw()
+    noexcept
   {
     assert(profiles_it_ != read_mem_level_->profiles_.end());
     return profiles_it_->second.mem_buf;
@@ -233,7 +233,7 @@ namespace Gears
   template<typename KeyType>
   CheckProfileResult
   ReadMemLevel<KeyType>::check_profile(const KeyType& key)
-    const throw(typename ReadBaseLevel<KeyType>::Exception)
+    const /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     return this->check_profile_i(key);
   }
@@ -242,7 +242,7 @@ namespace Gears
   GetProfileResult
   ReadMemLevel<KeyType>::get_profile(
     const KeyType& key)
-    const throw(typename ReadBaseLevel<KeyType>::Exception)
+    const /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     return this->get_profile_i(key);
   }
@@ -250,7 +250,7 @@ namespace Gears
   template<typename KeyType>
   typename ReadBaseLevel<KeyType>::KeyIterator_var
   ReadMemLevel<KeyType>::get_key_iterator() const
-    throw()
+    noexcept
   {
     return new KeyIteratorImpl(this);
   }
@@ -259,35 +259,35 @@ namespace Gears
   typename ReadBaseLevel<KeyType>::Iterator_var
   ReadMemLevel<KeyType>::get_iterator(
     unsigned long /*read_buffer_size*/) const
-    throw()
+    noexcept
   {
     return new IteratorImpl(this);
   }
 
   template<typename KeyType>
   unsigned long
-  ReadMemLevel<KeyType>::size() const throw()
+  ReadMemLevel<KeyType>::size() const noexcept
   {
     return this->size_i();
   }
 
   template<typename KeyType>
   uint64_t
-  ReadMemLevel<KeyType>::area_size() const throw()
+  ReadMemLevel<KeyType>::area_size() const noexcept
   {
     return this->area_size_i();
   }
 
   template<typename KeyType>
   unsigned long
-  ReadMemLevel<KeyType>::merge_free_size() const throw()
+  ReadMemLevel<KeyType>::merge_free_size() const noexcept
   {
     return this->merge_free_size_i();
   }
 
   template<typename KeyType>
   Gears::Time
-  ReadMemLevel<KeyType>::min_access_time() const throw()
+  ReadMemLevel<KeyType>::min_access_time() const noexcept
   {
     return this->min_access_time_i();
   }

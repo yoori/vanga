@@ -40,11 +40,11 @@ namespace Parsing
       Code::ElementList* elements,
       std::istream& istr,
       Declaration::Namespace_var* root_namespace = 0)
-      throw(Exception);
+      /*throw(Exception)*/;
 
   protected:
     virtual
-    ~Parser() throw () = default;
+    ~Parser() noexcept = default;
   };
 
   typedef Gears::IntrusivePtr<Parser> Parser_var;

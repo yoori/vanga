@@ -24,7 +24,7 @@ namespace Gears
   template<typename Elem, const size_t SIZE, typename Buffer,
     typename BufferInitializer>
   BasicFixedBufferAllocator<Elem, SIZE, Buffer, BufferInitializer>::
-  BasicFixedBufferAllocator() throw()
+  BasicFixedBufferAllocator() noexcept
     : allocated_(false)
   {
     buffer_[SIZE - 1] = '\0';
@@ -34,7 +34,7 @@ namespace Gears
     typename BufferInitializer>
   BasicFixedBufferAllocator<Elem, SIZE, Buffer, BufferInitializer>::
   BasicFixedBufferAllocator(
-    BufferInitializer buffer_initializer) throw()
+    BufferInitializer buffer_initializer) noexcept
     : buffer_(buffer_initializer), allocated_(false)
   {
     buffer_[SIZE - 1] = '\0';
@@ -45,7 +45,7 @@ namespace Gears
   typename BasicFixedBufferAllocator<Elem, SIZE, Buffer, BufferInitializer>::
     Allocator::pointer
   BasicFixedBufferAllocator<Elem, SIZE, Buffer, BufferInitializer>::allocate(
-    typename Allocator::size_type size, const void*) throw()
+    typename Allocator::size_type size, const void*) noexcept
   {
     if (allocated_ || size >= SIZE)
     {
@@ -60,7 +60,7 @@ namespace Gears
   void
   BasicFixedBufferAllocator<Elem, SIZE, Buffer, BufferInitializer>::deallocate(
     typename Allocator::pointer ptr, typename Allocator::size_type size)
-    throw()
+    noexcept
   {
     if (!allocated_ || ptr != buffer_ || size >= SIZE)
     {
@@ -72,11 +72,11 @@ namespace Gears
   /* ArrayBuffer class */
   template<typename Elem, const size_t SIZE, typename Initializer>
   ArrayBuffer<Elem, SIZE, Initializer>::ArrayBuffer(
-    Initializer /*initializer*/) throw()
+    Initializer /*initializer*/) noexcept
   {}
 
   template<typename Elem, const size_t SIZE, typename Initializer>
-  ArrayBuffer<Elem, SIZE, Initializer>::operator Elem*() throw()
+  ArrayBuffer<Elem, SIZE, Initializer>::operator Elem*() noexcept
   {
     return buffer_;
   }
@@ -84,7 +84,7 @@ namespace Gears
   /* FixedBufferAllocator impl */
 
   template<typename Elem, const size_t SIZE>
-  FixedBufferAllocator<Elem, SIZE>::FixedBufferAllocator(Elem* buffer) throw()
+  FixedBufferAllocator<Elem, SIZE>::FixedBufferAllocator(Elem* buffer) noexcept
     : BasicFixedBufferAllocator<Elem, SIZE, Elem*>(buffer)
   {}
 
@@ -92,6 +92,6 @@ namespace Gears
 
   template<typename Elem, const size_t SIZE>
   StackAllocator<Elem, SIZE>::StackAllocator(size_t /*allocator_initializer*/)
-    throw()
+    noexcept
   {}
 }

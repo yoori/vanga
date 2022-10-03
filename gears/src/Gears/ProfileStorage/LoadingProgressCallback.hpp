@@ -30,13 +30,13 @@ namespace Gears
   public:
     LoadingProgressCallback(
       LoadingProgressCallbackBase* parent,
-      double range) throw();
+      double range) noexcept;
 
     void
-    post_progress(double value) throw();
+    post_progress(double value) noexcept;
 
     void
-    loading_is_finished() throw();
+    loading_is_finished() noexcept;
 
   private:
     LoadingProgressCallbackBase_var parent_;

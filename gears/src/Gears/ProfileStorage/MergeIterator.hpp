@@ -37,10 +37,10 @@ namespace Gears
   public:
     BaseMergeIterator(
       const std::list<IntrusivePtr<IteratorType> >& iterators)
-      throw();
+      noexcept;
 
   protected:
-    virtual ~BaseMergeIterator() throw()
+    virtual ~BaseMergeIterator() noexcept
     {}
 
     virtual bool
@@ -48,7 +48,7 @@ namespace Gears
       KeyType& key,
       ProfileOperation& operation,
       Time& access_time)
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
   protected:
     typedef std::list<IntrusivePtr<IteratorType> >
@@ -96,7 +96,7 @@ namespace Gears
   protected:
     void
     next_step_()
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
   protected:
     bool initialized_;
@@ -116,17 +116,17 @@ namespace Gears
     KeyMergeIterator(
       const std::list<typename ReadBaseLevel<KeyType>::KeyIterator_var>&
         iterators)
-      throw();
+      noexcept;
 
     virtual bool
     get_next(
       KeyType& key,
       ProfileOperation& operation,
       Time& access_time)
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
   protected:
-    virtual ~KeyMergeIterator() throw()
+    virtual ~KeyMergeIterator() noexcept
     {}
   };
 
@@ -142,21 +142,21 @@ namespace Gears
     MergeIterator(
       const std::list<typename ReadBaseLevel<KeyType>::Iterator_var>&
         iterators)
-      throw();
+      noexcept;
 
     virtual bool
     get_next(
       KeyType& key,
       ProfileOperation& operation,
       Time& access_time)
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual ConstSmartMemBuf_var
     get_profile()
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
   protected:
-    virtual ~MergeIterator() throw()
+    virtual ~MergeIterator() noexcept
     {}
   };
 
@@ -170,11 +170,11 @@ namespace Gears
   public:
     OperationPackIteratorBase(
       IterType* source_iterator)
-      throw();
+      noexcept;
 
   protected:
     virtual
-    ~OperationPackIteratorBase() throw()
+    ~OperationPackIteratorBase() noexcept
     {}
 
     bool
@@ -182,17 +182,17 @@ namespace Gears
       KeyType& key,
       ProfileOperation& operation,
       Time& access_time)
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual void
-    begin_chain_handler_() throw () = 0;
+    begin_chain_handler_() noexcept = 0;
 
     bool
     pack_key_operations_(
       KeyType& key,
       ProfileOperation& operation,
       Time& access_time)
-      throw();
+      noexcept;
 
   protected:
     typename Gears::IntrusivePtr<IterType> source_iterator_;
@@ -211,26 +211,26 @@ namespace Gears
   public:
     OperationPackIterator(
       typename ReadBaseLevel<KeyType>::Iterator* source_iterator)
-      throw();
+      noexcept;
 
     virtual bool
     get_next(
       KeyType& key,
       ProfileOperation& operation,
       Time& access_time)
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual ConstSmartMemBuf_var
     get_profile()
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
   protected:
     virtual
-    ~OperationPackIterator() throw()
+    ~OperationPackIterator() noexcept
     {}
 
     virtual void
-    begin_chain_handler_() throw ();
+    begin_chain_handler_() noexcept;
 
   private:
     ConstSmartMemBuf_var cur_profile_;
@@ -244,7 +244,7 @@ namespace Gears
   public:
     KeyOperationPackIterator(
       typename ReadBaseLevel<KeyType>::KeyIterator* source_iterator)
-      throw()
+      noexcept
       : OperationPackIteratorBase<KeyType, typename ReadBaseLevel<KeyType>::KeyIterator>(source_iterator)
     {}
 
@@ -253,18 +253,18 @@ namespace Gears
       KeyType& key,
       ProfileOperation& operation,
       Time& access_time)
-      throw(typename ReadBaseLevel<KeyType>::Exception)
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
     {
       return this->get_next_(key, operation, access_time);
     }
 
   protected:
     virtual
-    ~KeyOperationPackIterator() throw()
+    ~KeyOperationPackIterator() noexcept
     {}
 
     virtual void
-    begin_chain_handler_() throw ()
+    begin_chain_handler_() noexcept
     {}
   };
 
@@ -275,21 +275,21 @@ namespace Gears
     AccessTimeFilterIterator(
       typename ReadBaseLevel<KeyType>::Iterator* source_iterator,
       const Time& min_access_time)
-      throw();
+      noexcept;
 
     virtual bool
     get_next(
       KeyType& key,
       ProfileOperation& operation,
       Time& access_time)
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual ConstSmartMemBuf_var
     get_profile()
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
   protected:
-    virtual ~AccessTimeFilterIterator() throw()
+    virtual ~AccessTimeFilterIterator() noexcept
     {}
 
   private:
@@ -304,7 +304,7 @@ namespace Gears
   template<typename KeyType, typename IteratorType>
   BaseMergeIterator<KeyType, IteratorType>::BaseMergeIterator(
     const std::list<IntrusivePtr<IteratorType> >& iterators)
-    throw()
+    noexcept
     : initialized_(false),
       iterator_list_(iterators)
   {}
@@ -315,7 +315,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Time& access_time)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     if(!initialized_)
     {
@@ -363,7 +363,7 @@ namespace Gears
   template<typename KeyType, typename IteratorType>
   void
   BaseMergeIterator<KeyType, IteratorType>::next_step_()
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     assert(!iterator_map_.empty());
 
@@ -392,7 +392,7 @@ namespace Gears
   KeyMergeIterator<KeyType>::KeyMergeIterator(
     const std::list<typename ReadBaseLevel<KeyType>::KeyIterator_var>&
       iterators)
-    throw()
+    noexcept
     : BaseMergeIterator<KeyType, typename ReadBaseLevel<KeyType>::KeyIterator>(iterators)
   {}
 
@@ -402,7 +402,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& erased,
     Time& access_time)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     return this->get_next_(key, erased, access_time);
   }
@@ -412,7 +412,7 @@ namespace Gears
   MergeIterator<KeyType>::MergeIterator(
     const std::list<typename ReadBaseLevel<KeyType>::Iterator_var>&
       iterators)
-    throw()
+    noexcept
     : BaseMergeIterator<KeyType, typename ReadBaseLevel<KeyType>::Iterator>(iterators)
   {}
 
@@ -422,7 +422,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Time& access_time)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     return this->get_next_(key, operation, access_time);
   }
@@ -430,7 +430,7 @@ namespace Gears
   template<typename KeyType>
   ConstSmartMemBuf_var
   MergeIterator<KeyType>::get_profile()
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     if(!this->iterator_map_.empty())
     {
@@ -444,7 +444,7 @@ namespace Gears
   template<typename KeyType, typename IterType>
   OperationPackIteratorBase<KeyType, IterType>::OperationPackIteratorBase(
     IterType* source_iterator)
-    throw()
+    noexcept
     : source_iterator_(add_ref(source_iterator)),
       initialized_(false),
       cur_high_operation_(PO_NOT_FOUND),
@@ -457,7 +457,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Time& access_time)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     if(!initialized_)
     {
@@ -524,7 +524,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Time& access_time)
-    throw()
+    noexcept
   {
     if(cur_high_operation_ == PO_INSERT)
     {
@@ -573,13 +573,13 @@ namespace Gears
   template<typename KeyType>
   OperationPackIterator<KeyType>::OperationPackIterator(
     typename ReadBaseLevel<KeyType>::Iterator* source_iterator)
-    throw()
+    noexcept
     : OperationPackIteratorBase<KeyType, typename ReadBaseLevel<KeyType>::Iterator>(source_iterator)
   {}
 
   template<typename KeyType>
   void
-  OperationPackIterator<KeyType>::begin_chain_handler_() throw ()
+  OperationPackIterator<KeyType>::begin_chain_handler_() noexcept
   {
     if(this->cur_high_operation_ == PO_INSERT ||
         this->cur_high_operation_ == PO_REWRITE)
@@ -598,7 +598,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Time& access_time)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     return this->get_next_(key, operation, access_time);
   }
@@ -606,7 +606,7 @@ namespace Gears
   template<typename KeyType>
   ConstSmartMemBuf_var
   OperationPackIterator<KeyType>::get_profile()
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     return cur_profile_;
   }
@@ -616,7 +616,7 @@ namespace Gears
   AccessTimeFilterIterator<KeyType>::AccessTimeFilterIterator(
     typename ReadBaseLevel<KeyType>::Iterator* source_iterator,
     const Time& min_access_time)
-    throw()
+    noexcept
     : source_iterator_(add_ref(source_iterator)),
       min_access_time_(min_access_time)
   {}
@@ -627,7 +627,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Time& access_time)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     // if record expired transform:
     //   PO_INSERT => skip
@@ -661,7 +661,7 @@ namespace Gears
   template<typename KeyType>
   ConstSmartMemBuf_var
   AccessTimeFilterIterator<KeyType>::get_profile()
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     return source_iterator_->get_profile();
   }

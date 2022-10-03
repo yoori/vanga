@@ -30,7 +30,7 @@ namespace Gears
 {
   LoadingProgressCallback::LoadingProgressCallback(
     LoadingProgressCallbackBase* parent,
-    double range) throw()
+    double range) noexcept
     : parent_(Gears::add_ref(parent)),
       range_(range),
       current_value_(0.0),
@@ -42,7 +42,7 @@ namespace Gears
     }
   }
 
-  void LoadingProgressCallback::post_progress(double value) throw()
+  void LoadingProgressCallback::post_progress(double value) noexcept
   {
     if (current_value_ > range_)
     {
@@ -67,7 +67,7 @@ namespace Gears
     }
   }
 
-  void LoadingProgressCallback::loading_is_finished() throw()
+  void LoadingProgressCallback::loading_is_finished() noexcept
   {
     if (last_reported_chunk_ >= NUMBER_OF_CHUNKS_TO_REPORT)
     {

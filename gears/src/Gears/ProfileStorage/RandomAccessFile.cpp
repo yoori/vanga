@@ -33,7 +33,7 @@ namespace Gears
 {
   RandomAccessFile::RandomAccessFile(
     FileController* file_controller)
-    throw()
+    noexcept
     : file_controller_(
         file_controller ? add_ref(file_controller) :
         new PosixFileController()),
@@ -43,7 +43,7 @@ namespace Gears
   RandomAccessFile::RandomAccessFile(
     const char* file_name,
     FileController* file_controller)
-    throw(PosixException)
+    /*throw(PosixException)*/
     : file_controller_(
         file_controller ? add_ref(file_controller) :
         new PosixFileController())
@@ -51,7 +51,7 @@ namespace Gears
     open(file_name);
   }
 
-  RandomAccessFile::~RandomAccessFile() throw()
+  RandomAccessFile::~RandomAccessFile() noexcept
   {
     try
     {
@@ -65,7 +65,7 @@ namespace Gears
   }
 
   void
-  RandomAccessFile::open(const char* file_name) throw(PosixException)
+  RandomAccessFile::open(const char* file_name) /*throw(PosixException)*/
   {
     int mode = 0;
     int o_flags = O_RDONLY;
@@ -80,7 +80,7 @@ namespace Gears
   }
 
   void
-  RandomAccessFile::close() throw(PosixException)
+  RandomAccessFile::close() /*throw(PosixException)*/
   {
     if(file_handle_ != -1)
     {
@@ -96,7 +96,7 @@ namespace Gears
   }
 
   unsigned long
-  RandomAccessFile::size() throw(PosixException)
+  RandomAccessFile::size() /*throw(PosixException)*/
   {
     struct stat64 f_stat;
 
@@ -112,7 +112,7 @@ namespace Gears
   void
   RandomAccessFile::pread(
     void* buf, unsigned long read_size, unsigned long pos)
-    throw(PosixException)
+    /*throw(PosixException)*/
   {
     try
     {
@@ -128,7 +128,7 @@ namespace Gears
   }
 
   int
-  RandomAccessFile::fd() const throw()
+  RandomAccessFile::fd() const noexcept
   {
     return file_handle_;
   }

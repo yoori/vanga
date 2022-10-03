@@ -31,15 +31,15 @@ namespace PlainTypes
   public:
     static const unsigned long FIXED_SIZE = 8;
 
-    void init_default() throw();
+    void init_default() noexcept;
 
     void init(const void* buf, unsigned long size)
-      throw(CorruptedStruct);
+      /*throw(CorruptedStruct)*/;
 
-    unsigned long dyn_size_() const throw();
+    unsigned long dyn_size_() const noexcept;
 
     void save_(void* fixed_buf, void* dyn_buf) const
-      throw();
+      noexcept;
 
     static ConstBuf read_cast(const void* fixed_buf);
   };
@@ -50,13 +50,13 @@ namespace PlainTypes
   // Buffer
   inline
   void
-  Buffer::init_default() throw()
+  Buffer::init_default() noexcept
   {}
 
   inline
   void
   Buffer::init(const void* buf, unsigned long size)
-    throw(CorruptedStruct)
+    /*throw(CorruptedStruct)*/
   {
     static const char* FUN = "Buffer::init()";
 
@@ -76,7 +76,7 @@ namespace PlainTypes
 
   inline
   unsigned long
-  Buffer::dyn_size_() const throw()
+  Buffer::dyn_size_() const noexcept
   {
     return size();
   }
@@ -84,7 +84,7 @@ namespace PlainTypes
   inline
   void
   Buffer::save_(void* fixed_buf, void* dyn_buf) const
-    throw()
+    noexcept
   {
     *static_cast<uint32_t*>(fixed_buf) =
       static_cast<unsigned char*>(dyn_buf) -

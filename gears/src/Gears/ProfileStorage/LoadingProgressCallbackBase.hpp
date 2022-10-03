@@ -30,17 +30,17 @@ namespace Gears
     public AtomicRefCountable
   {
   public:
-    LoadingProgressCallbackBase() throw();
+    LoadingProgressCallbackBase() noexcept;
 
     virtual void
-    post_progress(double value) throw();
+    post_progress(double value) noexcept;
 
     virtual void
-    loading_is_finished() throw();
+    loading_is_finished() noexcept;
 
   protected:
     virtual
-    ~LoadingProgressCallbackBase() throw();
+    ~LoadingProgressCallbackBase() noexcept;
   };
 
   typedef IntrusivePtr<LoadingProgressCallbackBase>

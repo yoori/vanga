@@ -35,25 +35,25 @@ namespace Declaration
   public:
     BaseArrayTemplate(
       const char* name,
-      unsigned long header_size) throw();
+      unsigned long header_size) noexcept;
 
   protected:
-    virtual ~BaseArrayTemplate() throw() {}
+    virtual ~BaseArrayTemplate() noexcept {}
 
     virtual CompleteTemplateDescriptor_var
     create_template_descriptor_(
       const char* name,
       const BaseDescriptorList& args) const
-      throw(InvalidParam);
+      /*throw(InvalidParam)*/;
 
   private:
     CompleteTemplateDescriptor_var create_array_simple_type_(
       BaseDescriptor* descriptor) const
-      throw();
+      noexcept;
 
     CompleteTemplateDescriptor_var create_array_struct_type_(
       BaseDescriptor* descriptor) const
-      throw();
+      noexcept;
 
   private:
     unsigned long header_size_;
@@ -63,20 +63,20 @@ namespace Declaration
   class ArrayTemplate: public BaseArrayTemplate
   {
   public:
-    ArrayTemplate() throw();
+    ArrayTemplate() noexcept;
 
   protected:
-    virtual ~ArrayTemplate() throw() {}
+    virtual ~ArrayTemplate() noexcept {}
   };
 
   /* CompatibilityListTemplate */
   class CompatibilityListTemplate: public BaseArrayTemplate
   {
   public:
-    CompatibilityListTemplate() throw();
+    CompatibilityListTemplate() noexcept;
 
   protected:
-    virtual ~CompatibilityListTemplate() throw() {}
+    virtual ~CompatibilityListTemplate() noexcept {}
   };
 }
 

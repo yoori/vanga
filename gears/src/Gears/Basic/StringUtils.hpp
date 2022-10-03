@@ -35,7 +35,7 @@ namespace Gears
   namespace StringManip
   {
     size_t
-    strlcpy(char* dst, const char* src, size_t size) throw ();
+    strlcpy(char* dst, const char* src, size_t size) noexcept;
   } // namespace StringManip
 }
 
@@ -45,7 +45,7 @@ namespace StringManip
 {
   inline
   size_t
-  strlcpy(char* dst, const char* src, size_t size) throw ()
+  strlcpy(char* dst, const char* src, size_t size) noexcept
   {
     const char* const saved_src = src;
 

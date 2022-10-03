@@ -56,15 +56,15 @@ namespace Declaration
     SimpleReader(
       const char* name_val,
       const CppReadTraits& cpp_read_traits)
-      throw();
+      noexcept;
 
     /* BaseReader */
-    virtual SimpleReader_var as_simple_reader() throw();
+    virtual SimpleReader_var as_simple_reader() noexcept;
 
-    const CppReadTraits& cpp_read_traits() const throw();
+    const CppReadTraits& cpp_read_traits() const noexcept;
 
   protected:
-    virtual ~SimpleReader() throw() {}
+    virtual ~SimpleReader() noexcept {}
 
   private:
     CppReadTraits cpp_read_traits_;
@@ -80,7 +80,7 @@ namespace Declaration
   SimpleReader::SimpleReader(
     const char* name_val,
     const CppReadTraits& cpp_read_traits)
-    throw()
+    noexcept
     : BaseType(name_val),
       BaseReader(name_val),
       cpp_read_traits_(cpp_read_traits)
@@ -88,14 +88,14 @@ namespace Declaration
 
   inline
   SimpleReader_var
-  SimpleReader::as_simple_reader() throw()
+  SimpleReader::as_simple_reader() noexcept
   {
     return Gears::add_ref(this);
   }
 
   inline
   const SimpleReader::CppReadTraits&
-  SimpleReader::cpp_read_traits() const throw()
+  SimpleReader::cpp_read_traits() const noexcept
   {
     return cpp_read_traits_;
   }

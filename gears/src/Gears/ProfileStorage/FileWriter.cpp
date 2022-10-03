@@ -33,7 +33,7 @@ namespace Gears
     int fd,
     unsigned long buffer_size,
     FileController* file_controller)
-    throw(Exception)
+    /*throw(Exception)*/
     : buffer_size_(buffer_size),
       direct_write_min_size_(std::max(buffer_size_ / 4, 1ul)),
       file_controller_(
@@ -52,7 +52,7 @@ namespace Gears
     bool append,
     bool disable_caching,
     FileController* file_controller)
-    throw(Exception)
+    /*throw(Exception)*/
     : buffer_size_(buffer_size),
       direct_write_min_size_(
         disable_caching ?
@@ -86,7 +86,7 @@ namespace Gears
     }
   }
 
-  FileWriter::~FileWriter() throw()
+  FileWriter::~FileWriter() noexcept
   {
     try
     {
@@ -99,7 +99,7 @@ namespace Gears
   }
 
   void
-  FileWriter::close() throw(Exception)
+  FileWriter::close() /*throw(Exception)*/
   {
     flush();
 
@@ -112,7 +112,7 @@ namespace Gears
 
   void
   FileWriter::write(const void* write_buf, unsigned long write_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     unsigned long cur_write_size = write_size;
     const unsigned char* cur_write_buf =
@@ -161,7 +161,7 @@ namespace Gears
 
   void
   FileWriter::flush()
-    throw(Exception)
+    /*throw(Exception)*/
   {
     if(mem_buf_->membuf().size() > 0)
     {
@@ -171,14 +171,14 @@ namespace Gears
   }
 
   unsigned long
-  FileWriter::size() const throw()
+  FileWriter::size() const noexcept
   {
     return fd_pos_ + mem_buf_->membuf().size();
   }
 
   void
   FileWriter::write_(const void* buf, unsigned long size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     ssize_t res;
 

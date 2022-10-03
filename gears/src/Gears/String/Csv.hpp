@@ -41,20 +41,20 @@ namespace Gears
     parse_line(
       ContainerType& container,
       const SubString& line)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     static void
     write_escaped(
       std::ostream& out,
       const SubString& value)
-      throw();
+      noexcept;
 
     static void
     escape(
       std::string& res,
       const SubString& src,
       char separator = ',')
-      throw();
+      noexcept;
 
   protected:
     static const Gears::Ascii::CharCategory Q_CHARS_;
@@ -67,7 +67,7 @@ namespace Gears
   template<typename ContainerType>
   void
   Csv::parse_line(ContainerType& container, const SubString& line)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     SubString::ConstPointer pos = line.begin();
     SubString::ConstPointer pre_end = line.end();
@@ -144,7 +144,7 @@ namespace Gears
   Csv::write_escaped(
     std::ostream& out,
     const SubString& value)
-    throw()
+    noexcept
   {
     std::string csv_encoded_str;
     Csv::escape(csv_encoded_str, value);

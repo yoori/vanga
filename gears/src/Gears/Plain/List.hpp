@@ -45,7 +45,7 @@ namespace PlainTypes
     static
     std::pair<const unsigned char*, const unsigned char*>
     get_positions(const void* buf, unsigned long size)
-      throw(PlainTypes::CorruptedStruct);
+      /*throw(PlainTypes::CorruptedStruct)*/;
 
     template<typename ElementIteratorType>
     static void
@@ -54,14 +54,14 @@ namespace PlainTypes
       void* dyn_buf,
       ElementIteratorType it,
       ElementIteratorType end)
-      throw();
+      noexcept;
   };
 
   template<typename ElementType>
   struct BaseList: public std::list<ElementType, ListAlloc> 
   //  struct BaseList: public std::list<ElementType>
   {
-    void init_default() throw();
+    void init_default() noexcept;
   };
 
   /* List: ElementType have init/save/dyn_size_ methods, FIXED_SIZE value */
@@ -69,14 +69,14 @@ namespace PlainTypes
   struct List: public BaseList<ElementType>
   {
     void unsafe_init(const void* buf, unsigned long size)
-      throw(CorruptedStruct);
+      /*throw(CorruptedStruct)*/;
 
     void init(const void* buf, unsigned long size)
-      throw(CorruptedStruct);
+      /*throw(CorruptedStruct)*/;
 
-    unsigned long dyn_size_() const throw();
+    unsigned long dyn_size_() const noexcept;
 
-    void save_(void* fixed_buf, void* dyn_buf) const throw();
+    void save_(void* fixed_buf, void* dyn_buf) const noexcept;
   };
 
   /* SimpleList:
@@ -92,11 +92,11 @@ namespace PlainTypes
   struct SimpleList: public BaseList<ElementType>
   {
     void init(const void* buf, unsigned long size)
-      throw(CorruptedStruct);
+      /*throw(CorruptedStruct)*/;
 
-    unsigned long dyn_size_() const throw();
+    unsigned long dyn_size_() const noexcept;
 
-    void save_(void* fixed_buf, void* dyn_buf) const throw();
+    void save_(void* fixed_buf, void* dyn_buf) const noexcept;
   };
 }
 
@@ -108,7 +108,7 @@ namespace PlainTypes
   PlainArrayHelper<ElementType>::get_positions(
     const void* buf,
     unsigned long size)
-    throw(PlainTypes::CorruptedStruct)
+    /*throw(PlainTypes::CorruptedStruct)*/
   {
     static const char* FUN = "PlainArrayHelper<ElementType>::get_positions()";
 
@@ -146,7 +146,7 @@ namespace PlainTypes
     void* dyn_buf,
     ElementIteratorType it,
     ElementIteratorType end)
-    throw()
+    noexcept
   {
     unsigned char* fixed_ptr = static_cast<unsigned char*>(dyn_buf);
     unsigned char* dyn_ptr = fixed_ptr +
@@ -169,14 +169,14 @@ namespace PlainTypes
   /* BaseList */
   template<typename ElementType>
   void
-  BaseList<ElementType>::init_default() throw()
+  BaseList<ElementType>::init_default() noexcept
   {}
 
   /* List */
   template<typename ElementType>
   void
   List<ElementType>::unsafe_init(const void* buf, unsigned long size)
-    throw(CorruptedStruct)
+    /*throw(CorruptedStruct)*/
   {
     std::pair<const unsigned char*, const unsigned char*> buf_poses =
       PlainArrayHelper<ElementType>::get_positions(buf, size);
@@ -195,7 +195,7 @@ namespace PlainTypes
   template<typename ElementType>
   void
   List<ElementType>::init(const void* buf, unsigned long size)
-    throw(CorruptedStruct)
+    /*throw(CorruptedStruct)*/
   {
     static const char* FUN = "List<ElementType>::init()";
 
@@ -211,7 +211,7 @@ namespace PlainTypes
 
   template<typename ElementType>
   unsigned long
-  List<ElementType>::dyn_size_() const throw()
+  List<ElementType>::dyn_size_() const noexcept
   {
     unsigned long res = this->size() * ElementType::FIXED_SIZE;
     for(typename std::list<ElementType>::const_iterator it =
@@ -226,7 +226,7 @@ namespace PlainTypes
   template<typename ElementType>
   void
   List<ElementType>::save_(void* fixed_buf, void* dyn_buf) const
-    throw()
+    noexcept
   {
     unsigned char* fixed_ptr = static_cast<unsigned char*>(dyn_buf);
     unsigned char* dyn_ptr = fixed_ptr +
@@ -255,7 +255,7 @@ namespace PlainTypes
   void
   SimpleList<ElementType, ReadCastFun, WriteCastFun, STEP>::
   init(const void* buf, unsigned long /*size*/)
-    throw(CorruptedStruct)
+    /*throw(CorruptedStruct)*/
   {
     uint32_t start_pos = *static_cast<const uint32_t*>(buf);
     uint32_t end_pos = *(static_cast<const uint32_t*>(buf) + 1);
@@ -277,7 +277,7 @@ namespace PlainTypes
     const unsigned long STEP>
   unsigned long
   SimpleList<ElementType, ReadCastFun, WriteCastFun, STEP>::
-  dyn_size_() const throw()
+  dyn_size_() const noexcept
   {
     return this->size() * STEP;
   }
@@ -289,7 +289,7 @@ namespace PlainTypes
   void
   SimpleList<ElementType, ReadCastFun, WriteCastFun, STEP>::
   save_(void* fixed_buf, void* dyn_buf) const
-    throw()
+    noexcept
   {
     unsigned char* dyn_ptr = static_cast<unsigned char*>(dyn_buf);
 

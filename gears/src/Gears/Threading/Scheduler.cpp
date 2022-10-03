@@ -29,17 +29,17 @@ namespace Gears
   Scheduler::Job::Job(
     ActiveObjectCallback* callback,
     bool delivery_time_adjustment)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
     : SingleJob(callback),
       have_new_events_(false),
       delivery_time_adjustment_(delivery_time_adjustment)
   {}
 
-  Scheduler::Job::~Job() throw()
+  Scheduler::Job::~Job() noexcept
   {}
 
   void
-  Scheduler::Job::terminate() throw()
+  Scheduler::Job::terminate() noexcept
   {
     have_new_events_ = true;
     new_event_in_schedule_.signal(); // wake the working thread
@@ -47,7 +47,7 @@ namespace Gears
 
   void
   Scheduler::Job::schedule(Goal* goal, const Time& time)
-    throw(InvalidArgument, Exception, Gears::Exception)
+    /*throw(InvalidArgument, Exception, Gears::Exception)*/
   {
     static const char* FUN = "Scheduler::Job::schedule()";
 
@@ -96,7 +96,7 @@ namespace Gears
 
   unsigned
   Scheduler::Job::unschedule(const Goal* goal)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
   {
     unsigned removed = 0;
 
@@ -122,7 +122,7 @@ namespace Gears
   }
 
   void
-  Scheduler::Job::work() throw()
+  Scheduler::Job::work() noexcept
   {
     static const char* FUN = "Scheduler::Job::work()";
 
@@ -253,7 +253,7 @@ namespace Gears
   }
 
   void
-  Scheduler::Job::clear() throw()
+  Scheduler::Job::clear() noexcept
   {
     LockType::WriteGuard guard(mutex());
     messages_.clear();
@@ -264,13 +264,13 @@ namespace Gears
   //
 
   Scheduler::Scheduler(ActiveObjectCallback* callback, size_t stack_size,
-    bool delivery_time_adjustment) throw(InvalidArgument, Gears::Exception)
+    bool delivery_time_adjustment) /*throw(InvalidArgument, Gears::Exception)*/
     : ActiveObjectCommonImpl(
         Job_var(new Job(callback, delivery_time_adjustment)),
         1, stack_size),
       job_(static_cast<Job&>(*SINGLE_JOB_))
   {}
 
-  Scheduler::~Scheduler() throw()
+  Scheduler::~Scheduler() noexcept
   {}
 }

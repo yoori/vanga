@@ -43,21 +43,21 @@ namespace Declaration
         StructDescriptor::Field* field_val,
         BaseWriter* writer_val,
         const MappingSpecifierSet& mapping_specifiers)
-        throw();
+        noexcept;
 
-      const char* name() const throw();
+      const char* name() const noexcept;
       
-      StructDescriptor::Field_var descriptor_field() const throw();
+      StructDescriptor::Field_var descriptor_field() const noexcept;
 
-      BaseWriter_var writer() const throw();
+      BaseWriter_var writer() const noexcept;
 
-      BaseDescriptor_var descriptor() throw();
+      BaseDescriptor_var descriptor() noexcept;
 
       const MappingSpecifierSet&
-      mapping_specifiers() const throw();
+      mapping_specifiers() const noexcept;
 
     protected:
-      virtual ~FieldWriter() throw()
+      virtual ~FieldWriter() noexcept
       {}
 
     private:
@@ -74,7 +74,7 @@ namespace Declaration
       public Gears::AtomicRefCountable
     {
     protected:
-      virtual ~FieldWriterList() throw() {}
+      virtual ~FieldWriterList() noexcept {}
     };
     
     typedef Gears::IntrusivePtr<FieldWriterList>
@@ -88,17 +88,17 @@ namespace Declaration
 
     FieldWriterList_var fields() const;
 
-    virtual BaseDescriptor_var descriptor() throw();
+    virtual BaseDescriptor_var descriptor() noexcept;
 
-    virtual StructWriter_var as_struct_writer() throw();
+    virtual StructWriter_var as_struct_writer() noexcept;
 
     virtual void
     check_mapping_specifiers(
       const Declaration::MappingSpecifierSet& mapping_specifiers)
-      throw(InvalidMappingSpecifier);
+      /*throw(InvalidMappingSpecifier)*/;
 
   protected:
-    virtual ~StructWriter() throw() {}
+    virtual ~StructWriter() noexcept {}
     
   private:
     BaseDescriptor_var descriptor_;
@@ -117,7 +117,7 @@ namespace Declaration
     StructDescriptor::Field* field_val,
     BaseWriter* writer_val,
     const MappingSpecifierSet& mapping_specifiers)
-    throw()
+    noexcept
     : field_(Gears::add_ref(field_val)),
       writer_(Gears::add_ref(writer_val)),
       mapping_specifiers_(mapping_specifiers)
@@ -125,35 +125,35 @@ namespace Declaration
 
   inline
   const char*
-  StructWriter::FieldWriter::name() const throw()
+  StructWriter::FieldWriter::name() const noexcept
   {
     return field_->name();
   }
 
   inline
   StructDescriptor::Field_var
-  StructWriter::FieldWriter::descriptor_field() const throw()
+  StructWriter::FieldWriter::descriptor_field() const noexcept
   {
     return field_;
   }
 
   inline
   BaseWriter_var
-  StructWriter::FieldWriter::writer() const throw()
+  StructWriter::FieldWriter::writer() const noexcept
   {
     return writer_;
   }
 
   inline
   BaseDescriptor_var
-  StructWriter::FieldWriter::descriptor() throw()
+  StructWriter::FieldWriter::descriptor() noexcept
   {
     return field_->descriptor();
   }
 
   inline
   const MappingSpecifierSet&
-  StructWriter::FieldWriter::mapping_specifiers() const throw()
+  StructWriter::FieldWriter::mapping_specifiers() const noexcept
   {
     return mapping_specifiers_;
   }
@@ -172,7 +172,7 @@ namespace Declaration
 
   inline
   BaseDescriptor_var
-  StructWriter::descriptor() throw()
+  StructWriter::descriptor() noexcept
   {
     return descriptor_;
   }
@@ -186,7 +186,7 @@ namespace Declaration
 
   inline
   StructWriter_var
-  StructWriter::as_struct_writer() throw()
+  StructWriter::as_struct_writer() noexcept
   {
     return Gears::add_ref(this);
   }
@@ -195,7 +195,7 @@ namespace Declaration
   void
   StructWriter::check_mapping_specifiers(
     const Declaration::MappingSpecifierSet& mapping_specifiers)
-    throw(BaseWriter::InvalidMappingSpecifier)
+    /*throw(BaseWriter::InvalidMappingSpecifier)*/
   {
     if(!mapping_specifiers.empty())
     {

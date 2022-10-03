@@ -27,7 +27,7 @@ namespace Gears
 {
   template<typename Type>
   ThreadValue<Type>::ThreadValue()
-    throw(Exception)
+    /*throw(Exception)*/
   {
     int res = ::pthread_key_create(&key_, destroy_function_);
     if(res != 0)
@@ -37,7 +37,7 @@ namespace Gears
   }
 
   template<typename Type>
-  ThreadValue<Type>::~ThreadValue() throw()
+  ThreadValue<Type>::~ThreadValue() noexcept
   {
     try
     {
@@ -61,7 +61,7 @@ namespace Gears
   template<typename Type>
   void
   ThreadValue<Type>::reset(Type* value)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     reset_();
 
@@ -74,14 +74,14 @@ namespace Gears
 
   template<typename Type>
   Type*
-  ThreadValue<Type>::get() const throw()
+  ThreadValue<Type>::get() const noexcept
   {
     return static_cast<Type*>(::pthread_getspecific(key_));
   }
 
   template<typename Type>
   Type*
-  ThreadValue<Type>::release() throw(Exception)
+  ThreadValue<Type>::release() /*throw(Exception)*/
   {
     Type* ptr = get();
 
@@ -100,7 +100,7 @@ namespace Gears
 
   template<typename Type>
   void
-  ThreadValue<Type>::reset_() throw()
+  ThreadValue<Type>::reset_() noexcept
   {
     // destroy value without set null
     Type* obj = get();

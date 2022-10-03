@@ -25,7 +25,7 @@
 namespace Gears
 {
   Condition::Condition()
-    throw(ResourceError, Gears::Exception)
+    /*throw(ResourceError, Gears::Exception)*/
   {
     const int res = pthread_cond_init(&cond_, NULL);
     if(res)
@@ -35,7 +35,7 @@ namespace Gears
     }
   }
 
-  Condition::~Condition() throw()
+  Condition::~Condition() noexcept
   {
     // todo: should be able to detect the errors;
     pthread_cond_destroy(&cond_);
@@ -43,7 +43,7 @@ namespace Gears
 
   void
   Condition::wait(Mutex& lock)
-    throw(ResourceError, Gears::Exception)
+    /*throw(ResourceError, Gears::Exception)*/
   {
     // When we call pthread_cond_wait mutex_ should be locked,
     // else - U.B.
@@ -63,7 +63,7 @@ namespace Gears
     Mutex& lock,
     const Gears::Time* time,
     bool time_is_relative)
-    throw(ResourceError, Gears::Exception)
+    /*throw(ResourceError, Gears::Exception)*/
   {
     if(time == 0)
     {
@@ -98,7 +98,7 @@ namespace Gears
 
   /// Signal one waiting thread.
   void
-  Condition::signal() throw(ResourceError, Gears::Exception)
+  Condition::signal() /*throw(ResourceError, Gears::Exception)*/
   {
     // function may fail if:
     // EINVAL The value cond_ does not refer to an initialized condition
@@ -113,7 +113,7 @@ namespace Gears
 
   /// Signal *all* waiting threads.
   void
-  Condition::broadcast() throw(ResourceError, Gears::Exception)
+  Condition::broadcast() /*throw(ResourceError, Gears::Exception)*/
   {
     // function may fail if:
     // EINVAL The value cond_ does not refer to an initialized condition
@@ -133,14 +133,14 @@ namespace Gears
   ConditionGuard::ConditionGuard(
     Mutex& lock,
     Condition& condition)
-    throw()
+    noexcept
     : Mutex::WriteGuard(lock),
       condition_(condition)
   {}
 
   void
   ConditionGuard::wait()
-    throw(Condition::ResourceError, Gears::Exception)
+    /*throw(Condition::ResourceError, Gears::Exception)*/
   {
     condition_.wait(lock_);
   }
@@ -149,7 +149,7 @@ namespace Gears
   ConditionGuard::timed_wait(
     const Time* time,
     bool time_is_relative)
-    throw(Condition::ResourceError, Gears::Exception)
+    /*throw(Condition::ResourceError, Gears::Exception)*/
   {
     return condition_.timed_wait(lock_, time, time_is_relative);
   }

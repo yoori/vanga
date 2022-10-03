@@ -50,43 +50,43 @@ namespace Code
     Declarator(
       Declaration::Namespace* root_namespace,
       Code::ElementList* elements)
-      throw();
+      noexcept;
 
-    void open_namespace(const char* name) throw();
+    void open_namespace(const char* name) noexcept;
 
-    void close_namespace() throw();
+    void close_namespace() noexcept;
 
-    Declaration::Namespace_var current_namespace() throw();
+    Declaration::Namespace_var current_namespace() noexcept;
 
     /*
-    void open_include(const char* file_name) throw();
+    void open_include(const char* file_name) noexcept;
 
-    void close_include() throw();
+    void close_include() noexcept;
     */
 
     Declaration::StructDescriptor_var
     declare_struct(
       const char* name,
       Declaration::StructDescriptor::FieldList* fields)
-      throw();
+      noexcept;
 
     Declaration::StructReader_var
     declare_struct_reader(
       const char* name,
       Declaration::StructDescriptor* struct_descriptor,
       Declaration::StructReader::FieldReaderList* decl_list)
-      throw();
+      noexcept;
 
     Declaration::StructWriter_var
     declare_struct_writer(
       const char* name,
       Declaration::StructDescriptor* struct_descriptor,
       Declaration::StructWriter::FieldWriterList* decl_list)
-      throw();
+      noexcept;
 
   protected:
     virtual
-    ~Declarator() throw () = default;
+    ~Declarator() noexcept = default;
 
   private:
     Declaration::Namespace_var root_namespace_;

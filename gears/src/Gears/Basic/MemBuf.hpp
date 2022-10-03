@@ -54,7 +54,7 @@ namespace Gears
      * if not specified using special default allocator.
      */
     explicit
-    MemBuf(BasicBufAllocator* allocator = 0) throw ();
+    MemBuf(BasicBufAllocator* allocator = 0) noexcept;
 
     /**
      * Construct memory buffer and mark all size bytes as used.
@@ -64,7 +64,7 @@ namespace Gears
      */
     explicit
     MemBuf(std::size_t size, BasicBufAllocator* allocator = 0)
-      throw (OutOfMemory);
+      /*throw (OutOfMemory)*/;
 
     /**
      * Copy constructor
@@ -72,7 +72,7 @@ namespace Gears
      * Physically allocated memory enough for store right parameter size(),
      * bytes, but have not guarantee for right capacity()!
      */
-    MemBuf(const MemBuf& right) throw (OutOfMemory);
+    MemBuf(const MemBuf& right) /*throw (OutOfMemory)*/;
 
     /**
      * Copy constructor with allocator specified
@@ -81,13 +81,13 @@ namespace Gears
      * if not specified using special default allocator.
      */
     MemBuf(const MemBuf& right, BasicBufAllocator* allocator)
-      throw (OutOfMemory);
+      /*throw (OutOfMemory)*/;
 
     /**
      * Move constructor
      * @param right moving content
      */
-    MemBuf(MemBuf&& right) throw ();
+    MemBuf(MemBuf&& right) noexcept;
 
     /**
      * Construct MemBuf object that able to store size bytes,
@@ -99,45 +99,45 @@ namespace Gears
      */
     MemBuf(const void* ptr, std::size_t size,
       BasicBufAllocator* allocator = 0)
-      throw (RangeError, OutOfMemory);
+      /*throw (RangeError, OutOfMemory)*/;
 
     /**
      * Frees allocated memory, while debug mode on, checks
      * buffer boundaries for buffer overrun.
      */
-    ~MemBuf() throw ();
+    ~MemBuf() noexcept;
 
     /**
      * @return true if buffer size used by user is zero.
      */
     bool
-    empty() const throw ();
+    empty() const noexcept;
 
     /**
      * Free allocated memory, set logical size and capacity
      * to zero.
      */
     void
-    clear() throw ();
+    clear() noexcept;
 
     /**
      * @return buffer size used by user.
      */
     std::size_t
-    size() const throw ();
+    size() const noexcept;
 
     /**
      * @return really allocated memory by this MemBuf object.
      */
     std::size_t
-    capacity() const throw ();
+    capacity() const noexcept;
 
     /**
      * @param offset from begin of user data in bytes
      * @return pointer on user data.
      */
     void*
-    data(std::size_t offset = 0) throw ();
+    data(std::size_t offset = 0) noexcept;
 
     /**
      * @param offset from begin of user data in bytes
@@ -145,7 +145,7 @@ namespace Gears
      * Constant version.
      */
     const void*
-    data(std::size_t offset = 0) const throw ();
+    data(std::size_t offset = 0) const noexcept;
 
     /**
      * @param offset from begin of user data in bytes
@@ -153,7 +153,7 @@ namespace Gears
      */
     template <typename DataType>
     DataType*
-    get(std::size_t offset = 0) throw ();
+    get(std::size_t offset = 0) noexcept;
 
     /**
      * @param offset from begin of user data in bytes
@@ -162,7 +162,7 @@ namespace Gears
      */
     template <typename DataType>
     const DataType*
-    get(std::size_t offset = 0) const throw ();
+    get(std::size_t offset = 0) const noexcept;
 
     /**
      * Assigns new content for the buffer.
@@ -171,7 +171,7 @@ namespace Gears
      */
     void
     assign(const void* ptr, std::size_t size)
-      throw (Gears::Exception, OutOfMemory);
+      /*throw (Gears::Exception, OutOfMemory)*/;
 
     /**
      * Simply allocated new memory buffer.
@@ -180,7 +180,7 @@ namespace Gears
      * Set capacity and user size to parameter value.
      */
     void
-    alloc(std::size_t size) throw (Gears::Exception, OutOfMemory);
+    alloc(std::size_t size) /*throw (Gears::Exception, OutOfMemory)*/;
 
     /**
      * Modifying logical buffer size.
@@ -189,20 +189,20 @@ namespace Gears
      * Throw RangeError, if you exceed really allocate memory.
      */
     void
-    resize(std::size_t size) throw (RangeError);
+    resize(std::size_t size) /*throw (RangeError)*/;
 
     /**
      * swap between this object and the other
      * @param right object
      */
     void
-    swap(MemBuf& right) throw ();
+    swap(MemBuf& right) noexcept;
 
     /**
      * Assignment operator is prohibited.
      */
     MemBuf&
-    operator =(MemBuf& right) throw () = delete;
+    operator =(MemBuf& right) noexcept = delete;
 
     /**
      * Move operator. Calls swap().
@@ -210,13 +210,13 @@ namespace Gears
      * @return reference to this object
      */
     MemBuf&
-    operator =(MemBuf&& right) throw ();
+    operator =(MemBuf&& right) noexcept;
 
     /**
      * @return pointer to memory allocator
      */
     BasicBufAllocator_var
-    get_allocator() throw ();
+    get_allocator() noexcept;
 
   private:
     mutable BasicBufAllocator_var allocator_;
@@ -240,14 +240,14 @@ namespace Gears
      */
     template <typename... T>
     explicit
-    MemBufTmpl(T&&... data) throw (Gears::Exception);
+    MemBufTmpl(T&&... data) /*throw (Gears::Exception)*/;
 
     /**
      * Aggregated MemBuf
      * @return aggregated MemBuf
      */
     MemBuf&
-    membuf() throw ();
+    membuf() noexcept;
 
   private:
     MemBuf mem_buf_;
@@ -268,28 +268,28 @@ namespace Gears
      */
     template <typename... T>
     explicit
-    SmartTmplMemBuf(T&&... data) throw (Gears::Exception);
+    SmartTmplMemBuf(T&&... data) /*throw (Gears::Exception)*/;
 
     /**
      * Aggregated MemBuf
      * @return aggregated MemBuf
      */
     MemBuf&
-    membuf() throw ();
+    membuf() noexcept;
 
     /**
      * Aggregated MemBuf
      * @return aggregated MemBuf
      */
     const MemBuf&
-    membuf() const throw ();
+    membuf() const noexcept;
 
   protected:
     /**
      * Destructor
      */
     virtual
-    ~SmartTmplMemBuf() throw () = default;
+    ~SmartTmplMemBuf() noexcept = default;
 
   private:
     MemBuf mem_buf_;
@@ -314,11 +314,11 @@ namespace Gears
      */
     template <typename... T>
     explicit
-    SmartMemBufTmpl(T&&... data) throw (Gears::Exception);
+    SmartMemBufTmpl(T&&... data) /*throw (Gears::Exception)*/;
 
   protected:
     virtual
-    ~SmartMemBufTmpl() throw () = default;
+    ~SmartMemBufTmpl() noexcept = default;
   };
 
   /**
@@ -328,7 +328,7 @@ namespace Gears
   struct ConstSmartMemBufSize
   {
     std::size_t
-    operator()(ConstSmartMemBuf* smb) const throw ();
+    operator()(ConstSmartMemBuf* smb) const noexcept;
   };
 
 
@@ -338,12 +338,12 @@ namespace Gears
    * of the buffer. Thread safe.
    */
   ConstSmartMemBuf_var
-  transfer_membuf(SmartMemBuf* ptr) throw (Gears::Exception);
+  transfer_membuf(SmartMemBuf* ptr) /*throw (Gears::Exception)*/;
 
   struct MemBufBoundsGuard
   {
     explicit
-    MemBufBoundsGuard(size_t bounds) throw ();
+    MemBufBoundsGuard(size_t bounds) noexcept;
   };
 }
 
@@ -357,52 +357,52 @@ namespace Gears
   // MemBuf class
   //
   inline bool
-  MemBuf::empty() const throw ()
+  MemBuf::empty() const noexcept
   {
     return !size_;
   }
 
   inline void*
-  MemBuf::data(std::size_t offset) throw ()
+  MemBuf::data(std::size_t offset) noexcept
   {
     return static_cast<unsigned char*>(ptr_) + offset + DEV_MEMBUF_BOUNDS;
   }
 
   inline const void*
-  MemBuf::data(std::size_t offset) const throw ()
+  MemBuf::data(std::size_t offset) const noexcept
   {
     return static_cast<unsigned char*>(ptr_) + offset + DEV_MEMBUF_BOUNDS;
   }
 
   template <typename DataType>
   DataType*
-  MemBuf::get(std::size_t offset) throw ()
+  MemBuf::get(std::size_t offset) noexcept
   {
     return static_cast<DataType*>(data(offset));
   }
 
   template <typename DataType>
   const DataType*
-  MemBuf::get(std::size_t offset) const throw ()
+  MemBuf::get(std::size_t offset) const noexcept
   {
     return static_cast<const DataType*>(data(offset));
   }
 
   inline std::size_t
-  MemBuf::size() const throw ()
+  MemBuf::size() const noexcept
   {
     return size_;
   }
 
   inline std::size_t
-  MemBuf::capacity() const throw ()
+  MemBuf::capacity() const noexcept
   {
     return capacity_ - 2 * DEV_MEMBUF_BOUNDS;
   }
 
   inline
   BasicBufAllocator_var
-  MemBuf::get_allocator() throw ()
+  MemBuf::get_allocator() noexcept
   {
     return allocator_;
   }
@@ -412,13 +412,13 @@ namespace Gears
   //
   template <typename AllocatorValue>
   template <typename... T>
-  MemBufTmpl<AllocatorValue>::MemBufTmpl(T&&... data) throw (Gears::Exception)
+  MemBufTmpl<AllocatorValue>::MemBufTmpl(T&&... data) /*throw (Gears::Exception)*/
     : mem_buf_(std::forward<T>(data)..., AllocatorValue::ALLOCATOR)
   {}
 
   template <typename AllocatorValue>
   MemBuf&
-  MemBufTmpl<AllocatorValue>::membuf() throw ()
+  MemBufTmpl<AllocatorValue>::membuf() noexcept
   {
     return mem_buf_;
   }
@@ -429,20 +429,20 @@ namespace Gears
   template <typename MemBuf>
   template <typename... T>
   SmartTmplMemBuf<MemBuf>::SmartTmplMemBuf(T&&... data)
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
     : mem_buf_(std::forward<T>(data)...)
   {}
 
   template <typename MemBuf>
   MemBuf&
-  SmartTmplMemBuf<MemBuf>::membuf() throw ()
+  SmartTmplMemBuf<MemBuf>::membuf() noexcept
   {
     return mem_buf_;
   }
 
   template <typename MemBuf>
   const MemBuf&
-  SmartTmplMemBuf<MemBuf>::membuf() const throw ()
+  SmartTmplMemBuf<MemBuf>::membuf() const noexcept
   {
     return mem_buf_;
   }
@@ -453,7 +453,7 @@ namespace Gears
   template <typename MemBuf, typename AllocatorValue>
   template <typename... T>
   SmartMemBufTmpl<MemBuf, AllocatorValue>::SmartMemBufTmpl(T&&... data)
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
     : SmartTmplMemBuf<MemBuf>(std::forward<T>(data)...,
       AllocatorValue::ALLOCATOR)
   {}
@@ -462,7 +462,7 @@ namespace Gears
   // ConstSmartMemBufSize class
   //
   inline std::size_t
-  ConstSmartMemBufSize::operator()(ConstSmartMemBuf* smb) const throw ()
+  ConstSmartMemBufSize::operator()(ConstSmartMemBuf* smb) const noexcept
   {
     return smb->membuf().size();
   }

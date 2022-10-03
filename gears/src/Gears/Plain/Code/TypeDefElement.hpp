@@ -32,16 +32,16 @@ namespace Code
     TypeDefElement(
       const char* type_name_val,
       Declaration::BaseType* base_type_val)
-      throw();
+      noexcept;
 
-    const char* type_name() const throw();
+    const char* type_name() const noexcept;
 
-    Declaration::BaseType_var base_type() const throw();
+    Declaration::BaseType_var base_type() const noexcept;
 
-    virtual void visited(ElementVisitor* visitor) const throw();
+    virtual void visited(ElementVisitor* visitor) const noexcept;
 
   protected:
-    virtual ~TypeDefElement() throw() {}
+    virtual ~TypeDefElement() noexcept {}
     
   private:
     std::string type_name_;
@@ -55,28 +55,28 @@ namespace Code
   TypeDefElement::TypeDefElement(
     const char* type_name_val,
     Declaration::BaseType* base_type_val)
-    throw()
+    noexcept
     : type_name_(type_name_val),
       base_type_(Gears::add_ref(base_type_val))
   {}
 
   inline
   const char*
-  TypeDefElement::type_name() const throw()
+  TypeDefElement::type_name() const noexcept
   {
     return type_name_.c_str();
   }
 
   inline
   Declaration::BaseType_var
-  TypeDefElement::base_type() const throw()
+  TypeDefElement::base_type() const noexcept
   {
     return base_type_;
   }
   
   inline
   void
-  TypeDefElement::visited(ElementVisitor* visitor) const throw()
+  TypeDefElement::visited(ElementVisitor* visitor) const noexcept
   {
     visitor->visit_i(this);
   }

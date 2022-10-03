@@ -45,7 +45,7 @@ namespace Gears
       typedef std::list<std::string> StringList;
 
       OptionCont
-      operator ||(const OptionCont& right) throw ();
+      operator ||(const OptionCont& right) noexcept;
 
       StringList eq_options;
       StringList short_options;
@@ -54,16 +54,16 @@ namespace Gears
     class CheckOption
     {
     public:
-      CheckOption() throw ();
+      CheckOption() noexcept;
 
       bool
-      require_value() const throw ();
+      require_value() const noexcept;
 
       bool
-      enabled() const throw ();
+      enabled() const noexcept;
 
       void
-      set(const char* opt_name, const char* val) throw ();
+      set(const char* opt_name, const char* val) noexcept;
 
     protected:
       bool enabled_;
@@ -73,28 +73,28 @@ namespace Gears
     class Option
     {
     public:
-      Option() throw ();
+      Option() noexcept;
 
       explicit
-      Option(const Object& val) throw ();
+      Option(const Object& val) noexcept;
 
       const Object&
-      operator *() const throw ();
+      operator *() const noexcept;
 
       const Object*
-      operator ->() const throw ();
+      operator ->() const noexcept;
 
       bool
-      require_value() const throw ();
+      require_value() const noexcept;
 
       bool
-      installed() const throw ();
+      installed() const noexcept;
 
       void
-      set(const char* opt_name, const char* val) throw (InvalidParam);
+      set(const char* opt_name, const char* val) /*throw (InvalidParam)*/;
 
       void
-      set_value(const Object& val) throw ();
+      set_value(const Object& val) noexcept;
 
     protected:
       Object val_;
@@ -114,7 +114,7 @@ namespace Gears
       /**
        * Construct options container object in not installed state
        */
-      OptionsSet() throw () = default;
+      OptionsSet() noexcept = default;
 
       /**
        * Construct options container object in not installed state,
@@ -122,7 +122,7 @@ namespace Gears
        * @param val value to be assigned
        */
       explicit
-      OptionsSet(const Object& val) throw ();
+      OptionsSet(const Object& val) noexcept;
 
       /**
        * Parse source and store read value to OptionsSet object
@@ -130,17 +130,17 @@ namespace Gears
        * @param val Value string to be parsed and save result
        */
       void
-      set(const char* opt_name, const char* val) throw (InvalidParam);
+      set(const char* opt_name, const char* val) /*throw (InvalidParam)*/;
     };
 
     class StringOption : public Option<std::string>
     {
     public:
-      StringOption() throw () = default;
-      StringOption(const std::string& val) throw ();
+      StringOption() noexcept = default;
+      StringOption(const std::string& val) noexcept;
 
       void
-      set(const char* opt_name, const char* val) throw (InvalidParam);
+      set(const char* opt_name, const char* val) /*throw (InvalidParam)*/;
     };
 
     class Args: private Uncopyable
@@ -149,39 +149,39 @@ namespace Gears
       typedef std::list<std::string> CommandList;
 
       explicit
-      Args(long command_count = 0) throw (Gears::Exception);
+      Args(long command_count = 0) /*throw (Gears::Exception)*/;
 
       template <typename Option>
       void
       add(const OptionCont& cont, Option& opt, const char* comment = 0,
-        const char* arg_name = 0) throw (Gears::Exception);
+        const char* arg_name = 0) /*throw (Gears::Exception)*/;
 
       void
       parse(int argc, const char* const argv[])
-        throw (Gears::Exception, Exception, InvalidParam);
+        /*throw (Gears::Exception, Exception, InvalidParam)*/;
 
       const CommandList&
-      commands() const throw ();
+      commands() const noexcept;
 
       void
-      usage(std::ostream& ostr) const throw (Gears::Exception);
+      usage(std::ostream& ostr) const /*throw (Gears::Exception)*/;
 
     protected:
       struct ParseState
       {
       public:
         ParseState(unsigned long argc_val, const char* const* argv_val,
-          const char* arg_pos_val) throw ();
+          const char* arg_pos_val) noexcept;
 
         bool
-        next_word() throw ();
+        next_word() noexcept;
         bool
-        end() throw ();
+        end() noexcept;
 
         const char*
-        current_pos() throw ();
+        current_pos() noexcept;
         void
-        current_pos(const char* pos) throw ();
+        current_pos(const char* pos) noexcept;
 
       protected:
         unsigned long argc_;
@@ -193,16 +193,16 @@ namespace Gears
       {
       protected:
         virtual
-        ~OptionSetter() throw () = default;
+        ~OptionSetter() noexcept = default;
 
       public:
         virtual
         void
-        set(const char* opt_name, const char* val) throw (InvalidParam) = 0;
+        set(const char* opt_name, const char* val) /*throw (InvalidParam)*/ = 0;
 
         virtual
         bool
-        require_value() const throw () = 0;
+        require_value() const noexcept = 0;
       };
 
       typedef Gears::IntrusivePtr<OptionSetter> OptionSetter_var;
@@ -212,39 +212,39 @@ namespace Gears
 
       bool
       parse_eq_op_(ParseState& parse_state)
-        throw (Gears::Exception, Exception, InvalidParam);
+        /*throw (Gears::Exception, Exception, InvalidParam)*/;
 
       bool
       parse_short_opt_seq_(ParseState& parse_state)
-        throw (Exception, InvalidParam);
+        /*throw (Exception, InvalidParam)*/;
 
       bool
       parse_short_opt_(ParseState& parse_state)
-        throw (Exception, InvalidParam);
+        /*throw (Exception, InvalidParam)*/;
 
       void
       parse_short_op_value_(OptionSetterMap::iterator it,
         const char* opt_name, ParseState& parse_state)
-        throw (Exception, InvalidParam);
+        /*throw (Exception, InvalidParam)*/;
 
     private:
       template <typename Option>
       class OptionSetterImpl : public OptionSetter
       {
       public:
-        OptionSetterImpl(Option& opt) throw ();
+        OptionSetterImpl(Option& opt) noexcept;
 
         virtual
         void
-        set(const char* opt_name, const char* val) throw (InvalidParam);
+        set(const char* opt_name, const char* val) /*throw (InvalidParam)*/;
 
         virtual
         bool
-        require_value() const throw ();
+        require_value() const noexcept;
 
       protected:
         virtual
-        ~OptionSetterImpl() throw () = default;
+        ~OptionSetterImpl() noexcept = default;
 
       private:
         Option& opt_;
@@ -253,7 +253,7 @@ namespace Gears
       static
       void
       append_flag_(const std::string& flag, bool short_opt,
-        std::string& flags, std::string& usage) throw (Gears::Exception);
+        std::string& flags, std::string& usage) /*throw (Gears::Exception)*/;
 
       typedef std::map<std::string, std::string> Usage;
 
@@ -293,27 +293,27 @@ namespace Gears
     //
 
     inline
-    CheckOption::CheckOption() throw ()
+    CheckOption::CheckOption() noexcept
       : enabled_(false)
     {}
 
     inline
     bool
-    CheckOption::require_value() const throw ()
+    CheckOption::require_value() const noexcept
     {
       return false;
     }
 
     inline
     bool
-    CheckOption::enabled() const throw ()
+    CheckOption::enabled() const noexcept
     {
       return enabled_;
     }
 
     inline
     void
-    CheckOption::set(const char* /*opt_name*/, const char* /*val*/) throw ()
+    CheckOption::set(const char* /*opt_name*/, const char* /*val*/) noexcept
     {
       enabled_ = true;
     }
@@ -323,39 +323,39 @@ namespace Gears
     //
 
     template <typename Object>
-    Option<Object>::Option() throw ()
+    Option<Object>::Option() noexcept
       : installed_(false)
     {}
 
     template <typename Object>
-    Option<Object>::Option(const Object& val) throw ()
+    Option<Object>::Option(const Object& val) noexcept
       : val_(val), installed_(false)
     {}
 
     template <typename Object>
     const Object&
-    Option<Object>::operator *() const throw ()
+    Option<Object>::operator *() const noexcept
     {
       return val_;
     }
 
     template <typename Object>
     const Object*
-    Option<Object>::operator ->() const throw ()
+    Option<Object>::operator ->() const noexcept
     {
       return &val_;
     }
 
     template <typename Object>
     bool
-    Option<Object>::require_value() const throw ()
+    Option<Object>::require_value() const noexcept
     {
       return true;
     }
 
     template <typename Object>
     bool
-    Option<Object>::installed() const throw ()
+    Option<Object>::installed() const noexcept
     {
       return installed_;
     }
@@ -363,7 +363,7 @@ namespace Gears
     template <typename Object>
     void
     Option<Object>::set(const char* /*opt_name*/, const char* val)
-      throw (InvalidParam)
+      /*throw (InvalidParam)*/
     {
       static const char* FUN = "Option<>::set()";
 
@@ -388,7 +388,7 @@ namespace Gears
 
     template <typename Object>
     void
-    Option<Object>::set_value(const Object& val) throw ()
+    Option<Object>::set_value(const Object& val) noexcept
     {
       val_ = val;
       installed_ = true;
@@ -399,14 +399,14 @@ namespace Gears
     //
 
     template <typename Object>
-    OptionsSet<Object>::OptionsSet(const Object& val) throw ()
+    OptionsSet<Object>::OptionsSet(const Object& val) noexcept
       : Option<Object>(val)
     {}
 
     template <typename Object>
     void
     OptionsSet<Object>::set(const char* /*opt_name*/, const char* val)
-      throw (InvalidParam)
+      /*throw (InvalidParam)*/
     {
       static const char* FUN = "OptionsSet<>::set";
 
@@ -428,13 +428,13 @@ namespace Gears
     //
 
     inline
-    StringOption::StringOption(const std::string& val) throw ()
+    StringOption::StringOption(const std::string& val) noexcept
       : Option<std::string>(val)
     {}
 
     inline void
     StringOption::set(const char* /*opt_name*/, const char* val)
-      throw (InvalidParam)
+      /*throw (InvalidParam)*/
     {
       static const char* FUN = "StringOption<>::set";
 
@@ -454,21 +454,21 @@ namespace Gears
     //
 
     template <typename Option>
-    Args::OptionSetterImpl<Option>::OptionSetterImpl(Option& opt) throw ()
+    Args::OptionSetterImpl<Option>::OptionSetterImpl(Option& opt) noexcept
       : opt_(opt)
     {}
 
     template <typename Option>
     void
     Args::OptionSetterImpl<Option>::set(const char* opt_name,
-      const char* val) throw (InvalidParam)
+      const char* val) /*throw (InvalidParam)*/
     {
       opt_.set(opt_name, val);
     }
 
     template <typename Option>
     bool
-    Args::OptionSetterImpl<Option>::require_value() const throw ()
+    Args::OptionSetterImpl<Option>::require_value() const noexcept
     {
       return opt_.require_value();
     }
@@ -478,13 +478,13 @@ namespace Gears
     //
 
     inline
-    Args::Args(long command_count) throw (Gears::Exception)
+    Args::Args(long command_count) /*throw (Gears::Exception)*/
       : command_count_(command_count)
     {}
 
     inline
     const Args::CommandList&
-    Args::commands() const throw ()
+    Args::commands() const noexcept
     {
       return commands_;
     }
@@ -494,7 +494,7 @@ namespace Gears
       const std::string& flag,
       bool short_opt,
       std::string& flags,
-      std::string& usage) throw (Gears::Exception)
+      std::string& usage) /*throw (Gears::Exception)*/
     {
       flags.append(flag);
       if (!usage.empty())
@@ -512,7 +512,7 @@ namespace Gears
       Option& opt,
       const char* comment,
       const char* arg_name)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       std::string flags, usage;
 

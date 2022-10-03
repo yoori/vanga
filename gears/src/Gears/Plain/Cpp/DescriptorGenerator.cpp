@@ -28,7 +28,7 @@ namespace Cpp
     std::ostream& out,
     std::ostream& out_cpp,
     const char* offset)
-    throw()
+    noexcept
     : out_(out),
       out_cpp_(out_cpp),
       offset_(offset)
@@ -37,7 +37,7 @@ namespace Cpp
   void
   DescriptorGenerator::generate_decl(
     Declaration::StructDescriptor* struct_descriptor)
-    throw()
+    noexcept
   {
     out_ << offset_ << "/* " << struct_descriptor->name() <<
       " descriptor declaration */" << std::endl;
@@ -54,7 +54,7 @@ namespace Cpp
   void
   DescriptorGenerator::generate_impl(
     Declaration::StructDescriptor* struct_descriptor)
-    throw()
+    noexcept
   {
     Declaration::StructDescriptor::PosedFieldList_var fields =
       struct_descriptor->fields();
@@ -68,7 +68,7 @@ namespace Cpp
 
   void
   DescriptorGenerator::generate_descriptor_base_decl_(
-    const Declaration::StructDescriptor* struct_descriptor) throw()
+    const Declaration::StructDescriptor* struct_descriptor) noexcept
   {
     /* struct <descriptor name>_base
      * {

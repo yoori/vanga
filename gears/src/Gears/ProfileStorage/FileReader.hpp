@@ -38,43 +38,43 @@ namespace Gears
       bool exclusive,
       unsigned long buffer_size,
       FileController* file_controller = 0)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     FileReader(
       const char* file_name,
       unsigned long buffer_size,
       bool disable_caching = false,
       FileController* file_controller = 0)
-      throw(Exception);
+      /*throw(Exception)*/;
 
-    ~FileReader() throw();
+    ~FileReader() noexcept;
 
     // result can be less then read_size only if reached eof
     unsigned long
     read(void* val, unsigned long read_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     // result can be less then skip_size only if reached eof
     unsigned long
     skip(unsigned long skip_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
-    bool eof() const throw();
-
-    unsigned long
-    pos() const throw();
+    bool eof() const noexcept;
 
     unsigned long
-    file_size() const throw();
+    pos() const noexcept;
+
+    unsigned long
+    file_size() const noexcept;
 
   private:
     unsigned long
     read_(void* val, unsigned long read_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     unsigned long
     read_mem_buf_()
-      throw(Exception);
+      /*throw(Exception)*/;
 
   private:
     const bool exclusive_;

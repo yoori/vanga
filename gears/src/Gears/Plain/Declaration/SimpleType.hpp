@@ -47,20 +47,20 @@ namespace Declaration
       SimpleWriter::CppWriteTraitsGenerator* cpp_write_traits_generator);
 
     /* BaseType */
-    virtual BaseDescriptor_var as_descriptor() throw();
+    virtual BaseDescriptor_var as_descriptor() noexcept;
 
-    virtual BaseReader_var as_reader() throw();
+    virtual BaseReader_var as_reader() noexcept;
 
-    virtual BaseWriter_var as_writer() throw();
+    virtual BaseWriter_var as_writer() noexcept;
 
     /* BaseDescriptor */
-    virtual SimpleDescriptor_var as_simple() throw();
+    virtual SimpleDescriptor_var as_simple() noexcept;
 
     /* BaseReader/BaseWriter */
-    virtual BaseDescriptor_var descriptor() throw();
+    virtual BaseDescriptor_var descriptor() noexcept;
 
   protected:
-    virtual ~SimpleType() throw() {}
+    virtual ~SimpleType() noexcept {}
   };
 
   typedef Gears::IntrusivePtr<SimpleType>
@@ -86,35 +86,35 @@ namespace Declaration
 
   inline
   BaseDescriptor_var
-  SimpleType::as_descriptor() throw()
+  SimpleType::as_descriptor() noexcept
   {
     return Gears::add_ref(this);
   }
 
   inline
   BaseReader_var
-  SimpleType::as_reader() throw()
+  SimpleType::as_reader() noexcept
   {
     return Gears::add_ref(this);
   }
 
   inline
   BaseWriter_var
-  SimpleType::as_writer() throw()
+  SimpleType::as_writer() noexcept
   {
     return Gears::add_ref(this);
   }
 
   inline
   SimpleDescriptor_var
-  SimpleType::as_simple() throw()
+  SimpleType::as_simple() noexcept
   {
     return Gears::add_ref(this);
   }
 
   inline
   BaseDescriptor_var
-  SimpleType::descriptor() throw()
+  SimpleType::descriptor() noexcept
   {
     return Gears::add_ref(this);
   }

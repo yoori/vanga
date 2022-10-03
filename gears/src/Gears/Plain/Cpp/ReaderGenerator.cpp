@@ -25,14 +25,14 @@ namespace Cpp
 {
   ReaderGenerator::ReaderGenerator(
     std::ostream& out, const char* offset)
-    throw()
+    noexcept
     : out_(out),
       offset_(offset)
   {}
 
   void ReaderGenerator::generate_decl(
     Declaration::StructReader* struct_reader)
-    throw()
+    noexcept
   {
     out_ << offset_ << "/* " << struct_reader->name() <<
       " reader declaration */" << std::endl;
@@ -127,7 +127,7 @@ namespace Cpp
 
   void ReaderGenerator::generate_impl(
     Declaration::StructReader* struct_reader)
-    throw()
+    noexcept
   {
     out_ << offset_ << "/* reader " << struct_reader->name() <<
       " */" << std::endl;
@@ -140,7 +140,7 @@ namespace Cpp
   void
   ReaderGenerator::generate_ctor_impl_(
     const Declaration::StructReader* struct_reader)
-    throw()
+    noexcept
   {
     out_ << offset_ << "inline" << std::endl <<
       offset_ << struct_reader->name() << "::" <<
@@ -152,7 +152,7 @@ namespace Cpp
   void
   ReaderGenerator::generate_field_funs_impl_(
     const Declaration::StructReader* struct_reader)
-    throw()
+    noexcept
   {
     Declaration::StructReader::FieldReaderList_var fields =
       struct_reader->fields();

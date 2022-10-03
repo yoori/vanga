@@ -76,14 +76,14 @@ namespace Declaration
 
       virtual bool
       check_mapping_specifier(const char* mapping_specifier)
-        throw()
+        noexcept
       {
         return ::strcmp(mapping_specifier, VECTOR_SPECIFIER) == 0;
       }
 
       virtual SimpleWriter::CppWriteTraits_var
       generate(const MappingSpecifierSet& mapping_specifiers)
-        throw()
+        noexcept
       {
         MappingSpecifierSet::const_iterator specifier_it =
           mapping_specifiers.find(VECTOR_SPECIFIER);
@@ -96,7 +96,7 @@ namespace Declaration
       }
 
     protected:
-      virtual ~CppWriteTraitsGeneratorSimpleArrayImpl() throw()
+      virtual ~CppWriteTraitsGeneratorSimpleArrayImpl() noexcept
       {}
 
       static
@@ -107,7 +107,7 @@ namespace Declaration
         const char* read_type_cast,
         const char* write_type_cast,
         unsigned long fixed_size)
-        throw()
+        noexcept
       {
         std::ostringstream cpp_write_type_name;
         cpp_write_type_name << "PlainTypes::" << base_type << "<" <<
@@ -144,14 +144,14 @@ namespace Declaration
 
       virtual bool
       check_mapping_specifier(const char* mapping_specifier)
-        throw()
+        noexcept
       {
         return ::strcmp(mapping_specifier, VECTOR_SPECIFIER) == 0;
       }
 
       virtual SimpleWriter::CppWriteTraits_var
       generate(const MappingSpecifierSet& mapping_specifiers)
-        throw()
+        noexcept
       {
         MappingSpecifierSet::const_iterator specifier_it =
           mapping_specifiers.find(VECTOR_SPECIFIER);
@@ -164,7 +164,7 @@ namespace Declaration
       }
 
     protected:
-      virtual ~CppWriteTraitsGeneratorArrayImpl() throw()
+      virtual ~CppWriteTraitsGeneratorArrayImpl() noexcept
       {}
 
       static
@@ -172,7 +172,7 @@ namespace Declaration
       generate_cpp_write_traits_(
         const char* base_type,
         const char* holder_type)
-        throw()
+        noexcept
       {
         std::ostringstream cpp_write_type_name;
         cpp_write_type_name << "PlainTypes::" << base_type <<
@@ -204,30 +204,30 @@ namespace Declaration
       const char* name,
       const BaseDescriptorList& args,
       unsigned long header_size)
-      throw();
+      noexcept;
 
-    virtual bool is_fixed() const throw();
+    virtual bool is_fixed() const noexcept;
 
-    virtual SizeType fixed_size() const throw();
+    virtual SizeType fixed_size() const noexcept;
 
   protected:
-    virtual ~ArrayCompleteTemplateDescriptor() throw() {}
+    virtual ~ArrayCompleteTemplateDescriptor() noexcept {}
 
     virtual BaseReader_var
     create_template_reader_(const BaseReaderList& args)
-      throw(InvalidParam);
+      /*throw(InvalidParam)*/;
 
     virtual BaseWriter_var
     create_template_writer_(const BaseWriterList& args)
-      throw(InvalidParam);
+      /*throw(InvalidParam)*/;
 
     virtual BaseReader_var
     create_array_reader_(BaseReader* arg_reader)
-      throw(InvalidParam);
+      /*throw(InvalidParam)*/;
 
     virtual BaseWriter_var
     create_array_writer_(BaseWriter* arg_writer)
-      throw(InvalidParam);
+      /*throw(InvalidParam)*/;
 
   private:
     const unsigned long header_size_;
@@ -244,10 +244,10 @@ namespace Declaration
       BaseDescriptor* descriptor,
       const SimpleReader::CppReadTraits& cpp_read_traits);
 
-    virtual BaseDescriptor_var descriptor() throw();
+    virtual BaseDescriptor_var descriptor() noexcept;
 
   protected:
-    virtual ~ArrayReader() throw() {}
+    virtual ~ArrayReader() noexcept {}
 
   private:
     BaseDescriptor_var descriptor_;
@@ -264,14 +264,14 @@ namespace Declaration
       BaseDescriptor* descriptor,
       SimpleWriter::CppWriteTraitsGenerator* cpp_write_traits_generator);
 
-    virtual BaseDescriptor_var descriptor() throw();
+    virtual BaseDescriptor_var descriptor() noexcept;
 
     virtual void
     check_mapping_specifiers(const Declaration::MappingSpecifierSet&)
-      throw(InvalidMappingSpecifier);
+      /*throw(InvalidMappingSpecifier)*/;
 
   protected:
-    virtual ~ArrayWriter() throw() {}
+    virtual ~ArrayWriter() noexcept {}
 
   private:
     BaseDescriptor_var descriptor_;
@@ -291,17 +291,17 @@ namespace Declaration
       const Declaration::SimpleReader::CppReadTraits& cpp_read_traits,
       Declaration::SimpleWriter::CppWriteTraitsGenerator* cpp_write_traits_generator,
       const BaseDescriptorList& args)
-      throw();
+      noexcept;
 
     virtual CompleteTemplateDescriptor_var
-    as_complete_template() throw();
+    as_complete_template() noexcept;
 
-    bool is_fixed() const throw();
+    bool is_fixed() const noexcept;
 
-    SizeType fixed_size() const throw();
+    SizeType fixed_size() const noexcept;
 
   protected:
-    virtual ~SimpleArrayType() throw() {};
+    virtual ~SimpleArrayType() noexcept {};
   };
 
   /* StructArrayType */
@@ -316,22 +316,22 @@ namespace Declaration
       Declaration::SimpleWriter::CppWriteTraitsGenerator* cpp_write_traits_generator,
       const BaseDescriptorList& args,
       unsigned long fixed_size_val)
-      throw();
+      noexcept;
 
     virtual CompleteTemplateDescriptor_var
-    as_complete_template() throw();
+    as_complete_template() noexcept;
 
-    bool is_fixed() const throw();
+    bool is_fixed() const noexcept;
 
-    SizeType fixed_size() const throw();
+    SizeType fixed_size() const noexcept;
 
-    virtual BaseDescriptor_var descriptor() throw()
+    virtual BaseDescriptor_var descriptor() noexcept
     {
       return Gears::add_ref(this);
     };
 
   protected:
-    virtual ~StructArrayType() throw() {};
+    virtual ~StructArrayType() noexcept {};
   };
 
   /**
@@ -371,20 +371,20 @@ namespace Declaration
     const char* name,
     const BaseDescriptorList& args,
     unsigned long header_size)
-    throw()
+    noexcept
     : BaseType(name),
       BaseDescriptor(name),
       CompleteTemplateDescriptor(name, args),
       header_size_(header_size)
   {}
 
-  bool ArrayCompleteTemplateDescriptor::is_fixed() const throw()
+  bool ArrayCompleteTemplateDescriptor::is_fixed() const noexcept
   {
     return false;
   }
 
   SizeType
-  ArrayCompleteTemplateDescriptor::fixed_size() const throw()
+  ArrayCompleteTemplateDescriptor::fixed_size() const noexcept
   {
     return header_size_;
   }
@@ -392,7 +392,7 @@ namespace Declaration
   BaseReader_var
   ArrayCompleteTemplateDescriptor::create_template_reader_(
     const BaseReaderList& args)
-    throw(InvalidParam)
+    /*throw(InvalidParam)*/
   {
     return create_array_reader_(*args.begin());
   }
@@ -400,7 +400,7 @@ namespace Declaration
   BaseWriter_var
   ArrayCompleteTemplateDescriptor::create_template_writer_(
     const BaseWriterList& args)
-    throw(InvalidParam)
+    /*throw(InvalidParam)*/
   {
     return create_array_writer_(*args.begin());
   }
@@ -408,7 +408,7 @@ namespace Declaration
   BaseReader_var
   ArrayCompleteTemplateDescriptor::create_array_reader_(
     BaseReader* arg_reader)
-    throw(InvalidParam)
+    /*throw(InvalidParam)*/
   {
     std::string cpp_read_type_name;
     std::string cpp_init_read_type_fun;
@@ -438,7 +438,7 @@ namespace Declaration
   BaseWriter_var
   ArrayCompleteTemplateDescriptor::create_array_writer_(
     BaseWriter* arg_writer)
-    throw(InvalidParam)
+    /*throw(InvalidParam)*/
   {
     return new ArrayWriter(
       (std::string("list<") + arg_writer->name() + ">").c_str(),
@@ -459,7 +459,7 @@ namespace Declaration
   {}
 
   BaseDescriptor_var
-  ArrayReader::descriptor() throw()
+  ArrayReader::descriptor() noexcept
   {
     return descriptor_;
   }
@@ -475,7 +475,7 @@ namespace Declaration
   {}
 
   BaseDescriptor_var
-  ArrayWriter::descriptor() throw()
+  ArrayWriter::descriptor() noexcept
   {
     return descriptor_;
   }
@@ -483,7 +483,7 @@ namespace Declaration
   void
   ArrayWriter::check_mapping_specifiers(
     const Declaration::MappingSpecifierSet& mapping_specifiers)
-    throw(InvalidMappingSpecifier)
+    /*throw(InvalidMappingSpecifier)*/
   {
     for(Declaration::MappingSpecifierSet::const_iterator it =
           mapping_specifiers.begin();
@@ -506,7 +506,7 @@ namespace Declaration
     const Declaration::SimpleReader::CppReadTraits& cpp_read_traits,
     Declaration::SimpleWriter::CppWriteTraitsGenerator* cpp_write_traits_generator,
     const BaseDescriptorList& args)
-    throw()
+    noexcept
     : BaseType(name),
       BaseDescriptor(name),
       BaseReader(name),
@@ -520,18 +520,18 @@ namespace Declaration
   {}
 
   CompleteTemplateDescriptor_var
-  SimpleArrayType::as_complete_template() throw()
+  SimpleArrayType::as_complete_template() noexcept
   {
     return Gears::add_ref(this);
   }
 
-  bool SimpleArrayType::is_fixed() const throw()
+  bool SimpleArrayType::is_fixed() const noexcept
   {
     return ArrayCompleteTemplateDescriptor::is_fixed();
   }
 
   SizeType
-  SimpleArrayType::fixed_size() const throw()
+  SimpleArrayType::fixed_size() const noexcept
   {
     return ArrayCompleteTemplateDescriptor::fixed_size();
   }
@@ -541,7 +541,7 @@ namespace Declaration
     Declaration::SimpleWriter::CppWriteTraitsGenerator* cpp_write_traits_generator,
     const BaseDescriptorList& args,
     unsigned long header_size)
-    throw()
+    noexcept
     : BaseType(name),
       SimpleWriter(name, cpp_write_traits_generator),
       BaseDescriptor(name),
@@ -549,18 +549,18 @@ namespace Declaration
   {}
 
   CompleteTemplateDescriptor_var
-  StructArrayType::as_complete_template() throw()
+  StructArrayType::as_complete_template() noexcept
   {
     return Gears::add_ref(this);
   }
 
-  bool StructArrayType::is_fixed() const throw()
+  bool StructArrayType::is_fixed() const noexcept
   {
     return ArrayCompleteTemplateDescriptor::is_fixed();
   }
 
   SizeType
-  StructArrayType::fixed_size() const throw()
+  StructArrayType::fixed_size() const noexcept
   {
     return ArrayCompleteTemplateDescriptor::fixed_size();
   }
@@ -568,7 +568,7 @@ namespace Declaration
   /* BaseArrayTemplate */
   BaseArrayTemplate::BaseArrayTemplate(
     const char* name,
-    unsigned long header_size) throw()
+    unsigned long header_size) noexcept
     : BaseTemplate(name, 1),
       header_size_(header_size)
   {}
@@ -577,7 +577,7 @@ namespace Declaration
   BaseArrayTemplate::create_template_descriptor_(
     const char* /*name*/,
     const BaseDescriptorList& args) const
-    throw(InvalidParam)
+    /*throw(InvalidParam)*/
   {
     Declaration::SimpleDescriptor_var arg_simple_descriptor =
       (*args.begin())->as_simple();
@@ -596,7 +596,7 @@ namespace Declaration
   CompleteTemplateDescriptor_var
   BaseArrayTemplate::create_array_simple_type_(
     BaseDescriptor* descriptor) const
-    throw()
+    noexcept
   {
     BaseReader_var reader = descriptor->as_reader();
     assert(reader.in());
@@ -689,7 +689,7 @@ namespace Declaration
   CompleteTemplateDescriptor_var
   BaseArrayTemplate::create_array_struct_type_(
     BaseDescriptor* descriptor) const
-    throw()
+    noexcept
   {
     StructDescriptor_var struct_descriptor = descriptor->as_struct();
     assert(struct_descriptor.in());
@@ -712,12 +712,12 @@ namespace Declaration
   }
 
   /* ArrayTemplate */
-  ArrayTemplate::ArrayTemplate() throw()
+  ArrayTemplate::ArrayTemplate() noexcept
     : BaseArrayTemplate("array", sizeof(uint32_t) * 2)
   {}
 
   /* CompatibilityListTemplate */
-  CompatibilityListTemplate::CompatibilityListTemplate() throw()
+  CompatibilityListTemplate::CompatibilityListTemplate() noexcept
     : BaseArrayTemplate("list", sizeof(uint32_t) * 3)
   {}
 }

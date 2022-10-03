@@ -71,11 +71,11 @@ namespace Gears
     public:
       virtual bool
       get_next(KeyType& key, ProfileOperation& operation, Time& access_time)
-        throw(Exception) = 0;
+        /*throw(Exception)*/ = 0;
 
     protected:
       virtual
-      ~KeyIterator() throw () = default;
+      ~KeyIterator() noexcept = default;
     };
 
     typedef IntrusivePtr<KeyIterator> KeyIterator_var;
@@ -85,15 +85,15 @@ namespace Gears
     public:
       virtual bool
       get_next(KeyType& key, ProfileOperation& operation, Time& access_time)
-        throw(Exception) = 0;
+        /*throw(Exception)*/ = 0;
 
       virtual ConstSmartMemBuf_var
       get_profile()
-        throw(Exception) = 0;
+        /*throw(Exception)*/ = 0;
 
     protected:
       virtual
-      ~Iterator() throw () = default;
+      ~Iterator() noexcept = default;
     };
 
     typedef IntrusivePtr<Iterator> Iterator_var;
@@ -101,38 +101,38 @@ namespace Gears
   public:
     virtual CheckProfileResult
     check_profile(const KeyType& key) const
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     virtual GetProfileResult
     get_profile(const KeyType& key) const
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     virtual KeyIterator_var
     get_key_iterator() const
-      throw() = 0;
+      noexcept = 0;
 
     virtual Iterator_var
     get_iterator(unsigned long read_buffer_size) const
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     // number of profiles
     virtual unsigned long
-    size() const throw() = 0;
+    size() const noexcept = 0;
 
     // estimated physical size
     virtual uint64_t
-    area_size() const throw() = 0;
+    area_size() const noexcept = 0;
 
     // size that will be freed on merge this level with next levels
     virtual unsigned long
-    merge_free_size() const throw() = 0;
+    merge_free_size() const noexcept = 0;
 
     virtual Time
-    min_access_time() const throw() = 0;
+    min_access_time() const noexcept = 0;
 
   protected:
     virtual
-    ~ReadBaseLevel() throw () = default;
+    ~ReadBaseLevel() noexcept = default;
   };
 
   template<typename KeyType>
@@ -146,17 +146,17 @@ namespace Gears
       ProfileOperation operation,
       unsigned long next_size,
       const Time& now)
-      throw(typename ReadBaseLevel<KeyType>::Exception) = 0;
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/ = 0;
 
     virtual unsigned long
     remove_profile(
       const KeyType& key,
       unsigned long next_size)
-      throw(typename ReadBaseLevel<KeyType>::Exception) = 0;
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/ = 0;
 
   protected:
     virtual
-    ~RWBaseLevel() throw () = default;
+    ~RWBaseLevel() noexcept = default;
   };
 }
 

@@ -71,39 +71,39 @@ namespace Gears
      */
     OutputMemoryStreamBuffer(Size initial_size = 0,
       const AllocatorInitializer& allocator_initializer =
-        AllocatorInitializer()) throw(Gears::Exception);
+        AllocatorInitializer()) /*throw(Gears::Exception)*/;
 
     /**
      * Destructor
      * Frees allocated memory region
      */
     virtual
-    ~OutputMemoryStreamBuffer() throw();
+    ~OutputMemoryStreamBuffer() noexcept;
 
     /**
      * @return The pointer to filled data
      */
     ConstPointer
-    data() const throw();
+    data() const noexcept;
 
     /**
      * @return The size of filled data
      */
     Size
-    size() const throw();
+    size() const noexcept;
 
   protected:
     virtual Position
     seekoff(Offset off,
       std::ios_base::seekdir way,
-      std::ios_base::openmode which) throw(Gears::Exception);
+      std::ios_base::openmode which) /*throw(Gears::Exception)*/;
 
     virtual Position
     seekpos(Position pos, std::ios_base::openmode which)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     virtual Int
-    overflow(Int c = Traits::eof()) throw(Gears::Exception);
+    overflow(Int c = Traits::eof()) /*throw(Gears::Exception)*/;
 
   private:
     /**
@@ -111,7 +111,7 @@ namespace Gears
      * @return whether or not extension was successful
      */
     bool
-    extend() throw(Gears::Exception);
+    extend() /*throw(Gears::Exception)*/;
 
   private:
     Allocator allocator_;
@@ -136,7 +136,7 @@ namespace Gears
      * Constructor
      * Constructs memory buffer without parameters
      */
-    MemoryBufferHolder() throw(Gears::Exception);
+    MemoryBufferHolder() /*throw(Gears::Exception)*/;
 
     /**
      * Constructor
@@ -144,7 +144,7 @@ namespace Gears
      * @param var parameter for buffer's constructor
      */
     template <typename T>
-    MemoryBufferHolder(T var) throw(Gears::Exception);
+    MemoryBufferHolder(T var) /*throw(Gears::Exception)*/;
 
     /**
      * Constructor
@@ -153,7 +153,7 @@ namespace Gears
      * @param var2 the second parameter for buffer's constructor
      */
     template <typename T1, typename T2>
-    MemoryBufferHolder(T1 var1, T2 var2) throw(Gears::Exception);
+    MemoryBufferHolder(T1 var1, T2 var2) /*throw(Gears::Exception)*/;
 
     /**
      * Return SubString based on this buffer. Buffer can be without
@@ -161,7 +161,7 @@ namespace Gears
      * @return SubString spreads the buffer
      */
     SubString
-    str() const throw(Gears::Exception);
+    str() const /*throw(Gears::Exception)*/;
 
     /**
      * Templatized version of string which allow get SubString
@@ -170,20 +170,20 @@ namespace Gears
      */
     template <typename Traits, typename Checker>
     BasicSubString<const Elem, Traits, Checker>
-    str() const throw(Gears::Exception);
+    str() const /*throw(Gears::Exception)*/;
 
   protected:
     /**
      * @return pointer to holding buffer
      */
     Buffer*
-    buffer() throw();
+    buffer() noexcept;
 
     /**
      * @return pointer to holding buffer
      */
     const Buffer*
-    buffer() const throw();
+    buffer() const noexcept;
 
   private:
     Buffer buffer_;
@@ -217,7 +217,7 @@ namespace Gears
      */
     OutputMemoryStream(typename Allocator::size_type initial_size = SIZE,
       const AllocatorInitializer& allocator_initializer =
-        AllocatorInitializer()) throw(Gears::Exception);
+        AllocatorInitializer()) /*throw(Gears::Exception)*/;
   };
 
   /**
@@ -251,13 +251,13 @@ namespace Gears
      * Constructor
      * @param buffer buffer to make output to of size not less than SIZE
      */
-    OutputBufferStream(char* buffer) throw();
+    OutputBufferStream(char* buffer) noexcept;
 
     /**
      * Destructor
      * Appends nul-terminating character to the buffer
      */
-    ~OutputBufferStream() throw();
+    ~OutputBufferStream() noexcept;
   };
 
   /**

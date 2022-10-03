@@ -33,7 +33,7 @@ namespace Gears
     SingleJob* job,
     unsigned int threads_number,
     std::size_t stack_size)
-    throw(InvalidArgument)
+    /*throw(InvalidArgument)*/
     : SINGLE_JOB_(Gears::add_ref(job)),
       thread_runner_(job, threads_number,
         ThreadRunner::Options(stack_size)),
@@ -50,7 +50,7 @@ namespace Gears
     }
   }
 
-  ActiveObjectCommonImpl::~ActiveObjectCommonImpl() throw()
+  ActiveObjectCommonImpl::~ActiveObjectCommonImpl() noexcept
   {
     static const char* FUN = "ActiveObjectCommonImpl::~ActiveObjectCommonImpl()";
 
@@ -121,7 +121,7 @@ namespace Gears
 
   void
   ActiveObjectCommonImpl::activate_object()
-    throw(AlreadyActive, Exception, Gears::Exception)
+    /*throw(AlreadyActive, Exception, Gears::Exception)*/
   {
     static const char* FUN = "ActiveObjectCommonImpl::activate_object()";
 
@@ -151,7 +151,7 @@ namespace Gears
 
   void
   ActiveObjectCommonImpl::wait_object()
-    throw(Exception, Gears::Exception)
+    /*throw(Exception, Gears::Exception)*/
   {
     static const char* FUN = "ActiveObjectCommonImpl::wait_object()";
 
@@ -180,7 +180,7 @@ namespace Gears
 
   void
   ActiveObjectCommonImpl::deactivate_object()
-    throw(Exception, Gears::Exception)
+    /*throw(Exception, Gears::Exception)*/
   {
     LockType::WriteGuard guard(work_mutex_);
     if(active_state_ == AS_ACTIVE)
@@ -191,7 +191,7 @@ namespace Gears
   }
 
   bool
-  ActiveObjectCommonImpl::active() throw(Gears::Exception)
+  ActiveObjectCommonImpl::active() /*throw(Gears::Exception)*/
   {
     return active_state_ == AS_ACTIVE;
   }

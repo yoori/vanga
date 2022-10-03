@@ -52,44 +52,44 @@ namespace Gears
   protected:
     explicit
     DescriptiveException(const char* description)
-      throw();
+      noexcept;
 
     DescriptiveException(const char* description, size_t length)
-      throw();
+      noexcept;
 
     explicit
     DescriptiveException(const std::string& description)
-      throw();
+      noexcept;
 
     DescriptiveException(const DescriptiveException& exception)
-      throw();
+      noexcept;
 
     template<typename CharType, typename Traits, typename Checker>
     DescriptiveException(
       const BasicSubString<CharType, Traits, Checker>& description)
-      throw();
+      noexcept;
 
     DescriptiveException&
-    operator=(const DescriptiveException& exception) throw();
+    operator=(const DescriptiveException& exception) noexcept;
 
   public:
-    virtual ~DescriptiveException() throw();
+    virtual ~DescriptiveException() noexcept;
 
     /** Returns the message associated with the exception. */
-    virtual const char* what() const throw();
+    virtual const char* what() const noexcept;
 
   protected:
-    DescriptiveException() throw ();
+    DescriptiveException() noexcept;
 
     void
-    copy_string_(const char* src, char* dst, size_t size) throw ();
+    copy_string_(const char* src, char* dst, size_t size) noexcept;
 
     void
-    init_(const char* description) throw ();
+    init_(const char* description) noexcept;
 
     void
     init_(const char* description, size_t length)
-      throw ();
+      noexcept;
 
   protected:
     enum { DESC_EXCEPTION_BUFFER_SIZE = 10 * 1024 };
@@ -101,21 +101,21 @@ namespace Gears
   {
   public:
     explicit
-    CompositeException(const char* description) throw();
+    CompositeException(const char* description) noexcept;
 
-    CompositeException(const char* description, size_t length) throw();
+    CompositeException(const char* description, size_t length) noexcept;
 
     explicit
     CompositeException(const std::string& description)
-      throw();
+      noexcept;
 
     template<typename CharType, typename Traits, typename Checker>
     CompositeException(
       const BasicSubString<CharType, Traits, Checker>& description)
-      throw();
+      noexcept;
 
   protected:
-    CompositeException() throw();
+    CompositeException() noexcept;
   };
 }
 
@@ -124,7 +124,7 @@ namespace Gears
   /* DescriptiveException */
   inline
   DescriptiveException::DescriptiveException()
-    throw()
+    noexcept
   {
     init_(0, 0);
   }
@@ -133,7 +133,7 @@ namespace Gears
   DescriptiveException::DescriptiveException(
     const char* description,
     size_t length)
-    throw()
+    noexcept
   {
     init_(description, length);
   }
@@ -141,21 +141,21 @@ namespace Gears
   inline
   DescriptiveException::DescriptiveException(
     const std::string& description)
-    throw()
+    noexcept
   {
     init_(description.data(), description.size());
   }
 
   inline
   DescriptiveException::~DescriptiveException()
-    throw()
+    noexcept
   {
     memset(description_, 0, sizeof(description_));
   }
 
   inline
   DescriptiveException::DescriptiveException(
-    const DescriptiveException& exception) throw ()
+    const DescriptiveException& exception) noexcept
     : Exception()
   {
     init_(exception.description_);
@@ -164,7 +164,7 @@ namespace Gears
   template<typename CharType, typename Traits, typename Checker>
   DescriptiveException::DescriptiveException(
     const BasicSubString<CharType, Traits, Checker>& description)
-    throw()
+    noexcept
   {
     init_(description.data(), description.size());
   }
@@ -173,7 +173,7 @@ namespace Gears
   DescriptiveException&
   DescriptiveException::operator=(
     const DescriptiveException& exception)
-    throw()
+    noexcept
   {
     init_(exception.description_);
     return *this;
@@ -181,7 +181,7 @@ namespace Gears
 
   inline
   const char*
-  DescriptiveException::what() const throw ()
+  DescriptiveException::what() const noexcept
   {
     return description_;
   }
@@ -189,7 +189,7 @@ namespace Gears
   inline
   void
   DescriptiveException::copy_string_(const char* src, char* dst, size_t size)
-    throw()
+    noexcept
   {
     if(src)
     {
@@ -206,7 +206,7 @@ namespace Gears
   inline
   void
   DescriptiveException::init_(const char* description)
-    throw()
+    noexcept
   {
     copy_string_(description, description_, DESC_EXCEPTION_BUFFER_SIZE);
   }
@@ -214,7 +214,7 @@ namespace Gears
   inline
   void
   DescriptiveException::init_(const char* description, size_t size)
-    throw()
+    noexcept
   {
     if(size)
     {
@@ -231,13 +231,13 @@ namespace Gears
   /* Composite */
 
   template<typename TagType, typename BaseType>
-  CompositeException<TagType, BaseType>::CompositeException() throw ()
+  CompositeException<TagType, BaseType>::CompositeException() noexcept
   {}
 
   template<typename TagType, typename BaseType>
   CompositeException<TagType, BaseType>::CompositeException(
     const char* description)
-    throw()
+    noexcept
   {
     BaseType::init_(description);
   }
@@ -245,7 +245,7 @@ namespace Gears
   template<typename TagType, typename BaseType>
   CompositeException<TagType, BaseType>::CompositeException(
     const char* description, size_t size)
-    throw()
+    noexcept
   {
     BaseType::init_(description, size);
   }
@@ -253,7 +253,7 @@ namespace Gears
   template<typename TagType, typename BaseType>
   CompositeException<TagType, BaseType>::CompositeException(
     const std::string& description)
-    throw()
+    noexcept
   {
     BaseType::init_(description.data(), description.size());
   }
@@ -262,7 +262,7 @@ namespace Gears
   template<typename CharType, typename Traits, typename Checker>
   CompositeException<TagType, BaseType>::CompositeException(
     const BasicSubString<CharType, Traits, Checker>& description)
-    throw()
+    noexcept
   {
     BaseType::init_(description.data(), description.size());
   }

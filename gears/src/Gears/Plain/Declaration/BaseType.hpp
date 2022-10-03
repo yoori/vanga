@@ -66,19 +66,19 @@ namespace Declaration
     name() const; // local name
 
     virtual BaseDescriptor_var
-    as_descriptor() throw();
+    as_descriptor() noexcept;
 
     virtual BaseReader_var
-    as_reader() throw();
+    as_reader() noexcept;
 
     virtual BaseWriter_var
-    as_writer() throw();
+    as_writer() noexcept;
 
     virtual BaseTemplate_var
-    as_template() throw();
+    as_template() noexcept;
 
   protected:
-    virtual ~BaseType() throw() {}
+    virtual ~BaseType() noexcept {}
 
   private:
     std::string name_;

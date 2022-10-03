@@ -30,25 +30,25 @@ namespace Declaration
   {}
 
   BaseDescriptor_var
-  BaseDescriptor::as_descriptor() throw()
+  BaseDescriptor::as_descriptor() noexcept
   {
     return Gears::add_ref(this);
   }
 
   SimpleDescriptor_var
-  BaseDescriptor::as_simple() throw()
+  BaseDescriptor::as_simple() noexcept
   {
     return SimpleDescriptor_var();
   }
 
   StructDescriptor_var
-  BaseDescriptor::as_struct() throw()
+  BaseDescriptor::as_struct() noexcept
   {
     return StructDescriptor_var();
   }
 
   CompleteTemplateDescriptor_var
-  BaseDescriptor::as_complete_template() throw()
+  BaseDescriptor::as_complete_template() noexcept
   {
     return CompleteTemplateDescriptor_var();
   }

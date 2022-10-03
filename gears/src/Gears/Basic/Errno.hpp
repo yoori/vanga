@@ -53,7 +53,7 @@ OPEN_NAMESPACE(Gears)
     template <typename... Args>
     void
     compose_safe(char* string, size_t string_size, int error, Args... args)
-      throw ()
+      noexcept
     {
       char error_buf[128];
       char buf[128];
@@ -72,7 +72,7 @@ OPEN_NAMESPACE(Gears)
 
   template <typename ExceptionType, typename... ArgTypes>
   void
-  throw_errno_value_exception(int error, ArgTypes... args) throw(ExceptionType)
+  throw_errno_value_exception(int error, ArgTypes... args) /*throw(ExceptionType)*/
   {
     char string[sizeof(ExceptionType)];
     ErrnoHelper::compose_safe(string, sizeof(string), error, args...);
@@ -81,7 +81,7 @@ OPEN_NAMESPACE(Gears)
 
   template <typename ExceptionType, typename... ArgTypes>
   void
-  throw_errno_exception(ArgTypes... args) throw(ExceptionType)
+  throw_errno_exception(ArgTypes... args) /*throw(ExceptionType)*/
   {
     throw_errno_value_exception<ExceptionType>(errno, args...);
   }

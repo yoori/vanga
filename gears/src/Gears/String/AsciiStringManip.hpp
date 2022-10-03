@@ -45,24 +45,24 @@ namespace Gears
      * affect only for (0-127) chars.
      */
     char
-    to_lower(char ch) throw ();
+    to_lower(char ch) noexcept;
 
     char
-    to_upper(char ch) throw ();
+    to_upper(char ch) noexcept;
 
     void
-    to_lower(std::string& dest) throw ();
+    to_lower(std::string& dest) noexcept;
 
     void
-    to_upper(std::string& dest) throw ();
-
-    template <typename Iterator>
-    void
-    to_lower(Iterator first, Iterator last) throw (Gears::Exception);
+    to_upper(std::string& dest) noexcept;
 
     template <typename Iterator>
     void
-    to_upper(Iterator first, Iterator last) throw (Gears::Exception);
+    to_lower(Iterator first, Iterator last) /*throw (Gears::Exception)*/;
+
+    template <typename Iterator>
+    void
+    to_upper(Iterator first, Iterator last) /*throw (Gears::Exception)*/;
 
     namespace Category
     {
@@ -80,7 +80,7 @@ namespace Gears
          * Constructor
          * Calls default constructor of Predicate
          */
-        Category() throw (Gears::Exception);
+        Category() /*throw (Gears::Exception)*/;
 
         /**
          * Constructor
@@ -88,7 +88,7 @@ namespace Gears
          * @param data data for constructor of Predicate
          */
         template <typename T>
-        Category(const T& data) throw (Gears::Exception);
+        Category(const T& data) /*throw (Gears::Exception)*/;
 
         /**
          * Constructor
@@ -97,7 +97,7 @@ namespace Gears
          * @param data2 data for constructor of Predicate
          */
         template <typename T1, typename T2>
-        Category(const T1& data1, const T2& data2) throw (Gears::Exception);
+        Category(const T1& data1, const T2& data2) /*throw (Gears::Exception)*/;
 
         /**
          * Constructor
@@ -108,7 +108,7 @@ namespace Gears
          */
         template <typename T1, typename T2, typename T3>
         Category(const T1& data1, const T2& data2, const T3& data3)
-          throw (Gears::Exception);
+          /*throw (Gears::Exception)*/;
 
         /**
          * Checks if character is in the set
@@ -116,14 +116,14 @@ namespace Gears
          * @return Presence of the character in the set
          */
         bool
-        is_owned(char ch) const throw ();
+        is_owned(char ch) const noexcept;
 
         /**
          * Checks category for emptiness
          * @return true if category has no symbol inside
          */
         bool
-        empty() const throw ();
+        empty() const noexcept;
 
         /**
          * Finds the first character in the string which belongs to the set
@@ -131,7 +131,7 @@ namespace Gears
          * @return Pointer to found character or NULL if none
          */
         const char*
-        find_owned(const char* str) const throw ();
+        find_owned(const char* str) const noexcept;
 
         /**
          * Finds the first character in the string which belongs to the set
@@ -142,7 +142,7 @@ namespace Gears
          */
         const char*
         find_owned(const char* begin, const char* end,
-          unsigned long* octets_length = 0) const throw ();
+          unsigned long* octets_length = 0) const noexcept;
 
         /**
          * Finds the first character in the string which doesn't belong
@@ -151,7 +151,7 @@ namespace Gears
          * @return Pointer to found character or NULL if none
          */
         const char*
-        find_nonowned(const char* str) const throw ();
+        find_nonowned(const char* str) const noexcept;
 
         /**
          * Finds the first character in the string which does not belong
@@ -161,7 +161,7 @@ namespace Gears
          * @return Pointer to found character or end if none
          */
         const char*
-        find_nonowned(const char* begin, const char* end) const throw ();
+        find_nonowned(const char* begin, const char* end) const noexcept;
 
         /**
          * Finds the last character in the string which belongs to the set
@@ -172,7 +172,7 @@ namespace Gears
          * none.
          */
         const char*
-        rfind_owned(const char* pos, const char* start) const throw ();
+        rfind_owned(const char* pos, const char* start) const noexcept;
 
         /**
          * Finds the last character in the string which does not belong
@@ -184,7 +184,7 @@ namespace Gears
          * none.
          */
         const char*
-        rfind_nonowned(const char* pos, const char* start) const throw ();
+        rfind_nonowned(const char* pos, const char* start) const noexcept;
       };
 
       /**
@@ -199,7 +199,7 @@ namespace Gears
          * Does not initialize the object.
          */
         CharTable()
-          throw ();
+          noexcept;
 
         /**
          * Constructor
@@ -210,7 +210,7 @@ namespace Gears
          */
         explicit
         CharTable(const char* str, bool check_zero = false)
-          throw ();
+          noexcept;
 
         /**
          * Constructor
@@ -219,7 +219,7 @@ namespace Gears
          * @param second second object to unite
          */
         CharTable(const CharTable& first, const CharTable& second)
-          throw ();
+          noexcept;
 
         /**
          * Constructor
@@ -230,7 +230,7 @@ namespace Gears
          */
         CharTable(const CharTable& first, const CharTable& second,
           const CharTable& third)
-          throw ();
+          noexcept;
 
         /**
          * Constructor
@@ -239,10 +239,10 @@ namespace Gears
          */
         template <typename Predicate>
         explicit
-        CharTable(Predicate predicate) throw ();
+        CharTable(Predicate predicate) noexcept;
 
         bool
-        operator ()(char ch) const throw ();
+        operator ()(char ch) const noexcept;
 
       private:
         bool table_[256];
@@ -260,7 +260,7 @@ namespace Gears
          * @return if ch equals to SYMBOL
          */
         bool
-        operator ()(char ch) const throw ();
+        operator ()(char ch) const noexcept;
       };
 
       /**
@@ -275,7 +275,7 @@ namespace Gears
          * @return if ch equals to SYMBOL1 or SYMBOL2
          */
         bool
-        operator ()(char ch) const throw ();
+        operator ()(char ch) const noexcept;
       };
 
       /**
@@ -290,7 +290,7 @@ namespace Gears
          * @return if ch equals to SYMBOL1, SYMBOL2 or SYMBOL3
          */
         bool
-        operator ()(char ch) const throw ();
+        operator ()(char ch) const noexcept;
       };
     }
 
@@ -342,7 +342,7 @@ namespace Gears
       size_t size,
       const SubString& replacement = SubString(" ", 1),
       const CharCategory& to_replace = SPACE)
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
 
     /**
      * Finds and replaces all sequences of chars from CharCategory
@@ -360,7 +360,7 @@ namespace Gears
       const char* last,
       const SubString& replacement = SubString(" ", 1),
       const CharCategory& to_replace = SPACE)
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
 
     /**
      * Compare caseless two non zero terminated string
@@ -379,7 +379,7 @@ namespace Gears
       std::size_t len1,
       const char* str2,
       std::size_t len2)
-      throw ();
+      noexcept;
 
     /**
      * Checks two non zero terminated strings on equality
@@ -397,7 +397,7 @@ namespace Gears
       std::size_t len1,
       const char* str2,
       std::size_t len2)
-      throw ();
+      noexcept;
 
     /**
      * Checks SubString and non zero terminated string on equality
@@ -413,7 +413,7 @@ namespace Gears
     equal_caseless(const SubString& str,
       const char* str2,
       std::size_t len2)
-      throw ();
+      noexcept;
 
     /**
      * Checks SubStrings on equality ignore possible \\0 characters
@@ -427,7 +427,7 @@ namespace Gears
      */
     bool
     equal_caseless(const SubString& str1, const SubString& str2)
-      throw ();
+      noexcept;
 
     /// Small and capital Latin letters.
     extern const CharCategory ALPHA;
@@ -479,7 +479,7 @@ namespace Gears
     inline void
     flatten(std::string& dest, const char* first, const char* last,
       const SubString& replacement, const CharCategory& to_replace)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       const char* const REPLACEMENT_DATA = replacement.data();
       const size_t REPLACEMENT_SIZE = replacement.size();
@@ -509,26 +509,26 @@ namespace Gears
     inline void
     flatten(std::string& dest, const char* str, size_t size,
       const SubString& replacement, const CharCategory& to_replace)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       flatten(dest, str, str + size, replacement, to_replace);
     }
 
     inline char
-    to_lower(char ch) throw ()
+    to_lower(char ch) noexcept
     {
       return Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(ch)];
     }
 
     inline char
-    to_upper(char ch) throw ()
+    to_upper(char ch) noexcept
     {
       return Tables::ASCII_TOUPPER_TABLE[static_cast<uint8_t>(ch)];
     }
 
     template <typename Iterator>
     void
-    to_lower(Iterator first, Iterator last) throw (Gears::Exception)
+    to_lower(Iterator first, Iterator last) /*throw (Gears::Exception)*/
     {
       for (; first != last; ++first)
       {
@@ -539,7 +539,7 @@ namespace Gears
 
     template <typename Iterator>
     void
-    to_upper(Iterator first, Iterator last) throw (Gears::Exception)
+    to_upper(Iterator first, Iterator last) /*throw (Gears::Exception)*/
     {
       for (; first != last; ++first)
       {
@@ -549,13 +549,13 @@ namespace Gears
     }
 
     inline void
-    to_lower(std::string& dest) throw ()
+    to_lower(std::string& dest) noexcept
     {
       to_lower(dest.begin(), dest.end());
     }
 
     inline void
-    to_upper(std::string& dest) throw ()
+    to_upper(std::string& dest) noexcept
     {
       to_upper(dest.begin(), dest.end());
     }
@@ -563,7 +563,7 @@ namespace Gears
     inline int
     compare_caseless(const char* str1, std::size_t len1,
       const char* str2, std::size_t len2)
-      throw ()
+      noexcept
     {
       std::size_t len = std::min(len1, len2);
       if (str1 == str2 || len == 0)
@@ -596,11 +596,11 @@ namespace Gears
     inline bool
     equal_caseless(const char* str1, std::size_t len1,
       const char* str2)
-      throw ()
+      noexcept
     {
-      for (register const char* const END = str1 + len1; str1 != END;)
+      for (const char* const END = str1 + len1; str1 != END;)
       {
-        register const char CH(*str2++);
+        const char CH(*str2++);
         if (!CH || Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(CH)] !=
           Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str1++)])
         {
@@ -614,7 +614,7 @@ namespace Gears
     inline bool
     equal_caseless(const char* str1, std::size_t len1,
       const char* str2, std::size_t len2)
-      throw ()
+      noexcept
     {
       if (len1 != len2)
       {
@@ -640,14 +640,14 @@ namespace Gears
     inline bool
     equal_caseless(const SubString& str,
       const char* str2, std::size_t len2)
-      throw ()
+      noexcept
     {
       return equal_caseless(str.data(), str.size(), str2, len2);
     }
 
     inline bool
     equal_caseless(const SubString& str, const char* str2)
-      throw ()
+      noexcept
     {
       return equal_caseless(str.data(), str.size(), str2);
     }
@@ -655,7 +655,7 @@ namespace Gears
     inline bool
     equal_caseless(const SubString& str1,
       const SubString& str2)
-      throw ()
+      noexcept
     {
       return equal_caseless(str1.data(), str1.size(),
         str2.data(), str2.size());
@@ -667,41 +667,41 @@ namespace Gears
       // Category class
       //
       template <typename Predicate>
-      Category<Predicate>::Category() throw (Gears::Exception)
+      Category<Predicate>::Category() /*throw (Gears::Exception)*/
       {}
 
       template <typename Predicate>
       template <typename T>
-      Category<Predicate>::Category(const T& data) throw (Gears::Exception)
+      Category<Predicate>::Category(const T& data) /*throw (Gears::Exception)*/
         : Predicate(data)
       {}
 
       template <typename Predicate>
       template <typename T1, typename T2>
       Category<Predicate>::Category(const T1& data1, const T2& data2)
-        throw (Gears::Exception)
+        /*throw (Gears::Exception)*/
         : Predicate(data1, data2)
       {}
 
       template <typename Predicate>
       template <typename T1, typename T2, typename T3>
       Category<Predicate>::Category(const T1& data1, const T2& data2,
-        const T3& data3) throw (Gears::Exception)
+        const T3& data3) /*throw (Gears::Exception)*/
         : Predicate(data1, data2, data3)
       {}
 
       template <typename Predicate>
       bool
-      Category<Predicate>::is_owned(char ch) const throw ()
+      Category<Predicate>::is_owned(char ch) const noexcept
       {
         return Predicate::operator ()(ch);
       }
 
       template <typename Predicate>
       bool
-      Category<Predicate>::empty() const throw ()
+      Category<Predicate>::empty() const noexcept
       {
-        for (register char ch = CHAR_MIN; ; ch++)
+        for (char ch = CHAR_MIN; ; ch++)
         {
           if (is_owned(ch))
           {
@@ -717,9 +717,9 @@ namespace Gears
 
       template <typename Predicate>
       const char*
-      Category<Predicate>::find_owned(const char* str) const throw ()
+      Category<Predicate>::find_owned(const char* str) const noexcept
       {
-        for (register char ch; (ch = *str) != '\0'; str++)
+        for (char ch; (ch = *str) != '\0'; str++)
         {
           if (is_owned(ch))
           {
@@ -732,7 +732,7 @@ namespace Gears
       template <typename Predicate>
       const char*
       Category<Predicate>::find_owned(const char* str, const char* end,
-        unsigned long* octets_length) const throw ()
+        unsigned long* octets_length) const noexcept
       {
         for (; str != end; ++str)
         {
@@ -752,9 +752,9 @@ namespace Gears
       template <typename Predicate>
       const char*
       Category<Predicate>::find_nonowned(const char* str) const
-        throw ()
+        noexcept
       {
-        for (register char ch; (ch = *str) != '\0'; str++)
+        for (char ch; (ch = *str) != '\0'; str++)
         {
           if (!is_owned(ch))
           {
@@ -768,7 +768,7 @@ namespace Gears
       const char*
       Category<Predicate>::find_nonowned(const char* str,
         const char* end) const
-        throw ()
+        noexcept
       {
         for (; str != end; ++str)
         {
@@ -784,7 +784,7 @@ namespace Gears
       const char*
       Category<Predicate>::rfind_owned(const char* pos,
         const char* start) const
-        throw ()
+        noexcept
       {
         const char* const NOT_FOUND = pos;
         while (start != pos)
@@ -801,7 +801,7 @@ namespace Gears
       const char*
       Category<Predicate>::rfind_nonowned(const char* pos,
         const char* start) const
-        throw ()
+        noexcept
       {
         const char* const NOT_FOUND = pos;
         while (start != pos)
@@ -818,21 +818,21 @@ namespace Gears
       // CharTable class
       //
       inline
-      CharTable::CharTable() throw ()
+      CharTable::CharTable() noexcept
       {
       }
 
       template <typename Predicate>
-      CharTable::CharTable(Predicate predicate) throw ()
+      CharTable::CharTable(Predicate predicate) noexcept
       {
-        for (register int i = 0; i < 256; i++)
+        for (int i = 0; i < 256; i++)
         {
           table_[i] = predicate(i);
         }
       }
 
       inline bool
-      CharTable::operator ()(char ch) const throw ()
+      CharTable::operator ()(char ch) const noexcept
       {
         return table_[static_cast<uint8_t>(ch)];
       }
@@ -842,7 +842,7 @@ namespace Gears
       //
       template <const char SYMBOL>
       bool
-      Char1<SYMBOL>::operator ()(char ch) const throw ()
+      Char1<SYMBOL>::operator ()(char ch) const noexcept
       {
         return ch == SYMBOL;
       }
@@ -852,7 +852,7 @@ namespace Gears
       //
       template <const char SYMBOL1, const char SYMBOL2>
       bool
-      Char2<SYMBOL1, SYMBOL2>::operator ()(char ch) const throw ()
+      Char2<SYMBOL1, SYMBOL2>::operator ()(char ch) const noexcept
       {
         return ch == SYMBOL1 || ch == SYMBOL2;
       }
@@ -862,7 +862,7 @@ namespace Gears
       //
       template <const char SYMBOL1, const char SYMBOL2, const char SYMBOL3>
       bool
-      Char3<SYMBOL1, SYMBOL2, SYMBOL3>::operator ()(char ch) const throw ()
+      Char3<SYMBOL1, SYMBOL2, SYMBOL3>::operator ()(char ch) const noexcept
       {
         return ch == SYMBOL1 || ch == SYMBOL2 || ch == SYMBOL3;
       }

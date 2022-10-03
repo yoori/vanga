@@ -38,17 +38,17 @@ namespace Declaration
       FieldReader(
         StructDescriptor::Field* field_val,
         BaseReader* reader_val)
-        throw();
+        noexcept;
 
-      const char* name() const throw();
+      const char* name() const noexcept;
 
-      StructDescriptor::Field_var descriptor_field() const throw();
+      StructDescriptor::Field_var descriptor_field() const noexcept;
 
-      BaseReader_var reader() const throw();
+      BaseReader_var reader() const noexcept;
 
     protected:
       virtual
-      ~FieldReader() throw () = default;
+      ~FieldReader() noexcept = default;
 
     private:
       StructDescriptor::Field_var field_;
@@ -63,7 +63,7 @@ namespace Declaration
       public Gears::AtomicRefCountable
     {
     protected:
-      virtual ~FieldReaderList() throw() {}
+      virtual ~FieldReaderList() noexcept {}
     };
 
     typedef Gears::IntrusivePtr<FieldReaderList>
@@ -77,13 +77,13 @@ namespace Declaration
 
     FieldReaderList_var fields() const;
 
-    virtual BaseDescriptor_var descriptor() throw();
+    virtual BaseDescriptor_var descriptor() noexcept;
 
-    virtual StructReader_var as_struct_reader() throw();
+    virtual StructReader_var as_struct_reader() noexcept;
 
   protected:
     virtual
-    ~StructReader() throw () = default;
+    ~StructReader() noexcept = default;
 
   private:
     BaseDescriptor_var descriptor_;
@@ -100,28 +100,28 @@ namespace Declaration
   StructReader::FieldReader::FieldReader(
     StructDescriptor::Field* field_val,
     BaseReader* reader_val)
-    throw()
+    noexcept
     : field_(Gears::add_ref(field_val)),
       reader_(Gears::add_ref(reader_val))
   {}
 
   inline
   const char*
-  StructReader::FieldReader::name() const throw()
+  StructReader::FieldReader::name() const noexcept
   {
     return field_->name();
   }
 
   inline
   StructDescriptor::Field_var
-  StructReader::FieldReader::descriptor_field() const throw()
+  StructReader::FieldReader::descriptor_field() const noexcept
   {
     return field_;
   }
 
   inline
   BaseReader_var
-  StructReader::FieldReader::reader() const throw()
+  StructReader::FieldReader::reader() const noexcept
   {
     return reader_;
   }
@@ -139,7 +139,7 @@ namespace Declaration
 
   inline
   BaseDescriptor_var
-  StructReader::descriptor() throw()
+  StructReader::descriptor() noexcept
   {
     return descriptor_;
   }
@@ -153,7 +153,7 @@ namespace Declaration
 
   inline
   StructReader_var
-  StructReader::as_struct_reader() throw()
+  StructReader::as_struct_reader() noexcept
   {
     return Gears::add_ref(this);
   }

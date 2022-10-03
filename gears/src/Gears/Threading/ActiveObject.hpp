@@ -52,11 +52,11 @@ namespace Gears
       Severity severity,
       const SubString& description,
       const SubString& error_code = SubString())
-      throw() = 0;
+      noexcept = 0;
 
   protected:
     virtual
-    ~ActiveObjectCallback() throw();
+    ~ActiveObjectCallback() noexcept;
   };
 
   typedef IntrusivePtr<ActiveObjectCallback>
@@ -76,26 +76,26 @@ namespace Gears
     virtual
     void
     activate_object()
-      throw(AlreadyActive, Exception, Gears::Exception) = 0;
+      /*throw(AlreadyActive, Exception, Gears::Exception)*/ = 0;
 
     virtual
     void
     deactivate_object()
-      throw(Exception, Gears::Exception) = 0;
+      /*throw(Exception, Gears::Exception)*/ = 0;
 
     virtual
     void
     wait_object()
-      throw(Exception, Gears::Exception) = 0;
+      /*throw(Exception, Gears::Exception)*/ = 0;
 
     virtual
     bool
     active()
-      throw(Gears::Exception) = 0;
+      /*throw(Gears::Exception)*/ = 0;
 
     virtual
     void
-    clear() throw(Gears::Exception);
+    clear() /*throw(Gears::Exception)*/;
 
   public:
     static const char PRINTABLE_NAME[];
@@ -110,7 +110,7 @@ namespace Gears
 
   protected:
     virtual
-    ~ActiveObject() throw();
+    ~ActiveObject() noexcept;
   };
 
   typedef IntrusivePtr<ActiveObject>
@@ -127,7 +127,7 @@ namespace Gears
   //
 
   inline
-  ActiveObjectCallback::~ActiveObjectCallback() throw()
+  ActiveObjectCallback::~ActiveObjectCallback() noexcept
   {}
 
   //
@@ -135,12 +135,12 @@ namespace Gears
   //
 
   inline
-  ActiveObject::~ActiveObject() throw()
+  ActiveObject::~ActiveObject() noexcept
   {}
 
   inline
   void
-  ActiveObject::clear() throw(Gears::Exception)
+  ActiveObject::clear() /*throw(Gears::Exception)*/
   {}
 }
 

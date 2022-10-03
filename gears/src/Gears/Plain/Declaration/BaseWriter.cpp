@@ -24,24 +24,24 @@
 
 namespace Declaration
 {
-  BaseWriter::BaseWriter(const char* name_val) throw()
+  BaseWriter::BaseWriter(const char* name_val) noexcept
     : BaseType(name_val)
   {}
 
   BaseWriter_var
-  BaseWriter::as_writer() throw()
+  BaseWriter::as_writer() noexcept
   {
     return Gears::add_ref(this);
   }
 
   SimpleWriter_var
-  BaseWriter::as_simple_writer() throw()
+  BaseWriter::as_simple_writer() noexcept
   {
     return SimpleWriter_var();
   }
 
   StructWriter_var
-  BaseWriter::as_struct_writer() throw()
+  BaseWriter::as_struct_writer() noexcept
   {
     return StructWriter_var();
   }

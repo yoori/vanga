@@ -60,13 +60,13 @@ namespace Gears
      * Inserts object into the list of destroyable objects
      * @param priority objects with lesser value will be destroyed sooner
      */
-    AtExitDestroying(int priority) throw ();
+    AtExitDestroying(int priority) noexcept;
 
     /**
      * Destructor
      */
     virtual
-    ~AtExitDestroying() throw ();
+    ~AtExitDestroying() noexcept;
 
   private:
     typedef StaticInitializedMutex Lock;
@@ -76,7 +76,7 @@ namespace Gears
      * Destroys the registered objects
      */
     static void
-    destroy_at_exit_() throw ();
+    destroy_at_exit_() noexcept;
 
     static Lock mutex_;
     static bool registered_;
@@ -99,14 +99,14 @@ namespace Gears
        * Constructor
        * @param object object to destroy at exit
        */
-      AtExitDestroyer(Object* object) throw ();
+      AtExitDestroyer(Object* object) noexcept;
 
     protected:
       /**
        * Destructor
        */
       virtual
-      ~AtExitDestroyer() throw ();
+      ~AtExitDestroyer() noexcept;
 
     private:
       Pointer object_;
@@ -119,11 +119,11 @@ namespace Gears
     class AutoPtr: public std::auto_ptr<Type>
     {
     public:
-      AutoPtr(Type* object) throw ();
+      AutoPtr(Type* object) noexcept;
 
-      Type* in() throw ();
+      Type* in() noexcept;
 
-      Type* retn() throw ();
+      Type* retn() noexcept;
     };
 
     /**
@@ -133,11 +133,11 @@ namespace Gears
     class SimplePtr
     {
     public:
-      SimplePtr(Type* object) throw ();
+      SimplePtr(Type* object) noexcept;
 
-      Type* in() throw ();
+      Type* in() noexcept;
 
-      Type* retn() throw ();
+      Type* retn() noexcept;
 
     private:
       Type* ptr_;
@@ -164,7 +164,7 @@ namespace Gears
      * @return reference to the unique object
      */
     static Single&
-    instance() throw (Gears::Exception);
+    instance() /*throw (Gears::Exception)*/;
 
   private:
     typedef StaticInitializedMutex Lock;
@@ -192,12 +192,12 @@ namespace Gears
      * Constructor
      * Successfully constructs the object only if another one does not exist.
      */
-    Unique() throw (Gears::Exception, Exception);
+    Unique() /*throw (Gears::Exception, Exception)*/;
     /**
      * Destructor
      * Allows creating of another object of the same type.
      */
-    ~Unique() throw ();
+    ~Unique() noexcept;
 
   private:
     typedef StaticInitializedMutex Lock;
@@ -220,17 +220,17 @@ namespace Gears
      * Constructor.
      * Increases the number of objects created.
      */
-    AllDestroyer() throw ();
+    AllDestroyer() noexcept;
     /**
      * Constructor.
      * Increases the number of objects created.
      */
-    AllDestroyer(const AllDestroyer&) throw ();
+    AllDestroyer(const AllDestroyer&) noexcept;
     /**
      * Destructor.
      * Decreases the number of objects created.
      */
-    ~AllDestroyer() throw ();
+    ~AllDestroyer() noexcept;
 
   private:
     class LoudCounter:
@@ -238,12 +238,12 @@ namespace Gears
       public AtomicCounter
     {
     public:
-      LoudCounter() throw();
+      LoudCounter() noexcept;
 
-      void check() throw();
+      void check() noexcept;
 
     private:
-      virtual ~LoudCounter() throw();
+      virtual ~LoudCounter() noexcept;
     };
 
     typedef IntrusivePtr<LoudCounter> LoudCounter_var;
@@ -256,12 +256,12 @@ namespace Gears
         Helper::AutoPtr<LoudCounterHolder>,
         AtExitDestroying::DP_LOUD_COUNTER> Single;
 
-      LoudCounterHolder() throw (Gears::Exception);
+      LoudCounterHolder() /*throw (Gears::Exception)*/;
 
-      ~LoudCounterHolder() throw ();
+      ~LoudCounterHolder() noexcept;
 
       LoudCounter*
-      counter() throw ();
+      counter() noexcept;
 
     private:
       LoudCounter_var counter_;
@@ -275,7 +275,7 @@ namespace Gears
 {
   // AtExitDestroying impl
   inline
-  AtExitDestroying::~AtExitDestroying() throw()
+  AtExitDestroying::~AtExitDestroying() noexcept
   {}
 
   namespace Helper
@@ -283,32 +283,32 @@ namespace Gears
     // AtExitDestroyer impl
     template <typename Object, typename Pointer, const int PRIORITY>
     AtExitDestroyer<Object, Pointer, PRIORITY>::AtExitDestroyer(
-      Object* object) throw ()
+      Object* object) noexcept
       : AtExitDestroying(PRIORITY), object_(object)
     {}
 
     template <typename Object, typename Pointer, const int PRIORITY>
-    AtExitDestroyer<Object, Pointer, PRIORITY>::~AtExitDestroyer() throw ()
+    AtExitDestroyer<Object, Pointer, PRIORITY>::~AtExitDestroyer() noexcept
     {}
 
     //
     // class AutoPtr
     //
     template <typename Type>
-    AutoPtr<Type>::AutoPtr(Type* object) throw ()
+    AutoPtr<Type>::AutoPtr(Type* object) noexcept
       : std::auto_ptr<Type>(object)
     {}
 
     template <typename Type>
     Type*
-    AutoPtr<Type>::in() throw ()
+    AutoPtr<Type>::in() noexcept
     {
       return this->get();
     }
 
     template <typename Type>
     Type*
-    AutoPtr<Type>::retn() throw ()
+    AutoPtr<Type>::retn() noexcept
     {
       return this->release();
     }
@@ -317,20 +317,20 @@ namespace Gears
     // class SimplePtr
     //
     template <typename Type>
-    SimplePtr<Type>::SimplePtr(Type* object) throw ()
+    SimplePtr<Type>::SimplePtr(Type* object) noexcept
       : ptr_(object)
     {}
 
     template <typename Type>
     Type*
-    SimplePtr<Type>::in() throw ()
+    SimplePtr<Type>::in() noexcept
     {
       return ptr_;
     }
 
     template <typename Type>
     Type*
-    SimplePtr<Type>::retn() throw ()
+    SimplePtr<Type>::retn() noexcept
     {
       Type* ptr(ptr_);
       ptr_ = 0;
@@ -355,7 +355,7 @@ namespace Gears
 
   template <typename Single, typename Pointer, const int PRIORITY>
   Single&
-  Singleton<Single, Pointer, PRIORITY>::instance() throw(Gears::Exception)
+  Singleton<Single, Pointer, PRIORITY>::instance() /*throw(Gears::Exception)*/
   {
     if(!initialized_)
     {
@@ -383,7 +383,7 @@ namespace Gears
   Unique<Determinator>::existing_ = NULL;
 
   template<typename Determinator>
-  Unique<Determinator>::Unique() throw(Exception, Gears::Exception)
+  Unique<Determinator>::Unique() /*throw(Exception, Gears::Exception)*/
   {
     static const char* FUN = "Unique<...>::Unique()";
 
@@ -400,7 +400,7 @@ namespace Gears
   }
 
   template<typename Determinator>
-  Unique<Determinator>::~Unique() throw()
+  Unique<Determinator>::~Unique() noexcept
   {
     Lock::WriteGuard guard(mutex_);
     assert(existing_ == this);
@@ -409,17 +409,17 @@ namespace Gears
 
   /* AllDestroyer::LoudCounter impl */
   template<typename Determinator>
-  AllDestroyer<Determinator>::LoudCounter::LoudCounter() throw()
+  AllDestroyer<Determinator>::LoudCounter::LoudCounter() noexcept
     : AtomicCounter(0)
   {}
 
   template<typename Determinator>
-  AllDestroyer<Determinator>::LoudCounter::~LoudCounter() throw()
+  AllDestroyer<Determinator>::LoudCounter::~LoudCounter() noexcept
   {}
 
   template<typename Determinator>
   void
-  AllDestroyer<Determinator>::LoudCounter::check() throw()
+  AllDestroyer<Determinator>::LoudCounter::check() noexcept
   {
     int counter = *this;
     if(counter)
@@ -434,26 +434,26 @@ namespace Gears
   /* AllDestroyer::LoudCounterHolder class */
   template<typename Determinator>
   AllDestroyer<Determinator>::LoudCounterHolder::LoudCounterHolder()
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
     : counter_(new LoudCounter)
   {}
 
   template<typename Determinator>
-  AllDestroyer<Determinator>::LoudCounterHolder::~LoudCounterHolder() throw()
+  AllDestroyer<Determinator>::LoudCounterHolder::~LoudCounterHolder() noexcept
   {
     counter_->check();
   }
 
   template<typename Determinator>
   typename AllDestroyer<Determinator>::LoudCounter*
-  AllDestroyer<Determinator>::LoudCounterHolder::counter() throw()
+  AllDestroyer<Determinator>::LoudCounterHolder::counter() noexcept
   {
     return counter_;
   }
 
   /* AllDestroyer impl */
   template<typename Determinator>
-  AllDestroyer<Determinator>::AllDestroyer() throw()
+  AllDestroyer<Determinator>::AllDestroyer() noexcept
     : counter_(Gears::add_ref(
         AllDestroyer<Determinator>::LoudCounterHolder::Single::
           instance().counter()))
@@ -463,14 +463,14 @@ namespace Gears
 
   template<typename Determinator>
   AllDestroyer<Determinator>::AllDestroyer(const AllDestroyer& another)
-    throw()
+    noexcept
     : counter_(another.counter_)
   {
     counter_->add(1);
   }
 
   template<typename Determinator>
-  AllDestroyer<Determinator>::~AllDestroyer() throw()
+  AllDestroyer<Determinator>::~AllDestroyer() noexcept
   {
     counter_->add(-1);
   }

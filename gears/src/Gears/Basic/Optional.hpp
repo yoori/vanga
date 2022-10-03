@@ -40,31 +40,31 @@ OPEN_NAMESPACE(Gears)
     {}
 
     const ObjectType*
-    operator->() const throw ()
+    operator->() const noexcept
     {
       return &val_;
     }
 
     ObjectType*
-    operator->() throw ()
+    operator->() noexcept
     {
       return &val_;
     }
 
     const ObjectType&
-    operator*() const throw ()
+    operator*() const noexcept
     {
       return val_;
     }
 
     ObjectType&
-    operator*() throw ()
+    operator*() noexcept
     {
       return val_;
     }
 
     bool
-    present() const throw ()
+    present() const noexcept
     {
       return defined_;
     }
@@ -160,7 +160,7 @@ OPEN_NAMESPACE(Gears)
     {}
 
     void
-    present_(bool new_state) throw ()
+    present_(bool new_state) noexcept
     {
       defined_ = new_state;
     }

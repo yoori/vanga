@@ -30,7 +30,7 @@ namespace Gears
     ThreadJob* job,
     unsigned int number_of_jobs,
     const Options& options)
-    throw(Gears::Exception, PosixException)
+    /*throw(Gears::Exception, PosixException)*/
     : options_(options),
       start_semaphore_(0),
       is_running_(false),
@@ -49,7 +49,7 @@ namespace Gears
     size_t number_of_jobs,
     Functor functor,
     const Options& options)
-    throw(Gears::Exception, PosixException)
+    /*throw(Gears::Exception, PosixException)*/
     : options_(options),
       start_semaphore_(0),
       is_running_(false),
@@ -68,7 +68,7 @@ namespace Gears
     ForwardIterator begin,
     ForwardIterator end,
     const Options& options)
-    throw(Gears::Exception, PosixException)
+    /*throw(Gears::Exception, PosixException)*/
     : options_(options),
       start_semaphore_(0),
       is_running_(false),
@@ -83,7 +83,7 @@ namespace Gears
   }
 
   void
-  ThreadRunner::wait_for_completion() throw(PosixException)
+  ThreadRunner::wait_for_completion() /*throw(PosixException)*/
   {
     static const char* FUN = "ThreadRunner::wait_for_completion()";
 
@@ -117,7 +117,7 @@ namespace Gears
   }
 
   void
-  ThreadRunner::start() throw(AlreadyStarted, PosixException, Gears::Exception)
+  ThreadRunner::start() /*throw(AlreadyStarted, PosixException, Gears::Exception)*/
   {
     static const char* FUN = "ThreadRunner::start()";
 
@@ -180,7 +180,7 @@ namespace Gears
   }
 
   void
-  ThreadRunner::thread_func_(ThreadJob& job) throw()
+  ThreadRunner::thread_func_(ThreadJob& job) noexcept
   {
     start_semaphore_.acquire();
     start_semaphore_.release();

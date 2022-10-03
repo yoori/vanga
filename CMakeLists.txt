@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.20)
+
+project(Vanga)
 
 SET(GCC_ROOT ""
   CACHE
@@ -8,10 +10,17 @@ SET(GCC_VER ""
   CACHE
   STRING "Version of custom GCC. Must be specified if GCC_ROOT is defined!"
   )
+
 SET(CXX11 TRUE
   CACHE
   BOOL "Use C++11 standard"
   )
+#SET(CXX20 TRUE
+#  CACHE
+#  BOOL "Use C++20 standard"
+#  )
+
+
 SET(GCC_EXTRA_OPTIONS ""
   CACHE
   STRING "Extra flags used by the compiler during all builds"
@@ -41,9 +50,14 @@ SET(CMAKE_C_FLAGS_MINSIZEREL ${CMAKE_CXX_FLAGS_MINSIZEREL} CACHE INTERNAL "Compi
 SET(CMAKE_C_FLAGS_RELWITHDEBINFO ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} CACHE INTERNAL "Compiler RELWITHDEBINFO flags. Generated.")
 
 SET(CMAKE_CXX_FLAGS "-Wall ${GCC_EXTRA_OPTIONS}")
+
 IF (CXX11)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wno-deprecated -DBOOST_SYSTEM_NO_DEPRECATED")
 ENDIF()
+
+#IF (CXX20)
+#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -Wno-deprecated -DBOOST_SYSTEM_NO_DEPRECATED")
+#ENDIF()
 
 MESSAGE(STATUS "cxx flags = " ${CMAKE_CXX_FLAGS})
 
@@ -69,8 +83,8 @@ set(
 )
 
 # commonly used packages
-find_package(FindBISON)
-find_package(FindFLEX)
+find_package(BISON)
+find_package(FLEX)
 
 
 if (NOT CMAKE_BUILD_TYPE)
@@ -92,7 +106,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gears/src)
 add_subdirectory(gears)
 add_subdirectory(vanga)
 
-add_dependencies(VangaDTree Gears)
+#add_dependencies(VangaDTree Gears)
 #add_dependencies(VangaDTreeTrainer Gears)
 
 install(DIRECTORY etc/ DESTINATION etc/

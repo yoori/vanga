@@ -56,19 +56,19 @@ OPEN_NAMESPACE(Gears)
      * @param size size of memory region
      */
     InputMemoryStreamBuffer(Pointer ptr, Size size)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     /**
      * @return The pointer to data not read yet
      */
     ConstPointer
-    data() const throw();
+    data() const noexcept;
 
     /**
      * @return The size of data not read yet
      */
     Size
-    size() const throw();
+    size() const noexcept;
 
   protected:
     virtual Position
@@ -76,14 +76,14 @@ OPEN_NAMESPACE(Gears)
       Offset off,
       std::ios_base::seekdir way,
       std::ios_base::openmode which)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     virtual Position
     seekpos(Position pos, std::ios_base::openmode which)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     virtual Int
-    underflow() throw();
+    underflow() noexcept;
   };
 
   /**
@@ -110,7 +110,7 @@ OPEN_NAMESPACE(Gears)
      * @param data address of memory region
      */
     InputMemoryStream(ConstPointer data)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     /**
      * Constructor
@@ -119,7 +119,7 @@ OPEN_NAMESPACE(Gears)
      * @param size size of memory region
      */
     InputMemoryStream(ConstPointer data, Size size)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     /**
      * Constructor
@@ -128,7 +128,7 @@ OPEN_NAMESPACE(Gears)
      */
     template <typename Allocator>
     InputMemoryStream(const std::basic_string<Elem, Allocator>& str)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
   };
 
 CLOSE_NAMESPACE

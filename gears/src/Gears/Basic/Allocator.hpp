@@ -38,13 +38,13 @@ namespace Gears
     /**
      * Constructor without parameters
      */
-    BasicFixedBufferAllocator() throw ();
+    BasicFixedBufferAllocator() noexcept;
 
     /**
      * Constructor with buffer_ init value
      * @param buffer_initializer initializer for buffer_
      */
-    BasicFixedBufferAllocator(BufferInitializer buffer_initializer) throw ();
+    BasicFixedBufferAllocator(BufferInitializer buffer_initializer) noexcept;
 
     /**
      * Allocation function
@@ -54,7 +54,7 @@ namespace Gears
      */
     typename Allocator::pointer
     allocate(typename Allocator::size_type size, const void* = 0)
-      throw ();
+      noexcept;
 
     /**
      * Deallocation function
@@ -64,7 +64,7 @@ namespace Gears
      */
     void
     deallocate(typename Allocator::pointer ptr,
-      typename Allocator::size_type size) throw ();
+      typename Allocator::size_type size) noexcept;
 
   private:
     Buffer buffer_;
@@ -84,16 +84,16 @@ namespace Gears
      * Constructor
      * @param buffer preallocated buffer of size not less than SIZE
      */
-    FixedBufferAllocator(Elem* buffer) throw ();
+    FixedBufferAllocator(Elem* buffer) noexcept;
   };
 
   template <typename Elem, const size_t SIZE, typename Initializer>
   class ArrayBuffer
   {
   public:
-    ArrayBuffer(Initializer initializer = Initializer()) throw ();
+    ArrayBuffer(Initializer initializer = Initializer()) noexcept;
 
-    operator Elem*() throw ();
+    operator Elem*() noexcept;
 
   private:
     Elem buffer_[SIZE];
@@ -112,7 +112,7 @@ namespace Gears
     /**
      * Constructor
      */
-    StackAllocator(size_t allocator_initializer) throw ();
+    StackAllocator(size_t allocator_initializer) noexcept;
   };
 } /*Gears*/
 

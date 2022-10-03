@@ -44,19 +44,19 @@ namespace Cpp
       std::ostream& out_hpp,
       std::ostream& out_cpp,
       const char* offset)
-      throw();
+      noexcept;
 
     void generate_decl(
       Declaration::StructDescriptor* struct_descriptor)
-      throw();
+      noexcept;
 
     void generate_impl(
       Declaration::StructDescriptor* struct_descriptor)
-      throw();
+      noexcept;
 
   private:
     void generate_descriptor_base_decl_(
-      const Declaration::StructDescriptor* descriptor) throw();
+      const Declaration::StructDescriptor* descriptor) noexcept;
 
   private:
     std::ostream& out_;

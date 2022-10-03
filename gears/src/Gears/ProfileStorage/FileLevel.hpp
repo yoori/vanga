@@ -44,14 +44,14 @@ namespace Gears
     public:
       KeyIteratorImpl(
         const ReadFileLevel<KeyType, KeySerializerType>* read_mem_level)
-        throw();
+        noexcept;
 
       virtual bool
       get_next(
         KeyType& key,
         ProfileOperation& operation,
         Time& access_time)
-        throw();
+        noexcept;
 
     private:
       const Gears::IntrusivePtr<
@@ -69,18 +69,18 @@ namespace Gears
         unsigned long read_buffer_size,
         bool disable_caching,
         FileController* file_controller)
-        throw(typename ReadBaseLevel<KeyType>::Exception);
+        /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
       virtual bool
       get_next(
         KeyType& key,
         ProfileOperation& operation,
         Time& access_time)
-        throw(typename ReadBaseLevel<KeyType>::Exception);
+        /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
       virtual ConstSmartMemBuf_var
       get_profile()
-        throw (typename ReadBaseLevel<KeyType>::Exception);
+        /*throw (typename ReadBaseLevel<KeyType>::Exception)*/;
 
     private:
       const Gears::IntrusivePtr<
@@ -102,7 +102,7 @@ namespace Gears
       bool disable_caching_on_fetch,
       FileController* file_controller = 0,
       LoadingProgressCallbackBase* progress_checker_parent = 0)
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     // save data into file
     ReadFileLevel(
@@ -113,45 +113,45 @@ namespace Gears
       bool disable_caching_on_fetch,
       volatile sig_atomic_t* interrupter,
       FileController* file_controller = 0)
-      throw(Interrupted, typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(Interrupted, typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual CheckProfileResult
     check_profile(const KeyType& key) const
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual GetProfileResult
     get_profile(const KeyType& key) const
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual typename ReadBaseLevel<KeyType>::KeyIterator_var
     get_key_iterator() const
-      throw();
+      noexcept;
 
     virtual typename ReadBaseLevel<KeyType>::Iterator_var
     get_iterator(unsigned long read_buffer_size) const
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual unsigned long
     size() const
-      throw();
+      noexcept;
 
     virtual unsigned long
     area_size() const
-      throw();
+      noexcept;
 
     virtual unsigned long
     merge_free_size() const
-      throw();
+      noexcept;
 
     virtual Time
     min_access_time() const
-      throw();
+      noexcept;
 
     void
     rename_files(
       const char* new_index_file_name,
       const char* new_body_file_name)
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
   protected:
     // pos, size eval in runtime by result file size
@@ -184,7 +184,7 @@ namespace Gears
       operator() (
         const ProfileRef& ref,
         const KeyType& key) const
-        throw ()
+        noexcept
       {
         return (ref.key < key);
       }
@@ -193,7 +193,7 @@ namespace Gears
       operator() (
         const KeyType& key,
         const ProfileRef& ref) const
-        throw ()
+        noexcept
       {
         return (key < ref.key);
       }
@@ -202,31 +202,31 @@ namespace Gears
     typedef std::deque<ProfileRef> ProfileRefs;
 
   protected:
-    virtual ~ReadFileLevel() throw()
+    virtual ~ReadFileLevel() noexcept
     {}
 
     void
     read_index_profile_ref_(
       ProfileRef& profile_ref,
       FileReader& reader) const
-      throw(FileReader::Exception);
+      /*throw(FileReader::Exception)*/;
 
     void
     write_index_profile_ref_(
       FileWriter& writer,
       const ProfileRef& profile_ref) const
-      throw(FileWriter::Exception);
+      /*throw(FileWriter::Exception)*/;
 
     static void
     read_body_head_(
       FileReader& reader,
       unsigned long& version,
       unsigned long& id)
-      throw(FileReader::Exception);
+      /*throw(FileReader::Exception)*/;
 
     static void
     skip_body_head_(FileReader& reader)
-      throw(FileReader::Exception);
+      /*throw(FileReader::Exception)*/;
 
     bool
     read_body_key_(
@@ -242,11 +242,11 @@ namespace Gears
 
     ConstSmartMemBuf_var
     read_body_profile_(FileReader& reader)
-      const throw(Gears::Exception, FileReader::Exception);
+      const /*throw(Gears::Exception, FileReader::Exception)*/;
 
     void
     skip_body_profile_(FileReader& reader)
-      const throw(FileReader::Exception);
+      const /*throw(FileReader::Exception)*/;
 
     uint32_t
     read_key_(
@@ -270,7 +270,7 @@ namespace Gears
 
     void
     write_null_key_(FileWriter& writer)
-      const throw(FileWriter::Exception);
+      const /*throw(FileWriter::Exception)*/;
 
   private:
     const KeySerializerType key_serializer_;

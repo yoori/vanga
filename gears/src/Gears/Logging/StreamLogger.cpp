@@ -32,13 +32,13 @@
 namespace Gears
 {
   unsigned long
-  OStreamLogger::log_level() throw()
+  OStreamLogger::log_level() noexcept
   {
     return log_level_;
   }
 
   void
-  OStreamLogger::log_level(unsigned long value) throw()
+  OStreamLogger::log_level(unsigned long value) noexcept
   {
     // lock for memory barrier
     Gears::SpinLock::WriteGuard guard(lock_);
@@ -51,7 +51,7 @@ namespace Gears
     unsigned long severity,
     const Gears::SubString& aspect,
     const Gears::SubString& code)
-    throw()
+    noexcept
   {
     static const char* FUN = "OStreamLogHandler::publish()";
 

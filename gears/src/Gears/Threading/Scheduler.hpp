@@ -43,7 +43,7 @@ namespace Gears
      */
     virtual
     void
-    deliver() throw(Gears::Exception) = 0;
+    deliver() /*throw(Gears::Exception)*/ = 0;
   };
 
   typedef IntrusivePtr<Goal> Goal_var;
@@ -65,7 +65,7 @@ namespace Gears
       ActiveObjectCallback* callback,
       size_t stack_size = 0,
       bool delivery_time_adjustment = false)
-      throw(InvalidArgument, Gears::Exception);
+      /*throw(InvalidArgument, Gears::Exception)*/;
 
     /**
      * Adds goal to the queue. Goal's reference counter is incremented.
@@ -75,7 +75,7 @@ namespace Gears
      */
     void
     schedule(Goal* goal, const Time& time)
-      throw(InvalidArgument, Exception, Gears::Exception);
+      /*throw(InvalidArgument, Exception, Gears::Exception)*/;
 
     /**
      * Tries to remove goal from the queue.
@@ -84,14 +84,14 @@ namespace Gears
      */
     unsigned
     unschedule(const Goal* goal)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     /**
      * Clearance of messages' queue
      */
     virtual
     void
-    clear() throw(Gears::Exception);
+    clear() /*throw(Gears::Exception)*/;
 
   protected:
     /**
@@ -99,7 +99,7 @@ namespace Gears
      * Decreases all unmatched messages' reference counters
      */
     virtual
-    ~Scheduler() throw();
+    ~Scheduler() noexcept;
 
   private:
     class Job: public SingleJob
@@ -107,29 +107,29 @@ namespace Gears
     public:
       Job(ActiveObjectCallback* callback,
         bool delivery_time_adjustment)
-        throw(Gears::Exception);
+        /*throw(Gears::Exception)*/;
 
       virtual
       void
-      work() throw();
+      work() noexcept;
 
       virtual
       void
-      terminate() throw();
+      terminate() noexcept;
 
       void
       schedule(Goal* goal, const Time& time)
-        throw(InvalidArgument, Exception, Gears::Exception);
+        /*throw(InvalidArgument, Exception, Gears::Exception)*/;
 
       unsigned
       unschedule(const Goal* goal)
-        throw(Gears::Exception);
+        /*throw(Gears::Exception)*/;
 
       void
-      clear() throw();
+      clear() noexcept;
 
     protected:
-      virtual ~Job() throw();
+      virtual ~Job() noexcept;
 
       /**
        * Element of messages' queue. Composition of Message and associated Time.
@@ -142,20 +142,20 @@ namespace Gears
          * @param time Associated time
          * @param goal Shared ownership on goal
          */
-        TimedMessage(const Time& time, Goal* goal) throw();
+        TimedMessage(const Time& time, Goal* goal) noexcept;
 
         /**
          * Holding time
          * @return Associated time
          */
         const Time&
-        time() const throw();
+        time() const noexcept;
 
         /**
          * Calls deliver() on owned goal
          */
         void
-        deliver() throw(Gears::Exception);
+        deliver() /*throw(Gears::Exception)*/;
 
         /**
          * Checks if it holds the goal
@@ -163,7 +163,7 @@ namespace Gears
          * @return true if they coinside
          */
         bool
-        is_goal(const Goal* goal) const throw();
+        is_goal(const Goal* goal) const noexcept;
 
       private:
         Time time_;
@@ -202,21 +202,21 @@ namespace Gears
 
   inline
   Scheduler::Job::TimedMessage::TimedMessage(
-    const Time& time, Goal* goal) throw()
+    const Time& time, Goal* goal) noexcept
     : time_(time),
       goal_(Gears::add_ref(goal))
   {}
 
   inline
   const Time&
-  Scheduler::Job::TimedMessage::time() const throw()
+  Scheduler::Job::TimedMessage::time() const noexcept
   {
     return time_;
   }
 
   inline
   void
-  Scheduler::Job::TimedMessage::deliver() throw(Gears::Exception)
+  Scheduler::Job::TimedMessage::deliver() /*throw(Gears::Exception)*/
   {
     goal_->deliver();
   }
@@ -224,7 +224,7 @@ namespace Gears
   inline
   bool
   Scheduler::Job::TimedMessage::is_goal(const Goal* goal) const
-    throw()
+    noexcept
   {
     return goal == goal_.in();
   }
@@ -236,7 +236,7 @@ namespace Gears
   inline
   void
   Scheduler::schedule(Goal* goal, const Time& time)
-    throw(InvalidArgument, Exception, Gears::Exception)
+    /*throw(InvalidArgument, Exception, Gears::Exception)*/
   {
     job_.schedule(goal, time);
   }
@@ -244,14 +244,14 @@ namespace Gears
   inline
   unsigned
   Scheduler::unschedule(const Goal* goal)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
   {
     return job_.unschedule(goal);
   }
 
   inline
   void
-  Scheduler::clear() throw(Gears::Exception)
+  Scheduler::clear() /*throw(Gears::Exception)*/
   {
     job_.clear();
   }

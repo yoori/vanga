@@ -35,28 +35,28 @@ namespace Declaration
     DECLARE_GEARS_EXCEPTION(InvalidParam, Exception);
 
     BaseTemplate(const char* name, unsigned long args_count)
-      throw();
+      noexcept;
 
     virtual BaseTemplate_var
-    as_template() throw();
+    as_template() noexcept;
 
     unsigned long
-    args() const throw();
+    args() const noexcept;
 
     CompleteTemplateDescriptor_var
     complete_template_descriptor(
       const BaseDescriptorList& args) const
-      throw(InvalidParam);
+      /*throw(InvalidParam)*/;
 
   protected:
     virtual
-    ~BaseTemplate() throw() {}
+    ~BaseTemplate() noexcept {}
 
     virtual CompleteTemplateDescriptor_var
     create_template_descriptor_(
       const char* name,
       const BaseDescriptorList& args) const
-      throw(InvalidParam) = 0;
+      /*throw(InvalidParam)*/ = 0;
 
   private:
     unsigned long args_count_;

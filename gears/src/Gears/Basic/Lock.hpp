@@ -41,13 +41,13 @@ namespace Gears
   class BaseReadGuard
   {
   public:
-    BaseReadGuard(LockType& lock) throw()
+    BaseReadGuard(LockType& lock) noexcept
       : lock_(lock)
     {
       lock_.lock_read();
     }
 
-    ~BaseReadGuard() throw()
+    ~BaseReadGuard() noexcept
     {
       lock_.unlock();
     }
@@ -60,13 +60,13 @@ namespace Gears
   class BaseWriteGuard
   {
   public:
-    BaseWriteGuard(LockType& lock) throw()
+    BaseWriteGuard(LockType& lock) noexcept
       : lock_(lock)
     {
       lock_.lock();
     }
 
-    ~BaseWriteGuard() throw()
+    ~BaseWriteGuard() noexcept
     {
       lock_.unlock();
     }
@@ -82,11 +82,11 @@ namespace Gears
     typedef BaseWriteGuard<StaticInitializedMutex> ReadGuard;
     typedef BaseWriteGuard<StaticInitializedMutex> WriteGuard;
 
-    void lock_read() throw();
+    void lock_read() noexcept;
 
-    void lock() throw();
+    void lock() noexcept;
 
-    void unlock() throw();
+    void unlock() noexcept;
 
     pthread_mutex_t mutex_;
   };
@@ -100,13 +100,13 @@ namespace Gears
     typedef BaseWriteGuard<Mutex> WriteGuard;
 
   public:
-    Mutex() throw();
+    Mutex() noexcept;
 
-    Mutex(int pshared) throw();
+    Mutex(int pshared) noexcept;
 
-    ~Mutex() throw();
+    ~Mutex() noexcept;
 
-    pthread_mutex_t& mutex_i() throw();
+    pthread_mutex_t& mutex_i() noexcept;
 
     using StaticInitializedMutex::lock_read;
 
@@ -122,17 +122,17 @@ namespace Gears
     typedef BaseWriteGuard<RWLock> WriteGuard;
 
   public:
-    RWLock() throw();
+    RWLock() noexcept;
 
-    RWLock(int pshared) throw();
+    RWLock(int pshared) noexcept;
 
-    ~RWLock() throw();
+    ~RWLock() noexcept;
 
-    void lock_read() throw();
+    void lock_read() noexcept;
 
-    void lock() throw();
+    void lock() noexcept;
 
-    void unlock() throw ();
+    void unlock() noexcept;
 
   protected:
     pthread_rwlock_t mutex_;
@@ -146,13 +146,13 @@ namespace Gears
     typedef BaseWriteGuard<SpinLock> WriteGuard;
 
   public:
-    SpinLock(int pshared = PTHREAD_PROCESS_PRIVATE) throw();
+    SpinLock(int pshared = PTHREAD_PROCESS_PRIVATE) noexcept;
 
-    ~SpinLock() throw();
+    ~SpinLock() noexcept;
 
-    void lock() throw();
+    void lock() noexcept;
 
-    void unlock() throw();
+    void unlock() noexcept;
 
   protected:
     pthread_spinlock_t mutex_;
@@ -167,18 +167,18 @@ namespace Gears
   public:
     struct NullGuard
     {
-      NullGuard(NullLock&) throw() {}
+      NullGuard(NullLock&) noexcept {}
     };
 
     typedef NullGuard ReadGuard;
     typedef NullGuard WriteGuard;
 
   public:
-    NullLock() throw() {};
+    NullLock() noexcept {};
 
-    void lock() throw() {};
+    void lock() noexcept {};
 
-    void unlock() throw() {};
+    void unlock() noexcept {};
   };
 }
 
@@ -187,34 +187,34 @@ namespace Gears
   /* StaticInitializedMutex */
   inline
   void
-  StaticInitializedMutex::lock_read() throw()
+  StaticInitializedMutex::lock_read() noexcept
   {
     ::pthread_mutex_lock(&mutex_);
   }
 
   inline
   void
-  StaticInitializedMutex::lock() throw()
+  StaticInitializedMutex::lock() noexcept
   {
     ::pthread_mutex_lock(&mutex_);
   }
 
   inline
   void
-  StaticInitializedMutex::unlock() throw()
+  StaticInitializedMutex::unlock() noexcept
   {
     ::pthread_mutex_unlock(&mutex_);
   }
 
   /* Mutex */
   inline
-  Mutex::Mutex() throw()
+  Mutex::Mutex() noexcept
   {
     pthread_mutex_init(&mutex_, 0);
   }
 
   inline
-  Mutex::Mutex(int pshared) throw()
+  Mutex::Mutex(int pshared) noexcept
   {
     pthread_mutexattr_t mutex_attributes;
     pthread_mutexattr_init(&mutex_attributes);
@@ -223,48 +223,48 @@ namespace Gears
   }
 
   inline
-  Mutex::~Mutex() throw()
+  Mutex::~Mutex() noexcept
   {
     pthread_mutex_destroy(&mutex_);
   }
 
   inline
   pthread_mutex_t&
-  Mutex::mutex_i() throw()
+  Mutex::mutex_i() noexcept
   {
     return mutex_;
   }
 
   /* RWLock */
   inline
-  RWLock::RWLock() throw()
+  RWLock::RWLock() noexcept
   {
     ::pthread_rwlock_init(&mutex_, 0);
   }
 
   inline
-  RWLock::~RWLock() throw()
+  RWLock::~RWLock() noexcept
   {
     ::pthread_rwlock_destroy(&mutex_);
   }
 
   inline
   void
-  RWLock::lock() throw()
+  RWLock::lock() noexcept
   {
     ::pthread_rwlock_wrlock(&mutex_);
   }
 
   inline
   void
-  RWLock::lock_read() throw()
+  RWLock::lock_read() noexcept
   {
     ::pthread_rwlock_rdlock(&mutex_);
   }
 
   inline
   void
-  RWLock::unlock() throw()
+  RWLock::unlock() noexcept
   {
     ::pthread_rwlock_unlock(&mutex_);
   }
@@ -272,27 +272,27 @@ namespace Gears
 #ifdef PTHREAD_SPINLOCK_DEFINED
   /* SpinLock */
   inline
-  SpinLock::SpinLock(int pshared) throw()
+  SpinLock::SpinLock(int pshared) noexcept
   {
     ::pthread_spin_init(&mutex_, pshared);
   }
 
   inline
-  SpinLock::~SpinLock() throw()
+  SpinLock::~SpinLock() noexcept
   {
     ::pthread_spin_destroy(&mutex_);
   }
 
   inline
   void
-  SpinLock::lock() throw()
+  SpinLock::lock() noexcept
   {
     ::pthread_spin_lock(&mutex_);
   }
 
   inline
   void
-  SpinLock::unlock() throw()
+  SpinLock::unlock() noexcept
   {
     ::pthread_spin_unlock(&mutex_);
   }

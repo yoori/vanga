@@ -27,7 +27,7 @@ namespace Gears
   namespace AppUtils
   {
     OptionCont
-    OptionCont::operator ||(const OptionCont& right) throw ()
+    OptionCont::operator ||(const OptionCont& right) noexcept
     {
       OptionCont ret(*this);
 
@@ -41,13 +41,13 @@ namespace Gears
 
     /**X Args::ParseState */
     Args::ParseState::ParseState(unsigned long argc_val,
-      const char* const *argv_val, const char* arg_pos_val) throw ()
+      const char* const *argv_val, const char* arg_pos_val) noexcept
       : argc_(argc_val), argv_(argv_val), arg_pos_(arg_pos_val)
     {
     }
 
     bool
-    Args::ParseState::next_word() throw ()
+    Args::ParseState::next_word() noexcept
     {
       ++argv_;
       --argc_;
@@ -56,19 +56,19 @@ namespace Gears
     };
 
     bool
-    Args::ParseState::end() throw ()
+    Args::ParseState::end() noexcept
     {
       return argc_ == 0;
     }
 
     const char*
-    Args::ParseState::current_pos() throw ()
+    Args::ParseState::current_pos() noexcept
     {
       return arg_pos_;
     }
 
     void
-    Args::ParseState::current_pos(const char* pos) throw ()
+    Args::ParseState::current_pos(const char* pos) noexcept
     {
       arg_pos_ = pos;
     }
@@ -76,7 +76,7 @@ namespace Gears
     /**X Args */
     bool
     Args::parse_eq_op_(ParseState& parse_state)
-      throw (Gears::Exception, Exception, InvalidParam)
+      /*throw (Gears::Exception, Exception, InvalidParam)*/
     {
       static const char* FUN = "Args::parse_eq_op_()";
 
@@ -139,7 +139,7 @@ namespace Gears
 
     bool
     Args::parse_short_opt_seq_(ParseState& parse_state)
-      throw (Exception, InvalidParam)
+      /*throw (Exception, InvalidParam)*/
     {
       static const char* FUN = "Args::parse_short_opt_seq_()";
 
@@ -173,7 +173,7 @@ namespace Gears
 
     bool
     Args::parse_short_opt_(ParseState& parse_state)
-      throw (Exception, InvalidParam)
+      /*throw (Exception, InvalidParam)*/
     {
       const char* cur_opt = parse_state.current_pos();
       const char* next = cur_opt + ::strlen(cur_opt);
@@ -199,7 +199,7 @@ namespace Gears
       OptionSetterMap::iterator it,
       const char* opt_name,
       ParseState& parse_state)
-      throw (Exception, InvalidParam)
+      /*throw (Exception, InvalidParam)*/
     {
       static const char* FUN = "Args::parse_short_op_value_()";
 
@@ -246,7 +246,7 @@ namespace Gears
 
     void
     Args::parse(int argc, const char* const argv[])
-      throw (Gears::Exception, Exception, InvalidParam)
+      /*throw (Gears::Exception, Exception, InvalidParam)*/
     {
       static const char* FUN = "Args::parse()";
 
@@ -276,7 +276,7 @@ namespace Gears
 
     void
     Args::usage(std::ostream& ostr) const
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       for (Usage::const_iterator itor(usage_.begin()); itor != usage_.end();
         ++itor)

@@ -39,7 +39,7 @@ namespace Gears
 
   template<typename Integer>
   Integer
-  safe_next(Integer number) throw ()
+  safe_next(Integer number) noexcept
   {
     return number < std::numeric_limits<Integer>::max() ? number + 1 : number;
   }

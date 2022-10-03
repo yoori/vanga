@@ -38,10 +38,10 @@ namespace Gears
   {
     static int
     compare(const CharType* str1, const CharType* str2, size_t size)
-      throw ();
+      noexcept;
 
     static CharType*
-    copy(CharType* str1, const CharType* str2, size_t size) throw ();
+    copy(CharType* str1, const CharType* str2, size_t size) noexcept;
   };
 
   template <typename CharType>
@@ -52,18 +52,18 @@ namespace Gears
 
     static void
     check_position(size_t length, size_t pos, const char* error_func)
-      throw ();
+      noexcept;
 
     static void
-    check_pointer(const CharType* ptr, const char* error_func) throw ();
+    check_pointer(const CharType* ptr, const char* error_func) noexcept;
 
     static void
     check_pointer(const CharType* begin, const CharType* end,
-      const char* error_func) throw ();
+      const char* error_func) noexcept;
 
     static void
     check_pointer(const CharType* ptr, size_t count,
-      const char* error_func) throw ();
+      const char* error_func) noexcept;
   };
 
   template <typename CharType>
@@ -89,7 +89,7 @@ namespace Gears
      */
     static void
     check_position(size_t length, size_t pos, const char* error_func)
-      throw (OutOfRange);
+      /*throw (OutOfRange)*/;
 
     /**
      * Check pointer != 0
@@ -98,7 +98,7 @@ namespace Gears
      */
     static void
     check_pointer(const CharType* ptr, const char* error_func)
-      throw (LogicError);
+      /*throw (LogicError)*/;
 
     /**
      * Check that pointers define correct range of data
@@ -109,7 +109,7 @@ namespace Gears
     static void
     check_pointer(const CharType* begin, const CharType* end,
       const char* error_func)
-      throw (LogicError);
+      /*throw (LogicError)*/;
 
     /**
      * Check pointer != 0 or count = 0
@@ -120,7 +120,7 @@ namespace Gears
     static void
     check_pointer(const CharType* ptr, size_t count,
       const char* error_func)
-      throw (LogicError);
+      /*throw (LogicError)*/;
 
   private:
     /**
@@ -129,7 +129,7 @@ namespace Gears
      */
     static void
     throw_logic_error_(const char* error_func)
-      throw (LogicError);
+      /*throw (LogicError)*/;
   };
 
   /**
@@ -176,21 +176,21 @@ namespace Gears
     template <typename BasicStringTraits, typename Allocator>
     BasicSubString(
       const std::basic_string<BasicStringValueType, BasicStringTraits,
-        Allocator>& str) throw (Exception);
+        Allocator>& str) /*throw (Exception)*/;
 
     /**
      * Constructor
      * @param ptr beginning of the SubString
      * @param count size of the SubString
      */
-    BasicSubString(Pointer ptr, SizeType count) throw (LogicError);
+    BasicSubString(Pointer ptr, SizeType count) /*throw (LogicError)*/;
 
     /**
      * Constructor
      * @param begin pointer to the beginning of the string
      * @param end pointer to the element beyond the last of that string
      */
-    BasicSubString(Pointer begin, Pointer end) throw (LogicError);
+    BasicSubString(Pointer begin, Pointer end) /*throw (LogicError)*/;
 
     /**
      * Constructor with zero-terminated c-string.
@@ -201,18 +201,18 @@ namespace Gears
      * length to the object but using of this constructor.
      * @param ptr beginning pointer of the string
      */
-    explicit BasicSubString(Pointer ptr) throw (LogicError);
+    explicit BasicSubString(Pointer ptr) /*throw (LogicError)*/;
 
     /**
      * Construct an empty SubString.
      */
-    explicit BasicSubString() throw ();
+    explicit BasicSubString() noexcept;
 
     /**
      * Constructor to avoid error code BasicSubString(0, 12345),
      * it leads to the compile error
      */
-    BasicSubString(int, SizeType) throw ();
+    BasicSubString(int, SizeType) noexcept;
 
     /**
      * Assigns new range character to be the contents of a stored
@@ -222,7 +222,7 @@ namespace Gears
      * @return reference on self
      */
     BasicSubString&
-    assign(Pointer ptr, SizeType count) throw (LogicError);
+    assign(Pointer ptr, SizeType count) /*throw (LogicError)*/;
 
     /**
      * Assigns new range character to be the contents of a stored
@@ -232,7 +232,7 @@ namespace Gears
      * @return reference on self
      */
     BasicSubString&
-    assign(Pointer begin, Pointer end) throw (LogicError);
+    assign(Pointer begin, Pointer end) /*throw (LogicError)*/;
 
     /**
      * Assigns new range character to be the contents of a stored
@@ -244,7 +244,7 @@ namespace Gears
      */
     BasicSubString&
     assign(const BasicSubString& str, SizeType pos, SizeType count)
-      throw (OutOfRange);
+      /*throw (OutOfRange)*/;
 
     /**
      * Assigns SubString from source SubString
@@ -252,7 +252,7 @@ namespace Gears
      * @return reference on self
      */
     BasicSubString&
-    assign(const BasicSubString& str) throw ();
+    assign(const BasicSubString& str) noexcept;
 
     /**
      * Returns a const reference to the element at a specified location
@@ -261,7 +261,7 @@ namespace Gears
      * @return const reference to SubString character.
      */
     ConstReference
-    at(SizeType pos) const throw (OutOfRange);
+    at(SizeType pos) const /*throw (OutOfRange)*/;
 
     /**
      * Returns a reference to the element at a specified location
@@ -270,27 +270,27 @@ namespace Gears
      * @return reference to SubString character.
      */
     Reference
-    at(SizeType pos) throw (OutOfRange);
+    at(SizeType pos) /*throw (OutOfRange)*/;
 
     /**
      * Get begin pointer of SubString, on empty SubString equal 0.
      * @return a const iterator addressing the first element in the string.
      */
     ConstPointer
-    begin() const throw ();
+    begin() const noexcept;
 
     /**
      * Get begin pointer of SubString, on empty SubString equal 0.
      * @return an iterator addressing the first element in the string.
      */
     Pointer
-    begin() throw ();
+    begin() noexcept;
 
     /**
      * Make SubString to be in empty state.
      */
     void
-    clear() throw ();
+    clear() noexcept;
 
     /**
      * Determines the effective length rlen of the strings to compare as
@@ -313,7 +313,7 @@ namespace Gears
      *    size() > str.size()   > 0
      */
     int
-    compare(const BasicSubString& str) const throw ();
+    compare(const BasicSubString& str) const noexcept;
 
     /**
      * Compare with SubString of Substring
@@ -326,7 +326,7 @@ namespace Gears
      */
     int
     compare(SizeType pos1, SizeType count1, const BasicSubString& str) const
-      throw (OutOfRange);
+      /*throw (OutOfRange)*/;
 
     /**
      * Compare SubString of SubString with SubString of Substring.
@@ -342,7 +342,7 @@ namespace Gears
      */
     int
     compare(SizeType pos1, SizeType count1, const BasicSubString& str,
-      SizeType pos2, SizeType count2) const throw (OutOfRange);
+      SizeType pos2, SizeType count2) const /*throw (OutOfRange)*/;
 
 
     /**
@@ -354,7 +354,7 @@ namespace Gears
      * to match, or be greater than zero-terminated string ptr.
      */
     int
-    compare(ConstPointer str) const throw (LogicError);
+    compare(ConstPointer str) const /*throw (LogicError)*/;
 
     /**
      * Compare SubString of SubString with zero-terminated C-string.
@@ -368,7 +368,7 @@ namespace Gears
      */
     int
     compare(SizeType pos1, SizeType count1, ConstPointer str) const
-      throw (LogicError);
+      /*throw (LogicError)*/;
 
     /**
      * Compare SubString of SubString with count2 elements of
@@ -384,7 +384,7 @@ namespace Gears
      */
     int
     compare(SizeType pos1, SizeType count1, ConstPointer str,
-      SizeType count2) const throw (LogicError);
+      SizeType count2) const /*throw (LogicError)*/;
 
     /**
      * Compare SubString on equal with C-string.
@@ -392,7 +392,7 @@ namespace Gears
      * @return true if SubString equal str, else return false
      */
     bool
-    equal(ConstPointer str) const throw (LogicError);
+    equal(ConstPointer str) const /*throw (LogicError)*/;
 
     /**
      * Compare BasicSubString on equal with other BasicSubString.
@@ -401,7 +401,7 @@ namespace Gears
      * @return true if this equal str, else return false
      */
     bool
-    equal(const BasicSubString& str) const throw ();
+    equal(const BasicSubString& str) const noexcept;
 
     /**
      * Copies at most a specified number of characters from an indexed
@@ -415,35 +415,35 @@ namespace Gears
      */
     SizeType
     copy(BasicStringValueType* ptr, SizeType count, SizeType pos = 0) const
-      throw (OutOfRange, LogicError);
+      /*throw (OutOfRange, LogicError)*/;
 
     /**
      * Get pointer to the content of a SubString as an array of characters.
      * @return pointer to begin of array.
      */
     ConstPointer
-    data() const throw ();
+    data() const noexcept;
 
     /**
      * Tests whether the substring contains characters or not.
      * @return substring emptiness status
      */
     bool
-    empty() const throw ();
+    empty() const noexcept;
 
     /**
      * @return a const iterator that addresses the location succeeding
      * the last element in a string.
      */
     ConstPointer
-    end() const throw ();
+    end() const noexcept;
 
     /**
      * @return an iterator that addresses the location succeeding
      * the last element in a string.
      */
     Pointer
-    end() throw ();
+    end() noexcept;
 
     /**
      * Removes a count number of elements in a SubString from front.
@@ -454,7 +454,7 @@ namespace Gears
      * @return reference on self.
      */
     BasicSubString&
-    erase_front(SizeType count = NPOS) throw ();
+    erase_front(SizeType count = NPOS) noexcept;
 
     /**
      * Removes a count number of elements in a SubString from back.
@@ -465,7 +465,7 @@ namespace Gears
      * @return reference on self.
      */
     BasicSubString&
-    erase_back(SizeType count = NPOS) throw ();
+    erase_back(SizeType count = NPOS) noexcept;
 
     // Finders
     /**
@@ -477,11 +477,11 @@ namespace Gears
      * NPOS if not.
      */
     SizeType
-    find(ValueType ch, SizeType pos = 0) const throw ();
+    find(ValueType ch, SizeType pos = 0) const noexcept;
 
 #ifdef BASIC_STRING_INTERFACE_IMITATION
     SizeType
-    find(ConstPointer ptr, SizeType pos = 0) const throw (LogicError);
+    find(ConstPointer ptr, SizeType pos = 0) const /*throw (LogicError)*/;
 #endif
 
     /**
@@ -496,7 +496,7 @@ namespace Gears
      */
     SizeType
     find(ConstPointer ptr, SizeType pos, SizeType count) const
-      throw (LogicError);
+      /*throw (LogicError)*/;
 
     /**
      * Find position of a SubString.
@@ -508,7 +508,7 @@ namespace Gears
      * @return Index of start of first occurrence.
      */
     SizeType
-    find(const BasicSubString& str, SizeType pos = 0) const throw ();
+    find(const BasicSubString& str, SizeType pos = 0) const noexcept;
 
 #ifdef BASIC_STRING_INTERFACE_IMITATION
     /**
@@ -583,37 +583,37 @@ namespace Gears
      * @return length of SubString
      */
     SizeType
-    length() const throw ();
+    length() const noexcept;
 
     /**
      * @return the maximum number of characters a string could contain.
      */
     SizeType
-    max_size() const throw ();
+    max_size() const noexcept;
 
 #ifdef BASIC_STRING_INTERFACE_IMITATION
     /**
      *  Returns an iterator to the first element in a reversed string.
      */
     ConstReverseIterator
-    rbegin() const throw ();
+    rbegin() const noexcept;
 
     /**
      * non-const version
      * @return an iterator to the first element in a reversed string.
      */
     ReverseIterator
-    rbegin() throw ();
+    rbegin() noexcept;
 
     /**
      * Returns an iterator that points just beyond the last element
      * in a reversed string.
      */
     ConstReverseIterator
-    rend() const throw ();
+    rend() const noexcept;
 
     ReverseIterator
-    rend() throw ();
+    rend() noexcept;
 
     /**
      * Replaces elements in a string at a specified position with specified
@@ -621,50 +621,50 @@ namespace Gears
      * or C-strings.
      */
     BasicSubString&
-    replace(SizeType pos1, SizeType count1, ConstPointer ptr) throw ();
+    replace(SizeType pos1, SizeType count1, ConstPointer ptr) noexcept;
 
     BasicSubString&
     replace(SizeType pos1, SizeType count1, const BasicSubString& str)
-      throw ();
+      noexcept;
 
     BasicSubString&
     replace(SizeType pos1, SizeType count1, ConstPointer ptr,
-      SizeType count2) throw ();
+      SizeType count2) noexcept;
 
     BasicSubString&
     replace(SizeType pos1, SizeType count1, const BasicSubString& str,
-      SizeType pos2, SizeType count2) throw ();
+      SizeType pos2, SizeType count2) noexcept;
 
     BasicSubString&
     replace(SizeType pos1, SizeType count1, SizeType count, ValueType ch)
-      throw ();
+      noexcept;
 
     BasicSubString&
-    replace(Pointer first0, Pointer last0, ConstPointer ptr) throw ();
+    replace(Pointer first0, Pointer last0, ConstPointer ptr) noexcept;
 
     BasicSubString&
     replace(Pointer first0, Pointer last0, const BasicSubString& str)
-      throw ();
+      noexcept;
 
     BasicSubString&
     replace(Pointer first0, Pointer last0, ConstPointer ptr,
-      SizeType count2) throw ();
+      SizeType count2) noexcept;
 
     BasicSubString&
     replace(Pointer first0, Pointer last0, SizeType num2, ValueType ch)
-      throw ();
+      noexcept;
 
     template <class InputIterator>
     BasicSubString&
     replace(Pointer first0, Pointer last0, InputIterator first,
-      InputIterator last) throw ();
+      InputIterator last) noexcept;
 
     /**
      * Specifies a new size for a string, appending or erasing elements
      * as required.
      */
     void
-    resize(SizeType count) throw ();
+    resize(SizeType count) noexcept;
 #endif
 
     /**
@@ -676,11 +676,11 @@ namespace Gears
      * @return index of last occurrence if found, NPOS if not found.
      */
     SizeType
-    rfind(ValueType ch, SizeType pos = NPOS) const throw ();
+    rfind(ValueType ch, SizeType pos = NPOS) const noexcept;
 
 #ifdef BASIC_STRING_INTERFACE_IMITATION
     SizeType
-    rfind(ConstPointer ptr, SizeType pos = NPOS) const throw (LogicError);
+    rfind(ConstPointer ptr, SizeType pos = NPOS) const /*throw (LogicError)*/;
 #endif
 
     /**
@@ -695,7 +695,7 @@ namespace Gears
      */
     SizeType
     rfind(ConstPointer ptr, SizeType pos, SizeType count) const
-      throw (LogicError);
+      /*throw (LogicError)*/;
 
     /**
      * Find last position of a SubString.
@@ -707,13 +707,13 @@ namespace Gears
      * @return Index of start of last occurrence.
      */
     SizeType
-    rfind(const BasicSubString& str, SizeType pos = NPOS) const throw ();
+    rfind(const BasicSubString& str, SizeType pos = NPOS) const noexcept;
 
     /**
      * @return the current number of elements in a SubString.
      */
     SizeType
-    size() const throw ();
+    size() const noexcept;
 
     /**
      * Copies a substring of at most some number of characters from
@@ -725,14 +725,14 @@ namespace Gears
      */
     BasicSubString
     substr(SizeType pos = 0, SizeType count = NPOS) const
-      throw (OutOfRange);
+      /*throw (OutOfRange)*/;
 
     /**
      * Exchange the contents of two strings.
      * @param right object to exchange with *this.
      */
     void
-    swap(BasicSubString& right) throw ();
+    swap(BasicSubString& right) noexcept;
 
     // Operators
     /**
@@ -745,7 +745,7 @@ namespace Gears
     BasicSubString&
     operator =(const std::basic_string<BasicStringValueType,
       BasicStringTraits, Allocator>& str)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     /**
      * Provides a const reference to the character with a specified
@@ -754,7 +754,7 @@ namespace Gears
      * @return const reference to SubString character.
      */
     ConstReference
-    operator [](SizeType pos) const throw (OutOfRange);
+    operator [](SizeType pos) const /*throw (OutOfRange)*/;
 
     /**
      * Provides a reference to the character with a specified
@@ -763,14 +763,14 @@ namespace Gears
      * @return reference to SubString character.
      */
     Reference
-    operator [](SizeType pos) throw (OutOfRange);
+    operator [](SizeType pos) /*throw (OutOfRange)*/;
 
     /**
      * @return BasicString (i.e. std::basic_string<BasicStringValueType>)
      * object created on range
      */
     BasicString
-    str() const throw ();
+    str() const noexcept;
 
     /**
      * Assigns itself to std::string
@@ -779,7 +779,7 @@ namespace Gears
     template <typename BasicStringTraits, typename Allocator>
     void
     assign_to(std::basic_string<BasicStringValueType, BasicStringTraits,
-      Allocator>& str) const throw (Exception);
+      Allocator>& str) const /*throw (Exception)*/;
 
     /**
      * Append itself to the end of std::string
@@ -788,7 +788,7 @@ namespace Gears
     template <typename BasicStringTraits, typename Allocator>
     void
     append_to(std::basic_string<BasicStringValueType, BasicStringTraits,
-      Allocator>& str) const throw (Exception);
+      Allocator>& str) const /*throw (Exception)*/;
 
   private:
     /**
@@ -798,7 +798,7 @@ namespace Gears
      * with this pos and count.
      */
     SizeType
-    get_available_length_(SizeType pos, SizeType count) const throw ();
+    get_available_length_(SizeType pos, SizeType count) const noexcept;
 
     /**
      * Check awareness and shift begin pointer
@@ -809,7 +809,7 @@ namespace Gears
      */
     Pointer
     begin_plus_position_(SizeType position, const char* error_func) const
-      throw (OutOfRange);
+      /*throw (OutOfRange)*/;
 
     Pointer begin_;
     SizeType length_;
@@ -829,21 +829,21 @@ namespace Gears
      * ComparanceWithZeroPointerIsProhibited
      */
     ComparanceWithZeroPointerIsProhibited
-    pointers_case() throw ();
+    pointers_case() noexcept;
 
     /**
      * Short easy to use synonym of type
      * UseDefaultConstructorToCreateEmptySubString
      */
     UseDefaultConstructorToCreateEmptySubString
-    constructor_case() throw ();
+    constructor_case() noexcept;
 
     /**
      * Will lead a compilation error with incomplete type T
      */
     template <typename T>
     void
-    compiler_fail(T& p) throw ();
+    compiler_fail(T& p) noexcept;
   }
 
   /**
@@ -861,7 +861,7 @@ namespace Gears
     typename BasicSubString<CharType, Traits, Checker>::
       BasicStringValueType>& ostr,
     const BasicSubString<CharType, Traits, Checker>& substr)
-    throw (Exception);
+    /*throw (Exception)*/;
 
   ///////////////////////////////////////////////////////////////////////
   //Additional operators and methods
@@ -876,7 +876,7 @@ namespace Gears
   bool
   operator ==(const BasicSubString<CharType, Traits, Checker>& substr,
     typename BasicSubString<CharType, Traits, Checker>::ConstPointer str)
-    throw (typename BasicSubString<CharType, Traits, Checker>::LogicError);
+    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/;
 
   /**
    * Comparison on equality
@@ -889,7 +889,7 @@ namespace Gears
   bool
   operator ==(typename BasicSubString<CharType, Traits, Checker>::
     ConstPointer str, const BasicSubString<CharType, Traits, Checker>& substr)
-    throw (typename BasicSubString<CharType, Traits, Checker>::LogicError);
+    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/;
 
   /**
    * Comparison on equality with other SubString. Compare
@@ -902,7 +902,7 @@ namespace Gears
   bool
   operator ==(const BasicSubString<CharType, Traits, Checker>& left_substr,
     const BasicSubString<CharType, Traits, Checker>& right_substr)
-    throw ();
+    noexcept;
 
   /**
    * Comparison on equality with std::basic_string<...>. Compare
@@ -918,7 +918,7 @@ namespace Gears
     const std::basic_string<
       typename BasicSubString<CharType, Traits, Checker>::
         BasicStringValueType, BasicStringTraits, Allocator>& str)
-    throw (Exception);
+    /*throw (Exception)*/;
 
   /**
    * Comparison on equality with std::basic_string<...>. Compare
@@ -934,7 +934,7 @@ namespace Gears
     typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
       BasicStringTraits, Allocator>& str,
     const BasicSubString<CharType, Traits, Checker>& substr)
-    throw (Exception);
+    /*throw (Exception)*/;
 
   /**
    * The operator is defined to avoid error SubString a; if (0==a){}
@@ -944,7 +944,7 @@ namespace Gears
   bool
   operator ==(
     int, const BasicSubString<CharType, Traits, Checker>&)
-    throw ();
+    noexcept;
 
   /**
    * The operator is defined to avoid error SubString a; if (a==0){}
@@ -954,7 +954,7 @@ namespace Gears
   bool
   operator ==(
     const BasicSubString<CharType, Traits, Checker>&, int)
-    throw ();
+    noexcept;
 
   /**
    * Comparison on inequality
@@ -967,7 +967,7 @@ namespace Gears
   bool
   operator !=(const BasicSubString<CharType, Traits, Checker>& substr,
     typename BasicSubString<CharType, Traits, Checker>::ConstPointer str)
-    throw (typename BasicSubString<CharType, Traits, Checker>::LogicError);
+    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/;
 
   /**
    * Comparison on inequality
@@ -980,7 +980,7 @@ namespace Gears
   bool
   operator !=(typename BasicSubString<CharType, Traits, Checker>::
     ConstPointer str, const BasicSubString<CharType, Traits, Checker>& substr)
-    throw (typename BasicSubString<CharType, Traits, Checker>::LogicError);
+    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/;
 
   /**
    * Comparison two SubString on inequality. Compare
@@ -992,7 +992,7 @@ namespace Gears
   template <typename CharType, typename Traits, typename Checker>
   bool
   operator !=(const BasicSubString<CharType, Traits, Checker>& left_substr,
-    const BasicSubString<CharType, Traits, Checker>& right_substr) throw ();
+    const BasicSubString<CharType, Traits, Checker>& right_substr) noexcept;
 
   /**
    * Comparison on inequality with std::basic_string<...>. Compare
@@ -1008,7 +1008,7 @@ namespace Gears
     const std::basic_string<
       typename BasicSubString<CharType, Traits, Checker>::
         BasicStringValueType, BasicStringTraits, Allocator>& str)
-    throw (Exception);
+    /*throw (Exception)*/;
 
   /**
    * Comparison on inequality with std::basic_string<...>. Compare
@@ -1024,7 +1024,7 @@ namespace Gears
     typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
       BasicStringTraits, Allocator>& str,
     const BasicSubString<CharType, Traits, Checker>& substr)
-    throw (Exception);
+    /*throw (Exception)*/;
 
   /**
    * The operator is defined to avoid error SubString a; if (0!=a){}
@@ -1034,7 +1034,7 @@ namespace Gears
   bool
   operator !=(
     int, const BasicSubString<CharType, Traits, Checker>&)
-    throw ();
+    noexcept;
 
   /**
    * The operator is defined to avoid error SubString a; if (a!=0){}
@@ -1044,7 +1044,7 @@ namespace Gears
   bool
   operator!=(
     const BasicSubString<CharType, Traits, Checker>&, int)
-    throw();
+    noexcept;
 
   /**
    * Comparison on less
@@ -1057,7 +1057,7 @@ namespace Gears
   bool
   operator <(const BasicSubString<CharType, Traits, Checker>& substr,
     typename BasicSubString<CharType, Traits, Checker>::ConstPointer str)
-    throw (typename BasicSubString<CharType, Traits, Checker>::LogicError);
+    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/;
 
   /**
    * Comparison on less
@@ -1070,7 +1070,7 @@ namespace Gears
   bool
   operator <(typename BasicSubString<CharType, Traits, Checker>::
     ConstPointer str, const BasicSubString<CharType, Traits, Checker>& substr)
-    throw (typename BasicSubString<CharType, Traits, Checker>::LogicError);
+    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/;
 
   /**
    * Comparison two SubString on less. Compare
@@ -1082,7 +1082,7 @@ namespace Gears
   template <typename CharType, typename Traits, typename Checker>
   bool
   operator <(const BasicSubString<CharType, Traits, Checker>& left_substr,
-    const BasicSubString<CharType, Traits, Checker>& right_substr) throw ();
+    const BasicSubString<CharType, Traits, Checker>& right_substr) noexcept;
 
   /**
    * Comparison on less
@@ -1097,7 +1097,7 @@ namespace Gears
     const std::basic_string<
       typename BasicSubString<CharType, Traits, Checker>::
         BasicStringValueType, BasicStringTraits, Allocator>& str)
-    throw ();
+    noexcept;
 
   /**
    * Comparison on less
@@ -1112,7 +1112,7 @@ namespace Gears
     typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
       BasicStringTraits, Allocator>& str,
     const BasicSubString<CharType, Traits, Checker>& substr)
-    throw ();
+    noexcept;
 
   /**
    * The operator is defined to avoid error SubString a; if (0<a){}
@@ -1122,7 +1122,7 @@ namespace Gears
   bool
   operator <(
     int, const BasicSubString<CharType, Traits, Checker>&)
-    throw ();
+    noexcept;
 
   /**
    * The operator is defined to avoid error SubString a; if (a<0){}
@@ -1132,7 +1132,7 @@ namespace Gears
   bool
   operator <(
     const BasicSubString<CharType, Traits, Checker>&, int)
-    throw ();
+    noexcept;
 
   typedef BasicSubString<const char, CharTraits<char>, CheckerNone<char> >
     SubString;

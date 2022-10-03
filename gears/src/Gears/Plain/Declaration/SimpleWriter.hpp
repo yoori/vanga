@@ -68,7 +68,7 @@ namespace Declaration
       std::string field_type_suffix;
 
     protected:
-      virtual ~CppWriteTraits() throw()
+      virtual ~CppWriteTraits() noexcept
       {}
     };
 
@@ -80,14 +80,14 @@ namespace Declaration
     public:
       virtual bool
       check_mapping_specifier(const char* mapping_specifier)
-        throw() = 0;
+        noexcept = 0;
 
       virtual CppWriteTraits_var
       generate(const MappingSpecifierSet& mapping_specifiers)
-        throw() = 0;
+        noexcept = 0;
 
     protected:
-      virtual ~CppWriteTraitsGenerator() throw()
+      virtual ~CppWriteTraitsGenerator() noexcept
       {}
     };
 
@@ -97,20 +97,20 @@ namespace Declaration
     SimpleWriter(
       const char* name_val,
       CppWriteTraitsGenerator* cpp_write_traits_generator)
-      throw();
+      noexcept;
 
-    virtual SimpleWriter_var as_simple_writer() throw();
+    virtual SimpleWriter_var as_simple_writer() noexcept;
 
     virtual void
     check_mapping_specifiers(
       const Declaration::MappingSpecifierSet& mapping_specifiers)
-      throw(InvalidMappingSpecifier);
+      /*throw(InvalidMappingSpecifier)*/;
 
     CppWriteTraitsGenerator_var
-    cpp_write_traits_generator() const throw();
+    cpp_write_traits_generator() const noexcept;
 
   protected:
-    virtual ~SimpleWriter() throw() {}
+    virtual ~SimpleWriter() noexcept {}
 
   private:
     CppWriteTraitsGenerator_var cpp_write_traits_generator_;
@@ -130,20 +130,20 @@ namespace Declaration
 
     virtual bool
     check_mapping_specifier(const char* /*mapping_specifier*/)
-      throw()
+      noexcept
     {
       return false;
     }
 
     virtual SimpleWriter::CppWriteTraits_var
     generate(const MappingSpecifierSet& /*mapping_specifiers*/)
-      throw()
+      noexcept
     {
       return cpp_write_traits_;
     }
 
   protected:
-    virtual ~CppWriteTraitsGeneratorNoSpecifiersImpl() throw()
+    virtual ~CppWriteTraitsGeneratorNoSpecifiersImpl() noexcept
     {}
 
   protected:
@@ -158,7 +158,7 @@ namespace Declaration
   SimpleWriter::SimpleWriter(
     const char* name_val,
     CppWriteTraitsGenerator* cpp_write_traits_generator)
-    throw()
+    noexcept
     : BaseType(name_val),
       BaseWriter(name_val),
       cpp_write_traits_generator_(
@@ -167,7 +167,7 @@ namespace Declaration
 
   inline
   SimpleWriter_var
-  SimpleWriter::as_simple_writer() throw()
+  SimpleWriter::as_simple_writer() noexcept
   {
     return Gears::add_ref(this);
   }
@@ -176,7 +176,7 @@ namespace Declaration
   void
   SimpleWriter::check_mapping_specifiers(
     const Declaration::MappingSpecifierSet& mapping_specifiers)
-    throw(InvalidMappingSpecifier)
+    /*throw(InvalidMappingSpecifier)*/
   {
     for(Declaration::MappingSpecifierSet::const_iterator it =
           mapping_specifiers.begin();
@@ -193,7 +193,7 @@ namespace Declaration
 
   inline
   SimpleWriter::CppWriteTraitsGenerator_var
-  SimpleWriter::cpp_write_traits_generator() const throw()
+  SimpleWriter::cpp_write_traits_generator() const noexcept
   {
     return cpp_write_traits_generator_;
   }

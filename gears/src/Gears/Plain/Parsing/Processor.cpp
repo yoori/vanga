@@ -27,7 +27,7 @@
 namespace Parsing
 {
   Processor::Processor(Code::ElementList* elements_val)
-    throw()
+    noexcept
     : global_namespace_(new Declaration::Namespace())
          //    ,
 //    elements_(Gears::add_ref(elements_val)),
@@ -42,14 +42,14 @@ namespace Parsing
     unsigned long line,
     unsigned long column,
     const char* message)
-    throw()
+    noexcept
   {
     std::cerr << "line " << line << ", column " << column << ": " <<
       message << std::endl;
   }
 
   Declaration::BaseType_var
-  Processor::find_type(const TypeSpecifier& type_specifier) const throw()
+  Processor::find_type(const TypeSpecifier& type_specifier) const noexcept
   {
     return current_namespace_->namespace_decl()->find_type(
       type_specifier.full_name().c_str());
@@ -71,7 +71,7 @@ namespace Parsing
   }
 
   void Processor::open_descriptor(const char* name)
-    throw(AlreadyDeclared)
+    /*throw(AlreadyDeclared)*/
   {
     Declaration::BaseType_var type_check =
       current_namespace_->namespace_decl()->find_local_type(name);
@@ -90,7 +90,7 @@ namespace Parsing
   Processor::add_descriptor_field(
     const TypeSpecifier& field_type_specifier,
     const char* name)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     descriptor_fields_->push_back(
       Declaration::StructDescriptor::Field_var(
@@ -99,7 +99,7 @@ namespace Parsing
           name)));
   }
 
-  void Processor::close_descriptor() throw()
+  void Processor::close_descriptor() noexcept
   {
     Declaration::StructDescriptor_var new_descriptor(
       new Declaration::StructDescriptor(
@@ -111,7 +111,7 @@ namespace Parsing
   }
 
   void Processor::open_reader(const char* name, const char* base_type_name)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     Declaration::BaseDescriptor_var base_descriptor =
       resolve_descriptor_(TypeSpecifier(base_type_name));
@@ -134,7 +134,7 @@ namespace Parsing
 
   void Processor::add_reader_field(
     const TypeSpecifier& field_type_specifier, const char* name)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     Declaration::StructDescriptor::Field_var base_field =
       reader_descriptor_->find_field(name);
@@ -186,7 +186,7 @@ namespace Parsing
         new Declaration::StructReader::FieldReader(base_field, reader)));
   }
 
-  void Processor::close_reader() throw()
+  void Processor::close_reader() noexcept
   {
     assert(reader_descriptor_.in());
     assert(reader_fields_.in());
@@ -203,7 +203,7 @@ namespace Parsing
   }
 
   void Processor::create_auto_reader(const char* name, const char* base_type_name)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     Declaration::BaseDescriptor_var base_descriptor =
       resolve_descriptor_(TypeSpecifier(base_type_name));
@@ -234,7 +234,7 @@ namespace Parsing
   }
 
   void Processor::open_writer(const char* name, const char* base_type_name)
-    throw (IncorrectType)
+    /*throw (IncorrectType)*/
   {
     Declaration::BaseDescriptor_var base_descriptor =
       resolve_descriptor_(TypeSpecifier(base_type_name));
@@ -259,7 +259,7 @@ namespace Parsing
     const TypeSpecifier& field_type_specifier,
     const char* name,
     const IdentifierList& mapping_specifiers_list)
-    throw (IncorrectType)
+    /*throw (IncorrectType)*/
   {
     Declaration::StructDescriptor::Field_var base_field =
       writer_descriptor_->find_field(name);
@@ -322,7 +322,7 @@ namespace Parsing
           mapping_specifiers)));
   }
 
-  void Processor::close_writer() throw()
+  void Processor::close_writer() noexcept
   {
     Declaration::StructWriter_var new_writer(
       new Declaration::StructWriter(
@@ -337,7 +337,7 @@ namespace Parsing
 
   void Processor::create_auto_writer(
     const char* name, const char* base_type_name)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     Declaration::BaseDescriptor_var base_descriptor =
       resolve_descriptor_(TypeSpecifier(base_type_name));
@@ -369,14 +369,14 @@ namespace Parsing
 
   void Processor::clone_type(
     const char* /*new_name*/, const TypeSpecifier& /*base_type*/)
-    throw()
+    noexcept
   {
     // TODO
   }
 
   Declaration::BaseDescriptor_var
   Processor::resolve_descriptor_(const TypeSpecifier& type_specifier)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     Declaration::BaseType_var type = current_namespace_->namespace_decl()->find_type(
       type_specifier.name.c_str());
@@ -410,7 +410,7 @@ namespace Parsing
   Processor::resolve_reader_(
     const TypeSpecifier& type_specifier,
     Declaration::BaseDescriptor* descriptor)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     Declaration::BaseType_var type = current_namespace_->namespace_decl()->find_type(
       type_specifier.name.c_str());
@@ -443,7 +443,7 @@ namespace Parsing
   Processor::resolve_writer_(
     const TypeSpecifier& type_specifier,
     Declaration::BaseDescriptor* descriptor)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     Declaration::BaseType_var type = current_namespace_->namespace_decl()->find_type(
       type_specifier.name.c_str());
@@ -475,7 +475,7 @@ namespace Parsing
 
   Declaration::BaseTemplate_var
   Processor::resolve_template_(const char* name)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     Declaration::BaseType_var template_type =
       current_namespace_->namespace_decl()->find_type(name);
@@ -501,7 +501,7 @@ namespace Parsing
   Declaration::StructReader_var
   Processor::resolve_struct_auto_reader_(
     Declaration::StructDescriptor* struct_descriptor)
-    throw (Exception)
+    /*throw (Exception)*/
   {
     const std::string auto_reader_name = std::string("<") +
       struct_descriptor->name();
@@ -531,7 +531,7 @@ namespace Parsing
   Declaration::StructWriter_var
   Processor::resolve_struct_auto_writer_(
     Declaration::StructDescriptor* struct_descriptor)
-    throw (IncorrectType)
+    /*throw (IncorrectType)*/
   {
     const std::string auto_writer_name = std::string(">") +
       struct_descriptor->name();
@@ -560,7 +560,7 @@ namespace Parsing
 
   Declaration::BaseReader_var
   Processor::resolve_auto_reader_(const char* name)
-    throw (IncorrectType)
+    /*throw (IncorrectType)*/
   {
     Declaration::BaseType_var type =
       current_namespace_->namespace_decl()->find_type(name);
@@ -594,7 +594,7 @@ namespace Parsing
 
   Declaration::BaseWriter_var
   Processor::resolve_auto_writer_(const char* name)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     // try resolve base type as reader: simple types
     Declaration::BaseType_var type =
@@ -631,7 +631,7 @@ namespace Parsing
   Processor::generate_auto_reader_(
     const char* name,
     Declaration::StructDescriptor* struct_descriptor)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     Declaration::StructReader::FieldReaderList_var reader_fields =
       new Declaration::StructReader::FieldReaderList();
@@ -667,7 +667,7 @@ namespace Parsing
   Processor::generate_auto_writer_(
     const char* name,
     Declaration::StructDescriptor* struct_descriptor)
-    throw (IncorrectType)
+    /*throw (IncorrectType)*/
   {
     Declaration::StructWriter::FieldWriterList_var writer_fields =
       new Declaration::StructWriter::FieldWriterList();
@@ -705,7 +705,7 @@ namespace Parsing
   Processor::init_template_descriptor_(
     const TypeSpecifier& type_specifier,
     DescriptorResolve descriptor_resolving)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     try
     {
@@ -773,7 +773,7 @@ namespace Parsing
   Processor::init_template_reader_(
     const TypeSpecifier& type_specifier,
     Declaration::BaseDescriptor* descriptor)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     try
     {
@@ -843,7 +843,7 @@ namespace Parsing
   Processor::init_template_writer_(
     const TypeSpecifier& type_specifier,
     Declaration::BaseDescriptor* descriptor)
-    throw(IncorrectType)
+    /*throw(IncorrectType)*/
   {
     try
     {

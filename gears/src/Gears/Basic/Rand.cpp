@@ -38,7 +38,7 @@ namespace Gears
   const size_t ISAAC::SIZE;
 
   uint32_t
-  safe_rand() throw ()
+  safe_rand() noexcept
   {
     StaticInitializedMutex::WriteGuard lock(mutex);
     return generator.rand() >> 1;

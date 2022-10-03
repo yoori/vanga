@@ -28,14 +28,14 @@ OPEN_NAMESPACE(Gears)
   class Uncopyable
   {
   protected:
-    Uncopyable() throw() {};
+    Uncopyable() noexcept {};
 
-    ~Uncopyable() throw() {};
+    ~Uncopyable() noexcept {};
 
   private:
-    Uncopyable(const Uncopyable&) throw();
+    Uncopyable(const Uncopyable&) noexcept;
 
-    void operator=(const Uncopyable&) throw();
+    void operator=(const Uncopyable&) noexcept;
   };
 
 CLOSE_NAMESPACE

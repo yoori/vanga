@@ -88,7 +88,7 @@ namespace_specifier
     }
   | PTOKEN_NAMESPACE error
     {
-      error(yylloc, "Expected namespace name");
+      error(yyla.location, "Expected namespace name");
     }
   ;
 
@@ -103,7 +103,7 @@ struct_specifier
     }
   | PTOKEN_STRUCT error
     {
-      error(yylloc, "Expected struct name");
+      error(yyla.location, "Expected struct name");
     }
   ;
 
@@ -126,7 +126,7 @@ struct_declaration
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
@@ -141,13 +141,13 @@ autoreader_specifier
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
   | PTOKEN_AUTOREADER error 
     {
-      error(yylloc, "Expected auto reader name");
+      error(yyla.location, "Expected auto reader name");
     }
   ;
 
@@ -160,13 +160,13 @@ autowriter_specifier
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
   | PTOKEN_AUTOWRITER error
     {
-      error(yylloc, "Expected auto writer name");
+      error(yyla.location, "Expected auto writer name");
     }
   ;
 
@@ -180,7 +180,7 @@ reader_specifier
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
@@ -190,7 +190,7 @@ reader_specifier
     }
   | PTOKEN_READER error 
     {
-      error(yylloc, "Expected reader name");
+      error(yyla.location, "Expected reader name");
     }
   ;
 
@@ -213,7 +213,7 @@ reader_declaration
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
@@ -229,7 +229,7 @@ reader_declaration
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
@@ -249,11 +249,11 @@ writer_specifier
     {
       std::ostringstream ostr;
       ostr << "Expected base struct name for writer '" << *$2 << "'";
-      error(yylloc, ostr.str());
+      error(yyla.location, ostr.str());
     }
   | PTOKEN_WRITER error
     {
-      error(yylloc, "Expected writer name");
+      error(yyla.location, "Expected writer name");
     }
   ;
 
@@ -278,7 +278,7 @@ writer_declaration
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
@@ -296,7 +296,7 @@ writer_declaration
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
@@ -315,7 +315,7 @@ writer_declaration
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }
@@ -332,7 +332,7 @@ writer_declaration
       }
       catch(const Parsing::Processor::Exception& ex)
       {
-        error(yylloc, ex.what());
+        error(yyla.location, ex.what());
         YYABORT;
       }
     }

@@ -36,11 +36,11 @@ namespace Gears
     BasicTokenizer(
       const SubString& value,
       const TokenFingerType& split_op)
-      throw();
+      noexcept;
 
     bool
     get_token(SubString& token)
-      throw();
+      noexcept;
 
   protected:
     const SubString value_;
@@ -92,7 +92,7 @@ namespace Gears
     CategoryTokenizer(
       const SubString& value,
       const CategoryType& category = CategoryType())
-      throw()
+      noexcept
       : BasicTokenizer<FirstAppearanceFinger<CategoryType> >(
           value,
           FirstAppearanceFinger<CategoryType>(category))
@@ -107,7 +107,7 @@ namespace Gears
     CategoryRepeatableTokenizer(
       const SubString& value,
       const CategoryType& category = CategoryType())
-      throw()
+      noexcept
       : BasicTokenizer<RepeatableAppearanceFinger<CategoryType> >(
           value,
           RepeatableAppearanceFinger<CategoryType>(category))
@@ -124,7 +124,7 @@ namespace Gears
   BasicTokenizer<TokenFingerType>::BasicTokenizer(
     const SubString& value,
     const TokenFingerType& token_finger)
-    throw()
+    noexcept
     : value_(value),
       cur_value_(value),
       token_finger_(token_finger)
@@ -133,7 +133,7 @@ namespace Gears
   template<typename TokenFingerType>
   bool
   BasicTokenizer<TokenFingerType>::get_token(Gears::SubString& token)
-    throw()
+    noexcept
   {
     if(cur_value_.empty())
     {

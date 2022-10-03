@@ -37,18 +37,18 @@ namespace PlainTypes
 
     String(const char* init);
 
-    void init_default() throw();
+    void init_default() noexcept;
 
     void unsafe_init(const void* buf, unsigned long size)
-      throw(CorruptedStruct);
+      /*throw(CorruptedStruct)*/;
 
     void init(const void* buf, unsigned long size)
-      throw(CorruptedStruct);
+      /*throw(CorruptedStruct)*/;
 
-    unsigned long dyn_size_() const throw();
+    unsigned long dyn_size_() const noexcept;
 
     void save_(void* fixed_buf, void* dyn_buf) const
-      throw();
+      noexcept;
 
     static const char* read_cast(
       const void* fixed_buf,
@@ -74,13 +74,13 @@ namespace PlainTypes
 
   inline
   void
-  String::init_default() throw()
+  String::init_default() noexcept
   {}
 
   inline
   void
   String::unsafe_init(const void* buf, unsigned long size)
-    throw(CorruptedStruct)
+    /*throw(CorruptedStruct)*/
   {
     static const char* FUN = "String::unsafe_init()";
 
@@ -100,7 +100,7 @@ namespace PlainTypes
   inline
   void
   String::init(const void* buf, unsigned long size)
-    throw(CorruptedStruct)
+    /*throw(CorruptedStruct)*/
   {
     static const char* FUN = "String::init()";
 
@@ -116,7 +116,7 @@ namespace PlainTypes
 
   inline
   unsigned long
-  String::dyn_size_() const throw()
+  String::dyn_size_() const noexcept
   {
     return size() + 1;
   }
@@ -124,7 +124,7 @@ namespace PlainTypes
   inline
   void
   String::save_(void* fixed_buf, void* dyn_buf) const
-    throw()
+    noexcept
   {
     *static_cast<uint32_t*>(fixed_buf) =
       static_cast<unsigned char*>(dyn_buf) -

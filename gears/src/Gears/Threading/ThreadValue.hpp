@@ -32,22 +32,22 @@ namespace Gears
   public:
     DECLARE_GEARS_EXCEPTION(Exception, DescriptiveException);
 
-    ThreadValue() throw(Exception);
+    ThreadValue() /*throw(Exception)*/;
 
-    ~ThreadValue() throw();
+    ~ThreadValue() noexcept;
 
     void
-    reset(Type* value) throw(Exception);
+    reset(Type* value) /*throw(Exception)*/;
 
     Type*
-    get() const throw();
+    get() const noexcept;
 
     Type*
-    release() throw(Exception);
+    release() /*throw(Exception)*/;
 
   private:
     void
-    reset_() throw();
+    reset_() noexcept;
 
     static
     void

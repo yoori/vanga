@@ -84,17 +84,17 @@ namespace Gears
         typedef AllocOnly<Other, SIZE, HASH_HACK> other;
       };
 
-      AllocOnly() throw ();
-      AllocOnly(const AllocOnly&) throw ();
+      AllocOnly() noexcept;
+      AllocOnly(const AllocOnly&) noexcept;
       template <typename Other>
-      AllocOnly(const AllocOnly<Other, SIZE, HASH_HACK>&) throw ();
-      ~AllocOnly() throw ();
+      AllocOnly(const AllocOnly<Other, SIZE, HASH_HACK>&) noexcept;
+      ~AllocOnly() noexcept;
 
       Type*
-      allocate(size_t n, const void* = 0) throw (Gears::Exception);
+      allocate(size_t n, const void* = 0) /*throw (Gears::Exception)*/;
 
       void
-      deallocate(Type* ptr, size_t) throw ();
+      deallocate(Type* ptr, size_t) noexcept;
 
     private:
       struct Item
@@ -119,9 +119,9 @@ namespace Gears
     class AllocOnly<Type*, SIZE, true> : public std::allocator<Type*>
     {
     public:
-      AllocOnly() throw ();
+      AllocOnly() noexcept;
       template <typename Other>
-      AllocOnly(const AllocOnly<Other, SIZE, true>&) throw ();
+      AllocOnly(const AllocOnly<Other, SIZE, true>&) noexcept;
 
       template <typename Other>
       struct rebind
@@ -142,15 +142,15 @@ namespace Gears
       static_assert(SIZE > 1, "SIZE must be larger");
 
     public:
-      AggregatedBase() throw ();
-      AggregatedBase(const AggregatedBase&) throw ();
-      ~AggregatedBase() throw ();
+      AggregatedBase() noexcept;
+      AggregatedBase(const AggregatedBase&) noexcept;
+      ~AggregatedBase() noexcept;
 
       void*
-      allocate() throw (Gears::Exception);
+      allocate() /*throw (Gears::Exception)*/;
 
       void
-      deallocate(void* ptr) throw ();
+      deallocate(void* ptr) noexcept;
 
     private:
       union Item
@@ -186,15 +186,15 @@ namespace Gears
         typedef Aggregated<Other, SIZE, HASH_HACK> other;
       };
 
-      Aggregated() throw () = default;
+      Aggregated() noexcept = default;
       template <typename Other>
-      Aggregated(const Aggregated<Other, SIZE, HASH_HACK>&) throw ();
+      Aggregated(const Aggregated<Other, SIZE, HASH_HACK>&) noexcept;
 
       Type*
-      allocate(size_t n, const void* = 0) throw (Gears::Exception);
+      allocate(size_t n, const void* = 0) /*throw (Gears::Exception)*/;
 
       void
-      deallocate(Type* ptr, size_t) throw ();
+      deallocate(Type* ptr, size_t) noexcept;
     };
 
 
@@ -205,9 +205,9 @@ namespace Gears
     class Aggregated<Type*, SIZE, true> : public std::allocator<Type*>
     {
     public:
-      Aggregated() throw () = default;
+      Aggregated() noexcept = default;
       template <typename Other>
-      Aggregated(const Aggregated<Other, SIZE, true>&) throw ();
+      Aggregated(const Aggregated<Other, SIZE, true>&) noexcept;
 
       template <typename Other>
       struct rebind
@@ -230,11 +230,11 @@ namespace Gears
     protected:
       static
       void*
-      allocate_() throw (Gears::Exception);
+      allocate_() /*throw (Gears::Exception)*/;
 
       static
       void
-      deallocate_(void* ptr) throw ();
+      deallocate_(void* ptr) noexcept;
 
     private:
       class MemoryHolder : public AggregatedBase<TYPE, SIZE>
@@ -246,15 +246,15 @@ namespace Gears
       class GlobalMemoryHolder : private Uncopyable
       {
       public:
-        ~GlobalMemoryHolder() throw ();
+        ~GlobalMemoryHolder() noexcept;
 
         MemoryHolder*
-        operator ->() const throw (Gears::Exception);
+        operator ->() const /*throw (Gears::Exception)*/;
 
       private:
         static
         void
-        delete_holder_(void* holder) throw ();
+        delete_holder_(void* holder) noexcept;
 
         static ThreadKey<MemoryHolder> key_;
         static SpinLock lock_;
@@ -286,16 +286,16 @@ namespace Gears
         typedef ThreadPool<Other, SIZE, HASH_HACK> other;
       };
 
-      ThreadPool() throw () = default;
-      ThreadPool(const ThreadPool&) throw ();
+      ThreadPool() noexcept = default;
+      ThreadPool(const ThreadPool&) noexcept;
       template <typename Other>
-      ThreadPool(const ThreadPool<Other, SIZE, HASH_HACK>&) throw ();
+      ThreadPool(const ThreadPool<Other, SIZE, HASH_HACK>&) noexcept;
 
       Type*
-      allocate(size_t n, const void* = 0) throw (Gears::Exception);
+      allocate(size_t n, const void* = 0) /*throw (Gears::Exception)*/;
 
       void
-      deallocate(Type* ptr, size_t) throw ();
+      deallocate(Type* ptr, size_t) noexcept;
     };
 
 
@@ -306,9 +306,9 @@ namespace Gears
     class ThreadPool<Type*, SIZE, true> : public std::allocator<Type*>
     {
     public:
-      ThreadPool() throw () = default;
+      ThreadPool() noexcept = default;
       template <typename Other>
-      ThreadPool(const ThreadPool<Other, SIZE, true>&) throw ();
+      ThreadPool(const ThreadPool<Other, SIZE, true>&) noexcept;
 
       template <typename Other>
       struct rebind
@@ -339,28 +339,28 @@ namespace Gears
         typedef GlobalPool<Other, SIZE> other;
       };
 
-      GlobalPool() throw () = default;
-      GlobalPool(const GlobalPool&) throw ();
+      GlobalPool() noexcept = default;
+      GlobalPool(const GlobalPool&) noexcept;
       template <typename Other>
-      GlobalPool(const GlobalPool<Other, SIZE>&) throw ();
+      GlobalPool(const GlobalPool<Other, SIZE>&) noexcept;
 
       Type*
-      allocate(size_t n, const void* = 0) throw (Gears::Exception);
+      allocate(size_t n, const void* = 0) /*throw (Gears::Exception)*/;
 
       void
-      deallocate(Type* ptr, size_t) throw ();
+      deallocate(Type* ptr, size_t) noexcept;
 
     private:
       class MemoryHolder : private Uncopyable
       {
       public:
-        MemoryHolder() throw ();
-        ~MemoryHolder() throw () = default;
+        MemoryHolder() noexcept;
+        ~MemoryHolder() noexcept = default;
 
         void*
-        allocate() throw (Gears::Exception);
+        allocate() /*throw (Gears::Exception)*/;
         void
-        deallocate(void* ptr) throw ();
+        deallocate(void* ptr) noexcept;
 
       private:
         union Block
@@ -398,19 +398,19 @@ namespace Gears
         typedef VectorBuf<Other, SIZE> other;
       };
 
-      VectorBuf() throw ();
-      VectorBuf(const VectorBuf&) throw ();
+      VectorBuf() noexcept;
+      VectorBuf(const VectorBuf&) noexcept;
       template <typename Other>
-      VectorBuf(const VectorBuf<Other, SIZE>&) throw ();
+      VectorBuf(const VectorBuf<Other, SIZE>&) noexcept;
 
       Type*
-      allocate(size_t n, const void* ptr = 0) throw (Gears::Exception);
+      allocate(size_t n, const void* ptr = 0) /*throw (Gears::Exception)*/;
 
       void
-      deallocate(Type* ptr, size_t size) throw ();
+      deallocate(Type* ptr, size_t size) noexcept;
 
       size_t
-      capacity() const throw ();
+      capacity() const noexcept;
 
     private:
       char buf_[sizeof(Type) * SIZE];
@@ -428,24 +428,24 @@ namespace Gears
     //
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
-    AllocOnly<Type, SIZE, HASH_HACK>::AllocOnly() throw ()
+    AllocOnly<Type, SIZE, HASH_HACK>::AllocOnly() noexcept
       : all_(0), cur_(0), end_(0)
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
-    AllocOnly<Type, SIZE, HASH_HACK>::AllocOnly(const AllocOnly&) throw ()
+    AllocOnly<Type, SIZE, HASH_HACK>::AllocOnly(const AllocOnly&) noexcept
       : std::allocator<Type>(), all_(0), cur_(0), end_(0)
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     template <typename Other>
     AllocOnly<Type, SIZE, HASH_HACK>::AllocOnly(
-      const AllocOnly<Other, SIZE, HASH_HACK>&) throw ()
+      const AllocOnly<Other, SIZE, HASH_HACK>&) noexcept
       : all_(0), cur_(0), end_(0)
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
-    AllocOnly<Type, SIZE, HASH_HACK>::~AllocOnly() throw ()
+    AllocOnly<Type, SIZE, HASH_HACK>::~AllocOnly() noexcept
     {
       while (all_)
       {
@@ -458,7 +458,7 @@ namespace Gears
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     Type*
     AllocOnly<Type, SIZE, HASH_HACK>::allocate(size_t n, const void*)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       assert(n == 1);
       if (cur_ != end_)
@@ -478,17 +478,17 @@ namespace Gears
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     void
-    AllocOnly<Type, SIZE, HASH_HACK>::deallocate(Type*, size_t) throw ()
+    AllocOnly<Type, SIZE, HASH_HACK>::deallocate(Type*, size_t) noexcept
     {}
 
     template <typename Type, const size_t SIZE>
-    AllocOnly<Type*, SIZE, true>::AllocOnly() throw ()
+    AllocOnly<Type*, SIZE, true>::AllocOnly() noexcept
     {}
 
     template <typename Type, const size_t SIZE>
     template <typename Other>
     AllocOnly<Type*, SIZE, true>::AllocOnly(
-      const AllocOnly<Other, SIZE, true>&) throw ()
+      const AllocOnly<Other, SIZE, true>&) noexcept
     {}
 
     //
@@ -496,18 +496,18 @@ namespace Gears
     //
 
     template <const size_t TYPE, const size_t SIZE>
-    AggregatedBase<TYPE, SIZE>::AggregatedBase() throw ()
+    AggregatedBase<TYPE, SIZE>::AggregatedBase() noexcept
       : all_(0), head_(0), cur_(0), end_(0)
     {}
 
     template <const size_t TYPE, const size_t SIZE>
     AggregatedBase<TYPE, SIZE>::AggregatedBase(const AggregatedBase&)
-      throw ()
+      noexcept
       : all_(0), head_(0), cur_(0), end_(0)
     {}
 
     template <const size_t TYPE, const size_t SIZE>
-    AggregatedBase<TYPE, SIZE>::~AggregatedBase() throw ()
+    AggregatedBase<TYPE, SIZE>::~AggregatedBase() noexcept
     {
       while (all_)
       {
@@ -519,7 +519,7 @@ namespace Gears
 
     template <const size_t TYPE, const size_t SIZE>
     void*
-    AggregatedBase<TYPE, SIZE>::allocate() throw (Gears::Exception)
+    AggregatedBase<TYPE, SIZE>::allocate() /*throw (Gears::Exception)*/
     {
       if (head_)
       {
@@ -544,7 +544,7 @@ namespace Gears
 
     template <const size_t TYPE, const size_t SIZE>
     void
-    AggregatedBase<TYPE, SIZE>::deallocate(void* ptr) throw ()
+    AggregatedBase<TYPE, SIZE>::deallocate(void* ptr) noexcept
     {
       Item* p = static_cast<Item*>(ptr);
       p->next = head_;
@@ -559,13 +559,13 @@ namespace Gears
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     template <typename Other>
     Aggregated<Type, SIZE, HASH_HACK>::Aggregated(
-      const Aggregated<Other, SIZE, HASH_HACK>&) throw ()
+      const Aggregated<Other, SIZE, HASH_HACK>&) noexcept
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     Type*
     Aggregated<Type, SIZE, HASH_HACK>::allocate(size_t n, const void*)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       assert(n == 1);
       return static_cast<Type*>(
@@ -575,7 +575,7 @@ namespace Gears
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     void
     Aggregated<Type, SIZE, HASH_HACK>::deallocate(Type* ptr, size_t)
-      throw ()
+      noexcept
     {
       AggregatedBase<sizeof(Type), SIZE>::deallocate(ptr);
     }
@@ -584,7 +584,7 @@ namespace Gears
     template <typename Type, const size_t SIZE>
     template <typename Other>
     Aggregated<Type*, SIZE, true>::Aggregated(
-      const Aggregated<Other, SIZE, true>&) throw ()
+      const Aggregated<Other, SIZE, true>&) noexcept
     {}
 
     //
@@ -605,7 +605,7 @@ namespace Gears
 
     template <const size_t TYPE, const size_t SIZE>
     ThreadPoolBase<TYPE, SIZE>::GlobalMemoryHolder::~GlobalMemoryHolder()
-      throw ()
+      noexcept
     {
       while (head_)
       {
@@ -618,7 +618,7 @@ namespace Gears
     template <const size_t TYPE, const size_t SIZE>
     typename ThreadPoolBase<TYPE, SIZE>::MemoryHolder*
     ThreadPoolBase<TYPE, SIZE>::GlobalMemoryHolder::operator ->() const
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       MemoryHolder* holder = key_.get_data();
       if (holder)
@@ -647,7 +647,7 @@ namespace Gears
     template <const size_t TYPE, const size_t SIZE>
     void
     ThreadPoolBase<TYPE, SIZE>::GlobalMemoryHolder::
-      delete_holder_(void* pholder) throw ()
+      delete_holder_(void* pholder) noexcept
     {
       if (!pholder)
       {
@@ -669,14 +669,14 @@ namespace Gears
 
     template <const size_t TYPE, const size_t SIZE>
     void*
-    ThreadPoolBase<TYPE, SIZE>::allocate_() throw (Gears::Exception)
+    ThreadPoolBase<TYPE, SIZE>::allocate_() /*throw (Gears::Exception)*/
     {
       return holder_->allocate();
     }
 
     template <const size_t TYPE, const size_t SIZE>
     void
-    ThreadPoolBase<TYPE, SIZE>::deallocate_(void* ptr) throw ()
+    ThreadPoolBase<TYPE, SIZE>::deallocate_(void* ptr) noexcept
     {
       holder_->deallocate(ptr);
     }
@@ -688,20 +688,20 @@ namespace Gears
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     ThreadPool<Type, SIZE, HASH_HACK>::ThreadPool(const ThreadPool&)
-      throw ()
+      noexcept
       : std::allocator<Type>()
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     template <typename Other>
     ThreadPool<Type, SIZE, HASH_HACK>::ThreadPool(
-      const ThreadPool<Other, SIZE, HASH_HACK>&) throw ()
+      const ThreadPool<Other, SIZE, HASH_HACK>&) noexcept
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     Type*
     ThreadPool<Type, SIZE, HASH_HACK>::allocate(size_t n, const void*)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       assert(n == 1);
       return static_cast<Type*>(
@@ -711,7 +711,7 @@ namespace Gears
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     void
     ThreadPool<Type, SIZE, HASH_HACK>::deallocate(Type* ptr, size_t)
-      throw ()
+      noexcept
     {
       ThreadPoolBase<sizeof(Type), SIZE>::deallocate_(ptr);
     }
@@ -719,7 +719,7 @@ namespace Gears
     template <typename Type, const size_t SIZE>
     template <typename Other>
     ThreadPool<Type*, SIZE, true>::ThreadPool(
-      const ThreadPool<Other, SIZE, true>&) throw ()
+      const ThreadPool<Other, SIZE, true>&) noexcept
     {}
 
     //
@@ -728,14 +728,14 @@ namespace Gears
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     GlobalPool<Type, SIZE, HASH_HACK>::MemoryHolder::MemoryHolder()
-      throw ()
+      noexcept
       : head_(0), cur_(0), end_(0)
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     void*
     GlobalPool<Type, SIZE, HASH_HACK>::MemoryHolder::allocate()
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       Gears::SpinLock::WriteGuard guard(lock_);
       if (head_)
@@ -761,7 +761,7 @@ namespace Gears
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     void
     GlobalPool<Type, SIZE, HASH_HACK>::MemoryHolder::deallocate(void* ptr)
-      throw ()
+      noexcept
     {
       Gears::SpinLock::WriteGuard guard(lock_);
       Block* p = static_cast<Block*>(ptr);
@@ -779,20 +779,20 @@ namespace Gears
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     GlobalPool<Type, SIZE, HASH_HACK>::GlobalPool(const GlobalPool&)
-      throw ()
+      noexcept
       : std::allocator<Type>()
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     template <typename Other>
     GlobalPool<Type, SIZE, HASH_HACK>::GlobalPool(
-      const GlobalPool<Other, SIZE>&) throw ()
+      const GlobalPool<Other, SIZE>&) noexcept
     {}
 
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     Type*
     GlobalPool<Type, SIZE, HASH_HACK>::allocate(size_t n, const void*)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       assert(n == 1);
       return static_cast<Type*>(holder_.allocate());
@@ -801,7 +801,7 @@ namespace Gears
     template <typename Type, const size_t SIZE, const bool HASH_HACK>
     void
     GlobalPool<Type, SIZE, HASH_HACK>::deallocate(Type* ptr, size_t)
-      throw ()
+      noexcept
     {
       holder_.deallocate(ptr);
     }
@@ -811,25 +811,25 @@ namespace Gears
     //
 
     template <typename Type, const size_t SIZE>
-    VectorBuf<Type, SIZE>::VectorBuf() throw ()
+    VectorBuf<Type, SIZE>::VectorBuf() noexcept
       : std::allocator<Type>(), used_(false)
     {}
 
     template <typename Type, const size_t SIZE>
-    VectorBuf<Type, SIZE>::VectorBuf(const VectorBuf&) throw ()
+    VectorBuf<Type, SIZE>::VectorBuf(const VectorBuf&) noexcept
       : std::allocator<Type>(), used_(false)
     {}
 
     template <typename Type, const size_t SIZE>
     template <typename Other>
-    VectorBuf<Type, SIZE>::VectorBuf(const VectorBuf<Other, SIZE>&) throw ()
+    VectorBuf<Type, SIZE>::VectorBuf(const VectorBuf<Other, SIZE>&) noexcept
       : std::allocator<Type>(), used_(false)
     {}
 
     template <typename Type, const size_t SIZE>
     Type*
     VectorBuf<Type, SIZE>::allocate(size_t n, const void* ptr)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       if (!used_ && n <= SIZE)
       {
@@ -841,7 +841,7 @@ namespace Gears
 
     template <typename Type, const size_t SIZE>
     void
-    VectorBuf<Type, SIZE>::deallocate(Type* ptr, size_t size) throw ()
+    VectorBuf<Type, SIZE>::deallocate(Type* ptr, size_t size) noexcept
     {
       if (used_)
       {
@@ -856,7 +856,7 @@ namespace Gears
 
     template <typename Type, const size_t SIZE>
     size_t
-    VectorBuf<Type, SIZE>::capacity() const throw ()
+    VectorBuf<Type, SIZE>::capacity() const noexcept
     {
       return SIZE;
     }

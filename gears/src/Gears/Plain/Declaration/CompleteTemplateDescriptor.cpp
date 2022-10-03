@@ -27,7 +27,7 @@ namespace Declaration
   CompleteTemplateDescriptor::CompleteTemplateDescriptor(
     const char* name,
     const BaseDescriptorList& args)
-    throw()
+    noexcept
     : BaseType(name),
       BaseDescriptor(name),
       args_(args)
@@ -35,13 +35,13 @@ namespace Declaration
 
   CompleteTemplateDescriptor_var
   CompleteTemplateDescriptor::as_complete_template()
-    throw()
+    noexcept
   {
     return Gears::add_ref(this);
   }
 
   const BaseDescriptorList&
-  CompleteTemplateDescriptor::args() const throw()
+  CompleteTemplateDescriptor::args() const noexcept
   {
     return args_;
   }
@@ -49,7 +49,7 @@ namespace Declaration
   BaseReader_var
   CompleteTemplateDescriptor::complete_template_reader(
     const BaseReaderList& args)
-    throw(InvalidParam)
+    /*throw(InvalidParam)*/
   {
     if(args.size() != args_.size())
     {
@@ -81,7 +81,7 @@ namespace Declaration
   BaseWriter_var
   CompleteTemplateDescriptor::complete_template_writer(
     const BaseWriterList& args)
-    throw(InvalidParam)
+    /*throw(InvalidParam)*/
   {
     if(args.size() != args_.size())
     {

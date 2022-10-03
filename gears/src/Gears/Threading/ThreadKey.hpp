@@ -42,21 +42,21 @@ namespace Gears
      * termination
      */
     explicit
-    ThreadKey(void (*destructor)(void*) = 0) throw (Exception);
+    ThreadKey(void (*destructor)(void*) = 0) /*throw (Exception)*/;
 
     /**
      * Store data for the current thread
      * @param data to store
      */
     void
-    set_data(Data* data) throw (Exception);
+    set_data(Data* data) /*throw (Exception)*/;
 
     /**
      * Get stored data for the current thread
      * @return stored data
      */
     Data*
-    get_data() throw ();
+    get_data() noexcept;
 
   private:
     ThreadKey(const ThreadKey&);
@@ -69,7 +69,7 @@ namespace Gears
 namespace Gears
 {
   template <typename Data>
-  ThreadKey<Data>::ThreadKey(void (*destructor)(void*)) throw (Exception)
+  ThreadKey<Data>::ThreadKey(void (*destructor)(void*)) /*throw (Exception)*/
   {
     static const char* FUN = "ThreadKey<>::ThreadKey()";
 
@@ -83,7 +83,7 @@ namespace Gears
 
   template <typename Data>
   void
-  ThreadKey<Data>::set_data(Data* data) throw (Exception)
+  ThreadKey<Data>::set_data(Data* data) /*throw (Exception)*/
   {
     static const char* FUN = "ThreadKey<>::set_data()";
 
@@ -97,7 +97,7 @@ namespace Gears
 
   template <typename Data>
   Data*
-  ThreadKey<Data>::get_data() throw ()
+  ThreadKey<Data>::get_data() noexcept
   {
     return static_cast<Data*>(pthread_getspecific(key_));
   }

@@ -37,18 +37,18 @@ namespace Gears
       const char* message_prefix = "ActiveObject",
       const char* aspect = 0,
       const char* code = 0)
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
 
     virtual void
     report_error(
       Severity severity,
       const SubString& description,
       const SubString& code = SubString())
-      throw();
+      noexcept;
     
   protected:
     virtual
-    ~ActiveObjectCallbackStreamImpl() throw() = default;
+    ~ActiveObjectCallbackStreamImpl() noexcept = default;
 
   protected:
     const Logger_var logger_;
@@ -70,7 +70,7 @@ namespace Gears
     const char* message_prefix,
     const char* aspect,
     const char* code)
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
     : logger_(new OStreamLogger(output_stream)),
       message_prefix_(message_prefix),
       aspect_(aspect),
@@ -82,7 +82,7 @@ namespace Gears
     Severity severity,
     const SubString& description,
     const SubString& code)
-    throw()
+    noexcept
   {
     logger_->log(
       message_prefix_ + description.str(),

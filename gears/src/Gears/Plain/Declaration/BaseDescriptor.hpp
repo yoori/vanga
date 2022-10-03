@@ -49,20 +49,20 @@ namespace Declaration
   public:
     BaseDescriptor(const char* name_val);
 
-    virtual SimpleDescriptor_var as_simple() throw();
+    virtual SimpleDescriptor_var as_simple() noexcept;
 
-    virtual StructDescriptor_var as_struct() throw();
+    virtual StructDescriptor_var as_struct() noexcept;
 
-    virtual CompleteTemplateDescriptor_var as_complete_template() throw();
+    virtual CompleteTemplateDescriptor_var as_complete_template() noexcept;
 
-    virtual bool is_fixed() const throw() = 0;
+    virtual bool is_fixed() const noexcept = 0;
 
-    virtual SizeType fixed_size() const throw() = 0;
+    virtual SizeType fixed_size() const noexcept = 0;
 
-    virtual BaseDescriptor_var as_descriptor() throw();
+    virtual BaseDescriptor_var as_descriptor() noexcept;
 
   protected:
-    virtual ~BaseDescriptor() throw() {}
+    virtual ~BaseDescriptor() noexcept {}
   };
 
   typedef Gears::IntrusivePtr<BaseDescriptor>

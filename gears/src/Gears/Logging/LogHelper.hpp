@@ -39,29 +39,29 @@ namespace Gears
     class Buffer: public Gears::RefCountable
     {
     public:
-      Buffer() throw();
+      Buffer() noexcept;
 
       const char*
-      data() const throw();
+      data() const noexcept;
 
       size_t
-      data_size() const throw();
+      data_size() const noexcept;
 
       char*
-      get() const throw();
+      get() const noexcept;
 
       size_t
-      size() const throw();
+      size() const noexcept;
 
       void
-      advance(size_t length) throw();
+      advance(size_t length) noexcept;
 
       void
-      prepare(int new_size) throw();
+      prepare(int new_size) noexcept;
 
     protected:
       virtual
-      ~Buffer() throw() = default;
+      ~Buffer() noexcept = default;
 
     private:
       std::unique_ptr<char[]> buf_;
@@ -81,7 +81,7 @@ namespace Gears
     void
     get_buffer_(
       BufferList& res_buffers)
-      throw();
+      noexcept;
 
     static void
     prepare_buf_(
@@ -91,7 +91,7 @@ namespace Gears
       const unsigned long* severity,
       const Gears::SubString* aspect,
       const Gears::SubString* code)
-      throw();
+      noexcept;
 
   private:
     SyncPolicy lock_;
@@ -102,38 +102,38 @@ namespace Gears
 namespace Gears
 {
   inline
-  LogHelper::Buffer::Buffer() throw()
+  LogHelper::Buffer::Buffer() noexcept
     : size_(0),
       cur_ptr_(0),
       cur_size_(0)
   {}
 
   inline const char*
-  LogHelper::Buffer::data() const throw()
+  LogHelper::Buffer::data() const noexcept
   {
     return buf_.get();
   }
 
   inline size_t
-  LogHelper::Buffer::data_size() const throw()
+  LogHelper::Buffer::data_size() const noexcept
   {
     return size_;
   }
 
   inline char*
-  LogHelper::Buffer::get() const throw()
+  LogHelper::Buffer::get() const noexcept
   {
     return cur_ptr_;
   }
 
   inline size_t
-  LogHelper::Buffer::size() const throw()
+  LogHelper::Buffer::size() const noexcept
   {
     return cur_size_;
   }
 
   inline void
-  LogHelper::Buffer::advance(size_t length) throw()
+  LogHelper::Buffer::advance(size_t length) noexcept
   {
     if(cur_size_ > 0)
     {
@@ -144,7 +144,7 @@ namespace Gears
 
   inline void
   LogHelper::Buffer::prepare(int new_size)
-    throw()
+    noexcept
   {
     if(new_size > size_)
     {

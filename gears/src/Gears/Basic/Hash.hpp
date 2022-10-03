@@ -60,13 +60,13 @@ namespace Gears
     typedef uint32_t Calc;
 
     explicit
-    CRC32Hasher(Calc seed = 0) throw ();
+    CRC32Hasher(Calc seed = 0) noexcept;
 
     void
-    add(const void* key, std::size_t len) throw ();
+    add(const void* key, std::size_t len) noexcept;
 
     std::size_t
-    finalize () throw ();
+    finalize () noexcept;
 
   private:
     Calc hash_;
@@ -81,13 +81,13 @@ namespace Gears
       typedef typename Mix::Calc Calc;
 
       explicit
-      Aggregator(Calc seed = 0) throw ();
+      Aggregator(Calc seed = 0) noexcept;
 
       void
-      add(const void* key, std::size_t len) throw ();
+      add(const void* key, std::size_t len) noexcept;
 
       std::size_t
-      finalize () throw ();
+      finalize () noexcept;
 
     private:
       std::size_t count_;
@@ -102,11 +102,11 @@ namespace Gears
       typedef std::size_t Calc;
 
       explicit
-      Murmur64(Calc seed) throw ();
+      Murmur64(Calc seed) noexcept;
       void
-      operator ()(Calc key) throw ();
+      operator ()(Calc key) noexcept;
       std::size_t
-      operator ()(std::size_t count, Calc tail, Calc size) throw ();
+      operator ()(std::size_t count, Calc tail, Calc size) noexcept;
 
     private:
       static const std::size_t MULTIPLIER_ = 0xC6A4A7935BD1E995ull;
@@ -121,11 +121,11 @@ namespace Gears
       typedef uint32_t Calc;
 
       explicit
-      Murmur32v3(Calc seed) throw ();
+      Murmur32v3(Calc seed) noexcept;
       void
-      operator ()(Calc key, bool rh = true) throw ();
+      operator ()(Calc key, bool rh = true) noexcept;
       std::size_t
-      operator ()(std::size_t count, Calc tail, Calc size) throw ();
+      operator ()(std::size_t count, Calc tail, Calc size) noexcept;
 
     private:
       Calc hash_;
@@ -153,10 +153,10 @@ namespace Gears
       typedef typename Hasher::Calc Calc;
 
       explicit
-      Adapter(std::size_t& result, Calc seed = 0) throw ();
-      ~Adapter() throw ();
+      Adapter(std::size_t& result, Calc seed = 0) noexcept;
+      ~Adapter() noexcept;
       void
-      add(const void* key, std::size_t len) throw ();
+      add(const void* key, std::size_t len) noexcept;
 
     protected:
       Adapter(const Adapter<Hasher>&);
@@ -173,13 +173,13 @@ namespace Gears
 
   template <typename Hash, typename Value>
   void
-  hash_add(Hash& hash, const Value& value) throw ();
+  hash_add(Hash& hash, const Value& value) noexcept;
 
   template <typename Hash,
     typename Char, typename CharTraits, typename Allocator>
   void
   hash_add(Hash& hash,
-    const std::basic_string<Char, CharTraits, Allocator>& value) throw ();
+    const std::basic_string<Char, CharTraits, Allocator>& value) noexcept;
 }
 
 namespace Gears
@@ -189,21 +189,21 @@ namespace Gears
   //
 
   inline
-  CRC32Hasher::CRC32Hasher(uint32_t seed) throw ()
+  CRC32Hasher::CRC32Hasher(uint32_t seed) noexcept
     : hash_(seed)
   {
   }
 
   inline
   void
-  CRC32Hasher::add(const void* key, std::size_t len) throw ()
+  CRC32Hasher::add(const void* key, std::size_t len) noexcept
   {
     hash_ = CRC::quick(hash_, key, len);
   }
 
   inline
   std::size_t
-  CRC32Hasher::finalize() throw ()
+  CRC32Hasher::finalize() noexcept
   {
     return hash_;
   }
@@ -213,14 +213,14 @@ namespace Gears
   {
     template <typename Calc>
     std::size_t
-    get_unsafe(const void* key) throw ()
+    get_unsafe(const void* key) noexcept
     {
       return *static_cast<const Calc*>(key);
     }
 
     inline
     std::size_t
-    get_safe(const uint8_t* key, std::size_t size) throw ()
+    get_safe(const uint8_t* key, std::size_t size) noexcept
     {
       std::size_t key_part = 0;
       for (size_t i = 0; i < size; i++)
@@ -236,14 +236,14 @@ namespace Gears
     //
 
     template <typename Mix>
-    Aggregator<Mix>::Aggregator(Calc seed) throw ()
+    Aggregator<Mix>::Aggregator(Calc seed) noexcept
       : count_(0), tail_(0), size_(0), mix_(seed)
     {
     }
 
     template <typename Mix>
     void
-    Aggregator<Mix>::add(const void* key, std::size_t len) throw ()
+    Aggregator<Mix>::add(const void* key, std::size_t len) noexcept
     {
       if (!len)
       {
@@ -292,7 +292,7 @@ namespace Gears
 
     template <typename Mix>
     std::size_t
-    Aggregator<Mix>::finalize() throw ()
+    Aggregator<Mix>::finalize() noexcept
     {
       return mix_(count_, tail_, size_);
     }
@@ -303,14 +303,14 @@ namespace Gears
     //
 
     inline
-    Murmur64::Murmur64(Calc seed) throw ()
+    Murmur64::Murmur64(Calc seed) noexcept
       : hash_(seed)
     {
     }
 
     inline
     void
-    Murmur64::operator ()(Calc key) throw ()
+    Murmur64::operator ()(Calc key) noexcept
     {
       key *= MULTIPLIER_;
       key ^= key >> R_;
@@ -322,7 +322,7 @@ namespace Gears
     inline
     std::size_t
     Murmur64::operator ()(std::size_t /*count*/, Calc tail, Calc size)
-      throw ()
+      noexcept
     {
       operator()(tail);
       // Merkle–Damgård strengthening
@@ -340,14 +340,14 @@ namespace Gears
     //
 
     inline
-    Murmur32v3::Murmur32v3(Calc seed) throw ()
+    Murmur32v3::Murmur32v3(Calc seed) noexcept
       : hash_(seed)
     {
     }
 
     inline
     void
-    Murmur32v3::operator ()(Calc key, bool rh) throw ()
+    Murmur32v3::operator ()(Calc key, bool rh) noexcept
     {
       key *= static_cast<Calc>(0xCC9E2D51u);
       key = (key << 15) | (key >> 17);
@@ -363,7 +363,7 @@ namespace Gears
     inline
     std::size_t
     Murmur32v3::operator ()(std::size_t count, Calc tail, Calc size)
-      throw ()
+      noexcept
     {
       if (count)
       {
@@ -380,20 +380,20 @@ namespace Gears
 
 
     template <typename Hasher>
-    Adapter<Hasher>::Adapter(std::size_t& result, Calc seed) throw ()
+    Adapter<Hasher>::Adapter(std::size_t& result, Calc seed) noexcept
       : hasher_(seed), result_(result)
     {
     }
 
     template <typename Hasher>
-    Adapter<Hasher>::~Adapter() throw ()
+    Adapter<Hasher>::~Adapter() noexcept
     {
       result_ = hasher_.finalize();
     }
 
     template <typename Hasher>
     void
-    Adapter<Hasher>::add(const void* key, std::size_t len) throw ()
+    Adapter<Hasher>::add(const void* key, std::size_t len) noexcept
     {
       hasher_.add(key, len);
     }
@@ -406,7 +406,7 @@ namespace Gears
 
   template <typename Hash, typename Value>
   void
-  hash_add(Hash& hash, const Value& value) throw ()
+  hash_add(Hash& hash, const Value& value) noexcept
   {
     static_assert(std::numeric_limits<Value>::is_specialized,
       "value type is not simple");
@@ -417,7 +417,7 @@ namespace Gears
     typename Char, typename CharTraits, typename Allocator>
   void
   hash_add(Hash& hash,
-    const std::basic_string<Char, CharTraits, Allocator>& value) throw ()
+    const std::basic_string<Char, CharTraits, Allocator>& value) noexcept
   {
     hash.add(value.data(), value.size());
   }

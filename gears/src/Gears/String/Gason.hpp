@@ -30,7 +30,7 @@ namespace Gears
 {
   const char*
   find_end_of_number(const char* str)
-    throw();
+    noexcept;
 
   const size_t JSON_ZONE_SIZE = 4096;
   const size_t JSON_STACK_SIZE = 32;
@@ -271,7 +271,7 @@ namespace Gears
 
   inline const char*
   find_end_of_number(const char* str)
-    throw()
+    noexcept
   {
     if(*str == '-' || *str == '+')
     {

@@ -32,38 +32,38 @@ namespace Gears
     typedef ObjectType value_type;
 
   public:
-    IntrusivePtr() throw();
+    IntrusivePtr() noexcept;
 
-    IntrusivePtr(ObjectType* ptr) throw();
+    IntrusivePtr(ObjectType* ptr) noexcept;
 
-    IntrusivePtr(const IntrusivePtr<ObjectType>& s_ptr) throw();
-
-    template<typename OtherType>
-    IntrusivePtr(const IntrusivePtr<OtherType>& s_ptr) throw();
-
-    ~IntrusivePtr() throw();
-
-    IntrusivePtr<ObjectType>&
-    operator=(ObjectType* ptr) throw();
-
-    IntrusivePtr<ObjectType>&
-    operator=(const IntrusivePtr<ObjectType>& s_ptr) throw();
+    IntrusivePtr(const IntrusivePtr<ObjectType>& s_ptr) noexcept;
 
     template<typename OtherType>
+    IntrusivePtr(const IntrusivePtr<OtherType>& s_ptr) noexcept;
+
+    ~IntrusivePtr() noexcept;
+
     IntrusivePtr<ObjectType>&
-    operator=(const IntrusivePtr<OtherType>& s_ptr) throw();
+    operator=(ObjectType* ptr) noexcept;
+
+    IntrusivePtr<ObjectType>&
+    operator=(const IntrusivePtr<ObjectType>& s_ptr) noexcept;
+
+    template<typename OtherType>
+    IntrusivePtr<ObjectType>&
+    operator=(const IntrusivePtr<OtherType>& s_ptr) noexcept;
 
     void
-    swap(IntrusivePtr<ObjectType>& sptr) throw();
+    swap(IntrusivePtr<ObjectType>& sptr) noexcept;
 
     // accessors
-    operator ObjectType*() const throw();
+    operator ObjectType*() const noexcept;
 
-    ObjectType* operator->() const throw();
+    ObjectType* operator->() const noexcept;
 
-    ObjectType* in() const throw();
+    ObjectType* in() const noexcept;
 
-    ObjectType* retn() throw();
+    ObjectType* retn() noexcept;
 
   private:
     ObjectType* ptr_;
@@ -71,29 +71,29 @@ namespace Gears
 
   template<typename ObjectType>
   ObjectType*
-  add_ref(ObjectType* ptr) throw();
+  add_ref(ObjectType* ptr) noexcept;
 
   template<typename ObjectType>
   ObjectType*
-  add_ref(const IntrusivePtr<ObjectType>& ptr) throw();
+  add_ref(const IntrusivePtr<ObjectType>& ptr) noexcept;
 }
 
 namespace Gears
 {
   template<typename ObjectType>
-  IntrusivePtr<ObjectType>::IntrusivePtr() throw()
+  IntrusivePtr<ObjectType>::IntrusivePtr() noexcept
     : ptr_(0)
   {}
 
   template<typename ObjectType>
-  IntrusivePtr<ObjectType>::IntrusivePtr(ObjectType* ptr) throw()
+  IntrusivePtr<ObjectType>::IntrusivePtr(ObjectType* ptr) noexcept
     : ptr_(ptr)
   {}
 
   template<typename ObjectType>
   IntrusivePtr<ObjectType>::IntrusivePtr(
     const IntrusivePtr<ObjectType>& s_ptr)
-    throw()
+    noexcept
     : ptr_(add_ref(s_ptr.in()))
   {}
 
@@ -101,12 +101,12 @@ namespace Gears
   template<typename OtherType>
   IntrusivePtr<ObjectType>::IntrusivePtr(
     const IntrusivePtr<OtherType>& s_ptr)
-    throw()
+    noexcept
     : ptr_(add_ref(s_ptr.in()))
   {}
 
   template<typename ObjectType>
-  IntrusivePtr<ObjectType>::~IntrusivePtr() throw()
+  IntrusivePtr<ObjectType>::~IntrusivePtr() noexcept
   {
     if(ptr_)
     {
@@ -116,7 +116,7 @@ namespace Gears
 
   template<typename ObjectType>
   IntrusivePtr<ObjectType>&
-  IntrusivePtr<ObjectType>::operator=(ObjectType* ptr) throw()
+  IntrusivePtr<ObjectType>::operator=(ObjectType* ptr) noexcept
   {
     if(ptr_)
     {
@@ -131,7 +131,7 @@ namespace Gears
   IntrusivePtr<ObjectType>&
   IntrusivePtr<ObjectType>::operator=(
     const IntrusivePtr<ObjectType>& s_ptr)
-    throw()
+    noexcept
   {
     ObjectType* new_ptr(add_ref(s_ptr.in()));
     if(ptr_)
@@ -148,7 +148,7 @@ namespace Gears
   template<typename OtherType>
   IntrusivePtr<ObjectType>&
   IntrusivePtr<ObjectType>::operator=(const IntrusivePtr<OtherType>& s_ptr)
-    throw()
+    noexcept
   {
     OtherType* new_ptr(add_ref(s_ptr.in()));
     if(ptr_)
@@ -163,7 +163,7 @@ namespace Gears
   template <typename ObjectType>
   void
   IntrusivePtr<ObjectType>::swap(IntrusivePtr<ObjectType>& sptr)
-    throw()
+    noexcept
   {
     ObjectType* new_ptr(sptr.in());
     sptr.retn();
@@ -172,28 +172,28 @@ namespace Gears
   }
 
   template<typename ObjectType>
-  IntrusivePtr<ObjectType>::operator ObjectType*() const throw()
+  IntrusivePtr<ObjectType>::operator ObjectType*() const noexcept
   {
     return ptr_;
   }
 
   template<typename ObjectType>
   ObjectType*
-  IntrusivePtr<ObjectType>::operator->() const throw()
+  IntrusivePtr<ObjectType>::operator->() const noexcept
   {
     return ptr_;
   }
 
   template<typename ObjectType>
   ObjectType*
-  IntrusivePtr<ObjectType>::in() const throw()
+  IntrusivePtr<ObjectType>::in() const noexcept
   {
     return ptr_;
   }
 
   template<typename ObjectType>
   ObjectType*
-  IntrusivePtr<ObjectType>::retn() throw()
+  IntrusivePtr<ObjectType>::retn() noexcept
   {
     ObjectType* ret(ptr_);
     ptr_ = 0;
@@ -202,7 +202,7 @@ namespace Gears
 
   template<typename ObjectType>
   ObjectType*
-  add_ref(ObjectType* ptr) throw()
+  add_ref(ObjectType* ptr) noexcept
   {
     if(ptr)
     {
@@ -214,7 +214,7 @@ namespace Gears
 
   template<typename ObjectType>
   ObjectType*
-  add_ref(const IntrusivePtr<ObjectType>& ptr) throw()
+  add_ref(const IntrusivePtr<ObjectType>& ptr) noexcept
   {
     return add_ref(ptr.in());
   }

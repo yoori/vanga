@@ -33,16 +33,16 @@ namespace Declaration
       const char* name,
       bool is_fixed_val,
       SizeType fixed_size_val)
-      throw();
+      noexcept;
 
-    virtual bool is_fixed() const throw();
+    virtual bool is_fixed() const noexcept;
 
-    virtual SizeType fixed_size() const throw();
+    virtual SizeType fixed_size() const noexcept;
 
-    virtual SimpleDescriptor_var as_simple() throw();
+    virtual SimpleDescriptor_var as_simple() noexcept;
 
   protected:
-    virtual ~SimpleDescriptor() throw() {}
+    virtual ~SimpleDescriptor() noexcept {}
     
   private:
     bool is_fixed_;
@@ -60,7 +60,7 @@ namespace Declaration
     const char* name_val,
     bool is_fixed_val,
     SizeType fixed_size_val)
-    throw()
+    noexcept
     : BaseType(name_val),
       BaseDescriptor(name_val),
       is_fixed_(is_fixed_val),
@@ -69,21 +69,21 @@ namespace Declaration
   
   inline
   bool
-  SimpleDescriptor::is_fixed() const throw()
+  SimpleDescriptor::is_fixed() const noexcept
   {
     return is_fixed_;
   }
 
   inline
   SizeType
-  SimpleDescriptor::fixed_size() const throw()
+  SimpleDescriptor::fixed_size() const noexcept
   {
     return fixed_size_;
   }
 
   inline
   SimpleDescriptor_var
-  SimpleDescriptor::as_simple() throw()
+  SimpleDescriptor::as_simple() noexcept
   {
     return Gears::add_ref(this);
   }

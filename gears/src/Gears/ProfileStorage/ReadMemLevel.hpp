@@ -48,41 +48,41 @@ namespace Gears
 
   public:
     MemLevelHolder()
-      throw();
+      noexcept;
 
     CheckProfileResult
     check_profile_i(const KeyType& key) const
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     GetProfileResult
     get_profile_i(const KeyType& key) const
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     unsigned long
     size_i() const
-      throw();
+      noexcept;
 
     uint64_t
     area_size_i() const
-      throw();
+      noexcept;
 
     unsigned long
     merge_free_size_i() const
-      throw();
+      noexcept;
 
     Time
     min_access_time_i() const
-      throw();
+      noexcept;
 
     bool
     get_first_i(
       KeyType& key,
       ConstSmartMemBuf_var& mem_buf) const
-      throw();
+      noexcept;
 
     static unsigned long
     eval_area_size_(const ProfileHolder& holder)
-      throw();
+      noexcept;
 
   public:
     ProfileHolderMap profiles_;
@@ -116,14 +116,14 @@ namespace Gears
     {
     public:
       KeyIteratorImpl(const ReadMemLevel<KeyType>* read_mem_level)
-        throw();
+        noexcept;
 
       virtual bool
       get_next(
         KeyType& key,
         ProfileOperation& operation,
         Time& access_time)
-        throw();
+        noexcept;
 
     private:
       const Gears::IntrusivePtr<const ReadMemLevel<KeyType> > read_mem_level_;
@@ -136,18 +136,18 @@ namespace Gears
     {
     public:
       IteratorImpl(const ReadMemLevel<KeyType>* read_mem_level)
-        throw();
+        noexcept;
 
       virtual bool
       get_next(
         KeyType& key,
         ProfileOperation& operation,
         Time& access_time)
-        throw();
+        noexcept;
 
       virtual ConstSmartMemBuf_var
       get_profile()
-        throw();
+        noexcept;
 
     private:
       const Gears::IntrusivePtr<const ReadMemLevel<KeyType> > read_mem_level_;
@@ -158,38 +158,38 @@ namespace Gears
   public:
     virtual CheckProfileResult
     check_profile(const KeyType& key) const
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual GetProfileResult
     get_profile(const KeyType& key) const
-      throw(typename ReadBaseLevel<KeyType>::Exception);
+      /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     virtual typename ReadBaseLevel<KeyType>::KeyIterator_var
     get_key_iterator() const
-      throw();
+      noexcept;
 
     virtual typename ReadBaseLevel<KeyType>::Iterator_var
     get_iterator(unsigned long read_buffer_size) const
-      throw();
+      noexcept;
 
     virtual unsigned long
     size() const
-      throw();
+      noexcept;
 
     virtual unsigned long
     area_size() const
-      throw();
+      noexcept;
 
     virtual unsigned long
     merge_free_size() const
-      throw();
+      noexcept;
 
     virtual Time
     min_access_time() const
-      throw();
+      noexcept;
 
   protected:
-    virtual ~ReadMemLevel() throw()
+    virtual ~ReadMemLevel() noexcept
     {}
   };
 }

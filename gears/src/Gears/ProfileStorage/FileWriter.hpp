@@ -39,34 +39,34 @@ namespace Gears
       bool append = false,
       bool disable_caching = false,
       FileController* file_controller = 0)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     FileWriter(
       int fd,
       unsigned long buffer_size,
       FileController* file_controller = 0)
-      throw(Exception);
+      /*throw(Exception)*/;
 
-    ~FileWriter() throw();
+    ~FileWriter() noexcept;
 
     // result can be less then read_size only if reached eof
     void
     write(const void* val, unsigned long read_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     void
-    flush() throw(Exception);
+    flush() /*throw(Exception)*/;
 
     unsigned long
-    size() const throw();
+    size() const noexcept;
 
     void
-    close() throw(Exception);
+    close() /*throw(Exception)*/;
 
   private:
     void
     write_(const void* val, unsigned long read_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
   private:
     const unsigned long buffer_size_;

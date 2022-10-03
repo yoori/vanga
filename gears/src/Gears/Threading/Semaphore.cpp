@@ -26,15 +26,15 @@ namespace Gears
   //
   // Condition based implementation
   //
-  Semaphore::Semaphore(int count) throw(Exception)
+  Semaphore::Semaphore(int count) /*throw(Exception)*/
     : value_(count)
   {}
 
-  Semaphore::~Semaphore() throw()
+  Semaphore::~Semaphore() noexcept
   {}
 
   void
-  Semaphore::acquire() throw(Exception)
+  Semaphore::acquire() /*throw(Exception)*/
   {
     ConditionGuard guard(lock_, cond_);
 
@@ -47,7 +47,7 @@ namespace Gears
   }
 
   bool
-  Semaphore::try_acquire() throw(Exception)
+  Semaphore::try_acquire() /*throw(Exception)*/
   {
     ConditionGuard guard(lock_, cond_);
 
@@ -62,7 +62,7 @@ namespace Gears
   }
 
   void
-  Semaphore::release() throw(Exception)
+  Semaphore::release() /*throw(Exception)*/
   {
     Mutex::WriteGuard guard(lock_);
     ++value_;
@@ -70,7 +70,7 @@ namespace Gears
   }
 
   int
-  Semaphore::value() throw(Exception)
+  Semaphore::value() /*throw(Exception)*/
   {
     Mutex::ReadGuard guard(lock_);
     return static_cast<int>(value_);
@@ -78,7 +78,7 @@ namespace Gears
 
 #else
 
-  Semaphore::Semaphore(int count) throw(Exception)
+  Semaphore::Semaphore(int count) /*throw(Exception)*/
   {
     if(::sem_init(&semaphore_, 0, count))
     {
@@ -87,13 +87,13 @@ namespace Gears
     }
   }
 
-  Semaphore::~Semaphore() throw()
+  Semaphore::~Semaphore() noexcept
   {
     ::sem_destroy(&semaphore_);
   }
 
   void
-  Semaphore::acquire() throw(Exception)
+  Semaphore::acquire() /*throw(Exception)*/
   {
     while(true)
     {
@@ -111,7 +111,7 @@ namespace Gears
   }
 
   bool
-  Semaphore::try_acquire() throw(Exception)
+  Semaphore::try_acquire() /*throw(Exception)*/
   {
     if(!sem_trywait(&semaphore_))
     {
@@ -128,7 +128,7 @@ namespace Gears
   }
 
   void
-  Semaphore::release() throw(Exception)
+  Semaphore::release() /*throw(Exception)*/
   {
     if(::sem_post(&semaphore_))
     {
@@ -137,7 +137,7 @@ namespace Gears
   }
 
   int
-  Semaphore::value() throw(Exception)
+  Semaphore::value() /*throw(Exception)*/
   {
     int value;
     if(::sem_getvalue(&semaphore_, &value) < 0)

@@ -31,7 +31,7 @@ namespace Gears
    * @return random number in [0..RAND_MAX] range
    */
   uint32_t
-  safe_rand() throw ();
+  safe_rand() noexcept;
 
   /**
    * Give uniform distribution in range [0..max_boundary-1].
@@ -42,7 +42,7 @@ namespace Gears
    */
   inline
   uint32_t
-  safe_rand(uint32_t max_boundary) throw ()
+  safe_rand(uint32_t max_boundary) noexcept
   {
     return static_cast<uint32_t>(static_cast<double>(max_boundary) *
       safe_rand() / 2147483648.0);
@@ -58,7 +58,7 @@ namespace Gears
    */
   inline
   uint32_t
-  safe_rand(uint32_t min_boundary, uint32_t max_boundary) throw ()
+  safe_rand(uint32_t min_boundary, uint32_t max_boundary) noexcept
   {
     return min_boundary + safe_rand(max_boundary - min_boundary + 1);
   }
@@ -75,7 +75,7 @@ namespace Gears
    */
   inline
   uint32_t
-  safe_integral_rand(uint8_t bits_number) throw ()
+  safe_integral_rand(uint8_t bits_number) noexcept
   {
     return safe_rand() >> (31 - bits_number);
   }

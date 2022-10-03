@@ -39,24 +39,24 @@ namespace Gears
     OStreamLogger(
       std::ostream& ostr,
       unsigned long log_level = Logger::INFO)
-      throw();
+      noexcept;
 
     virtual unsigned long
-    log_level() throw();
+    log_level() noexcept;
 
     virtual void
-    log_level(unsigned long value) throw();
+    log_level(unsigned long value) noexcept;
 
     virtual bool
     log(const Gears::SubString& text,
       unsigned long severity = INFO,
       const Gears::SubString& aspect = Gears::SubString(),
       const Gears::SubString& code = Gears::SubString())
-      throw();
+      noexcept;
 
   protected:
     virtual
-    ~OStreamLogger() throw() = default;
+    ~OStreamLogger() noexcept = default;
 
   protected:
     std::ostream& ostr_;
@@ -74,7 +74,7 @@ namespace Gears
   OStreamLogger::OStreamLogger(
     std::ostream& ostr,
     unsigned long log_level)
-    throw()
+    noexcept
     : ostr_(ostr),
       log_level_(log_level)
   {}

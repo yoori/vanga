@@ -45,29 +45,29 @@ namespace Code
   public:
     void generate(
       std::ostream& out,
-      Code::ElementList* elements) throw();
+      Code::ElementList* elements) noexcept;
 
-    virtual void visit_i(const Code::Element*) throw();
+    virtual void visit_i(const Code::Element*) noexcept;
 
-    virtual void visit_i(const Code::IncludeElement*) throw();
+    virtual void visit_i(const Code::IncludeElement*) noexcept;
 
-    virtual void visit_i(const Code::NamespaceElement*) throw();
+    virtual void visit_i(const Code::NamespaceElement*) noexcept;
 
-    virtual void visit_i(const Code::TypeDefElement*) throw();
+    virtual void visit_i(const Code::TypeDefElement*) noexcept;
 
-    virtual void visit_i(const Code::TypeElement*) throw();
+    virtual void visit_i(const Code::TypeElement*) noexcept;
 
   protected:
-    virtual ~Tracer() throw() {}
+    virtual ~Tracer() noexcept {}
 
     void generate_descriptor_(
-      const Declaration::StructDescriptor* descriptor) throw();
+      const Declaration::StructDescriptor* descriptor) noexcept;
 
     void generate_reader_(
-      Declaration::StructReader* reader) throw();
+      Declaration::StructReader* reader) noexcept;
 
     void generate_writer_(
-      Declaration::StructWriter* writer) throw();
+      Declaration::StructWriter* writer) noexcept;
 
   private:
     std::ostream* out_;
@@ -83,13 +83,13 @@ namespace Code
   inline
   void
   Tracer::visit_i(
-    const Code::Element*) throw()
+    const Code::Element*) noexcept
   {}
 
   inline
   void
   Tracer::visit_i(
-    const Code::IncludeElement* elem) throw()
+    const Code::IncludeElement* elem) noexcept
   {
     *out_ << offset_ << "#include <" << elem->file() << ">" << std::endl;
   }
@@ -97,7 +97,7 @@ namespace Code
   inline
   void
   Tracer::visit_i(
-    const Code::NamespaceElement* elem) throw()
+    const Code::NamespaceElement* elem) noexcept
   {
     Declaration::Namespace_var namespace_decl = elem->namespace_decl();
     std::string prev_offset;
@@ -126,7 +126,7 @@ namespace Code
   inline
   void
   Tracer::visit_i(
-    const Code::TypeDefElement* elem) throw()
+    const Code::TypeDefElement* elem) noexcept
   {
     *out_ << offset_ << "typedef " << elem->base_type()->name() << " " <<
       elem->type_name() << ";" << std::endl;
@@ -135,7 +135,7 @@ namespace Code
   inline
   void
   Tracer::visit_i(
-    const Code::TypeElement* elem) throw()
+    const Code::TypeElement* elem) noexcept
   {
     Declaration::BaseType_var type = elem->type();
     Declaration::BaseDescriptor_var descriptor = type->as_descriptor();
@@ -176,7 +176,7 @@ namespace Code
   inline
   void
   Tracer::generate_descriptor_(
-    const Declaration::StructDescriptor* struct_descriptor) throw()
+    const Declaration::StructDescriptor* struct_descriptor) noexcept
   {
     *out_ << std::endl << offset_ <<
       "struct " << struct_descriptor->name() << std::endl <<
@@ -198,7 +198,7 @@ namespace Code
   inline
   void
   Tracer::generate_reader_(
-    Declaration::StructReader* struct_reader) throw()
+    Declaration::StructReader* struct_reader) noexcept
   {
     *out_ << std::endl <<
       offset_ << "reader " << struct_reader->name() << "<" <<
@@ -221,7 +221,7 @@ namespace Code
   inline
   void
   Tracer::generate_writer_(
-    Declaration::StructWriter* struct_writer) throw()
+    Declaration::StructWriter* struct_writer) noexcept
   {
     *out_ << std::endl <<
       offset_ << "writer " << struct_writer->name() << "<" <<
@@ -245,7 +245,7 @@ namespace Code
   void
   Tracer::generate(
     std::ostream& out,
-    Code::ElementList* elements) throw()
+    Code::ElementList* elements) noexcept
   {
     out_ = &out;
     

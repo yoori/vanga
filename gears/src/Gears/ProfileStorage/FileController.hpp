@@ -38,30 +38,30 @@ namespace Gears
 
   public:
     virtual SmartMemBuf_var
-    create_buffer() const throw() = 0;
+    create_buffer() const noexcept = 0;
 
     virtual int
     open(const char* file_name, int flags, mode_t mode)
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     virtual void
-    close(int fd) throw(Exception) = 0;
+    close(int fd) /*throw(Exception)*/ = 0;
 
     virtual ssize_t
     pread(int fd, void* val, unsigned long read_size, unsigned long fd_pos)
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     virtual ssize_t
     read(int fd, void* val, unsigned long read_size)
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     virtual ssize_t
     write(int fd, const void* val, unsigned long write_size)
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
   protected:
     virtual
-    ~FileController() throw () = default;
+    ~FileController() noexcept = default;
   };
 
   typedef IntrusivePtr<FileController>
@@ -81,16 +81,16 @@ namespace Gears
       add_read_time_(
         const Time& start,
         const Time& stop,
-        unsigned long size) throw() = 0;
+        unsigned long size) noexcept = 0;
 
       virtual void
       add_write_time_(
         const Time& start,
         const Time& stop,
-        unsigned long size) throw() = 0;
+        unsigned long size) noexcept = 0;
 
       virtual
-      ~Stat() throw() = default;
+      ~Stat() noexcept = default;
     };
 
     typedef IntrusivePtr<Stat> Stat_var;
@@ -100,47 +100,47 @@ namespace Gears
       Stat* pread_stat = 0,
       uint64_t min_free_space = 0,
       unsigned long free_space_check_size_period = 0)
-      throw();
+      noexcept;
 
     virtual SmartMemBuf_var
-    create_buffer() const throw();
+    create_buffer() const noexcept;
 
     virtual int
     open(const char* file_name, int flags, mode_t mode)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual void
-    close(int fd) throw(Exception);
+    close(int fd) /*throw(Exception)*/;
 
     virtual ssize_t
     pread(int fd_, void* val, unsigned long read_size, unsigned long fd_pos)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual ssize_t
     read(int fd_, void* val, unsigned long read_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual ssize_t
     write(int fd_, const void* val, unsigned long write_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
   protected:
-    virtual ~PosixFileController() throw() = default;
+    virtual ~PosixFileController() noexcept = default;
 
     ssize_t
     pread_(int fd_, void* val, unsigned long read_size, unsigned long fd_pos)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     ssize_t
     read_(int fd_, void* val, unsigned long read_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     ssize_t
     write_(int fd_, const void* val, unsigned long write_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     bool
-    control_devices_() const throw();
+    control_devices_() const noexcept;
 
   protected:
     typedef unsigned long DeviceId;
@@ -148,13 +148,13 @@ namespace Gears
     class Device: public AtomicRefCountable
     {
     public:
-      Device() throw();
+      Device() noexcept;
 
       AtomicCounter write_size_meter;
 
     protected:
       virtual
-      ~Device() throw () = default;
+      ~Device() noexcept = default;
     };
 
     typedef IntrusivePtr<Device>
@@ -193,24 +193,24 @@ namespace Gears
       unsigned long count;
       uint64_t sum_size;
 
-      Counters() throw ();
+      Counters() noexcept;
 
       Time
-      avg_time() const throw();
+      avg_time() const noexcept;
 
       void
-      print(std::ostream& out) const throw();
+      print(std::ostream& out) const noexcept;
     };
 
   public:
     Counters
-    read_counters() const throw();
+    read_counters() const noexcept;
 
     Counters
-    write_counters() const throw();
+    write_counters() const noexcept;
 
     IntrusivePtr<StatImpl>
-    reset() throw();
+    reset() noexcept;
 
   protected:
     typedef Gears::Mutex SyncPolicy;
@@ -222,21 +222,21 @@ namespace Gears
 
   protected:
     virtual
-    ~StatImpl() throw() = default;
+    ~StatImpl() noexcept = default;
 
     virtual void
     add_read_time_(
       const Time& start,
       const Time& stop,
       unsigned long size)
-      throw();
+      noexcept;
 
     virtual void
     add_write_time_(
       const Time& start,
       const Time& stop,
       unsigned long size)
-      throw();
+      noexcept;
 
     void
     add_time_(
@@ -244,7 +244,7 @@ namespace Gears
       const Time& start,
       const Time& stop,
       unsigned long size)
-      throw();
+      noexcept;
 
   protected:
     CountersHolder read_counters_;
@@ -261,29 +261,29 @@ namespace Gears
     SSDFileController(
       FileController* delegate_file_controller,
       unsigned long write_block_size = 128*1024)
-      throw();
+      noexcept;
 
     virtual SmartMemBuf_var
-    create_buffer() const throw();
+    create_buffer() const noexcept;
 
     virtual int
     open(const char* file_name, int flags, mode_t mode)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual void
-    close(int fd) throw(Exception);
+    close(int fd) /*throw(Exception)*/;
 
     virtual ssize_t
     pread(int fd, void* val, unsigned long read_size, unsigned long fd_pos)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual ssize_t
     read(int fd, void* val, unsigned long read_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual ssize_t
     write(int fd, const void* val, unsigned long write_size)
-      throw(Exception);
+      /*throw(Exception)*/;
 
   protected:
     typedef Gears::RWLock SyncPolicy;

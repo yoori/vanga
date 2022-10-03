@@ -61,7 +61,7 @@ namespace Gears
      */
     CompositeActiveObject(
       bool synch_termination = false,
-      bool clear_on_exit = true) throw();
+      bool clear_on_exit = true) noexcept;
 
     // ActiveObject interface
     /**
@@ -72,7 +72,7 @@ namespace Gears
      */
     virtual void
     activate_object()
-      throw(CompositeAlreadyActive, ChildException, Gears::Exception);
+      /*throw(CompositeAlreadyActive, ChildException, Gears::Exception)*/;
 
     /**
      * Deactivate (initiate stopping) all owned Active Objects.
@@ -81,7 +81,7 @@ namespace Gears
      * will start deactivation first.
      */
     virtual void
-    deactivate_object() throw(Exception, Gears::Exception);
+    deactivate_object() /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Waits for deactivation all owned completion.
@@ -89,27 +89,27 @@ namespace Gears
      * That logic correspond deactivate_object method.
      */
     virtual void
-    wait_object() throw(Exception, Gears::Exception);
+    wait_object() /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Calls clear() for all owned objects
      */
     virtual void
-    clear() throw(Gears::Exception);
+    clear() /*throw(Gears::Exception)*/;
 
     /**
      * Thread-safe check status of this Active Object.
      * @return true if active.
      */
     virtual bool
-    active() throw(Gears::Exception);
+    active() /*throw(Gears::Exception)*/;
 
     /**
      * Deactivate and wait for stop for all owned Active Objects.
      * Clears list of the objects.
      */
     void
-    clear_children() throw(Exception, Gears::Exception);
+    clear_children() /*throw(Exception, Gears::Exception)*/;
 
     /**
      * This method fills CompositeActiveObject with other Active
@@ -121,7 +121,7 @@ namespace Gears
      * @param child object that should go under the management of container.
      */
     void
-    add_child_object(ActiveObject* child) throw(Exception, Gears::Exception);
+    add_child_object(ActiveObject* child) /*throw(Exception, Gears::Exception)*/;
 
   protected:
     typedef std::list<ActiveObject_var> ActiveObjectList;
@@ -134,7 +134,7 @@ namespace Gears
      * its completion.
      */
     virtual
-    ~CompositeActiveObject() throw();
+    ~CompositeActiveObject() noexcept;
 
     /**
      * Simply calls wait_object for the given interval of objects
@@ -142,14 +142,14 @@ namespace Gears
     void
     wait_for_some_objects(ActiveObjectList::reverse_iterator rbegin,
       ActiveObjectList::reverse_iterator rend)
-      throw(Exception, Gears::Exception);
+      /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Thread-unsafe deactivation logic
      */
     void
     deactivate_object_i(ActiveObjectList::reverse_iterator rit)
-      throw(Exception, Gears::Exception);
+      /*throw(Exception, Gears::Exception)*/;
 
   private:
     Lock lock_;
@@ -169,7 +169,7 @@ namespace Gears
 namespace Gears
 {
   inline bool
-  CompositeActiveObject::active() throw(Gears::Exception)
+  CompositeActiveObject::active() /*throw(Gears::Exception)*/
   {
     return active_state_ == AS_ACTIVE;
   }

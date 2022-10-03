@@ -29,11 +29,11 @@ namespace Code
   class TypeElement: public Element
   {
   public:
-    TypeElement(Declaration::BaseType* type_val) throw();
+    TypeElement(Declaration::BaseType* type_val) noexcept;
 
-    Declaration::BaseType_var type() const throw();
+    Declaration::BaseType_var type() const noexcept;
 
-    virtual void visited(ElementVisitor* visitor) const throw();
+    virtual void visited(ElementVisitor* visitor) const noexcept;
 
   private:
     Declaration::BaseType_var type_;
@@ -44,20 +44,20 @@ namespace Code
 {
   inline
   TypeElement::TypeElement(Declaration::BaseType* type_val)
-    throw()
+    noexcept
     : type_(Gears::add_ref(type_val))
   {}
 
   inline
   Declaration::BaseType_var
-  TypeElement::type() const throw()
+  TypeElement::type() const noexcept
   {
     return type_;
   }
 
   inline
   void
-  TypeElement::visited(ElementVisitor* visitor) const throw()
+  TypeElement::visited(ElementVisitor* visitor) const noexcept
   {
     visitor->visit_i(this);
   }

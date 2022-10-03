@@ -30,13 +30,13 @@ namespace Gears
 {
   CompositeActiveObject::CompositeActiveObject(
     bool synch_termination,
-    bool clear_on_exit) throw()
+    bool clear_on_exit) noexcept
     : active_state_(AS_NOT_ACTIVE),
       synchronous_(synch_termination),
       clear_on_exit_(clear_on_exit)
   {}
 
-  CompositeActiveObject::~CompositeActiveObject() throw()
+  CompositeActiveObject::~CompositeActiveObject() noexcept
   {
     if(clear_on_exit_)
     {
@@ -58,7 +58,7 @@ namespace Gears
 
   void
   CompositeActiveObject::activate_object()
-    throw(CompositeAlreadyActive, ChildException, Gears::Exception)
+    /*throw(CompositeAlreadyActive, ChildException, Gears::Exception)*/
   {
     static const char* FUN = "CompositeActiveObject::activate_object()";
 
@@ -110,14 +110,14 @@ namespace Gears
 
   void
   CompositeActiveObject::deactivate_object()
-    throw(Exception, Gears::Exception)
+    /*throw(Exception, Gears::Exception)*/
   {
     Lock::WriteGuard guard(lock_);
     deactivate_object_i(child_objects_.rbegin());
   }
 
   void
-  CompositeActiveObject::wait_object() throw(Exception, Gears::Exception)
+  CompositeActiveObject::wait_object() /*throw(Exception, Gears::Exception)*/
   {
     ActiveObjectList copy_of_child_objects;
 
@@ -154,7 +154,7 @@ namespace Gears
 
   void
   CompositeActiveObject::add_child_object(ActiveObject* child)
-    throw(Exception, Gears::Exception)
+    /*throw(Exception, Gears::Exception)*/
   {
     static const char* FUN = "CompositeActiveObject::add_child_object()";
 
@@ -189,7 +189,7 @@ namespace Gears
   }
 
   void
-  CompositeActiveObject::clear_children() throw(Exception, Gears::Exception)
+  CompositeActiveObject::clear_children() /*throw(Exception, Gears::Exception)*/
   {
     Lock::WriteGuard guard(lock_);
 
@@ -208,7 +208,7 @@ namespace Gears
   CompositeActiveObject::wait_for_some_objects(
     ActiveObjectList::reverse_iterator rit,
     ActiveObjectList::reverse_iterator rend)
-    throw(Exception, Gears::Exception)
+    /*throw(Exception, Gears::Exception)*/
   {
     static const char* FUN = "CompositeActiveObject::wait_for_some_objects()";
 
@@ -246,7 +246,7 @@ namespace Gears
   void
   CompositeActiveObject::deactivate_object_i(
     ActiveObjectList::reverse_iterator rit)
-    throw(Exception, Gears::Exception)
+    /*throw(Exception, Gears::Exception)*/
   {
     static const char* FUN = "CompositeActiveObject::deactivate_object_i()";
 
@@ -290,7 +290,7 @@ namespace Gears
   }
 
   void
-  CompositeActiveObject::clear() throw(Gears::Exception)
+  CompositeActiveObject::clear() /*throw(Gears::Exception)*/
   {
     Lock::WriteGuard guard(lock_);
 

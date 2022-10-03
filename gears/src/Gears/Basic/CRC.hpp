@@ -35,7 +35,7 @@ namespace Gears
      * @param size its size
      */
     uint32_t
-    quick(uint32_t crc, const void* data, size_t size) throw ();
+    quick(uint32_t crc, const void* data, size_t size) noexcept;
 
     /**
      * Calculates reversed CRC32 of the supplied data
@@ -44,7 +44,7 @@ namespace Gears
      * @param size its size
      */
     uint32_t
-    reversed(uint32_t crc, const void* data, size_t size) throw ();
+    reversed(uint32_t crc, const void* data, size_t size) noexcept;
   }
 }
 
@@ -57,7 +57,7 @@ namespace Gears
     inline
     uint32_t
     quick(uint32_t crc, const void* data, size_t size)
-      throw ()
+      noexcept
     {
       const uint8_t* udata = static_cast<const uint8_t*>(data);
       while (size-- > 0)
@@ -73,7 +73,7 @@ namespace Gears
     inline
     uint32_t
     reversed(uint32_t crc, const void* data, size_t size)
-      throw ()
+      noexcept
     {
       const uint8_t* udata = static_cast<const uint8_t*>(data);
       crc = ~crc;

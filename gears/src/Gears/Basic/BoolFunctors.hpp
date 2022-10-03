@@ -43,7 +43,7 @@ namespace Gears
        * Constructor
        * @param predicate1 the only predicate
        */
-      PredicatesHolder1(const Predicate1& predicate1) throw ();
+      PredicatesHolder1(const Predicate1& predicate1) noexcept;
 
       const Predicate1& predicate1_;
     };
@@ -61,7 +61,7 @@ namespace Gears
        * @param predicate2 the second predicate
        */
       PredicatesHolder2(const Predicate1& predicate1,
-        const Predicate2& predicate2) throw ();
+        const Predicate2& predicate2) noexcept;
 
       const Predicate1& predicate1_;
       const Predicate2& predicate2_;
@@ -82,7 +82,7 @@ namespace Gears
        */
       PredicatesHolder3(const Predicate1& predicate1,
         const Predicate2& predicate2, const Predicate3& predicate3)
-        throw ();
+        noexcept;
 
       const Predicate1& predicate1_;
       const Predicate2& predicate2_;
@@ -105,7 +105,7 @@ namespace Gears
      * Constructor
      * @param predicate1 the only predicate
      */
-    True1(const Predicate1& predicate1) throw ();
+    True1(const Predicate1& predicate1) noexcept;
 
     /**
      * Calls predicate(arg)
@@ -114,7 +114,7 @@ namespace Gears
      */
     bool
     operator ()(typename Predicate1::argument_type arg) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -134,7 +134,7 @@ namespace Gears
      * Constructor
      * @param predicate1 the only predicate
      */
-    True2(const Predicate1& predicate1) throw ();
+    True2(const Predicate1& predicate1) noexcept;
 
     /**
      * Calls predicate(arg1, arg2)
@@ -145,7 +145,7 @@ namespace Gears
     bool
     operator ()(typename Predicate1::first_argument_type arg1,
       typename Predicate1::second_argument_type arg2) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -163,7 +163,7 @@ namespace Gears
      * Constructor
      * @param predicate1 the only predicate
      */
-    False1(const Predicate1& predicate1) throw ();
+    False1(const Predicate1& predicate1) noexcept;
 
     /**
      * Calls predicate(arg)
@@ -172,7 +172,7 @@ namespace Gears
      */
     bool
     operator ()(typename Predicate1::argument_type arg) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -192,7 +192,7 @@ namespace Gears
      * Constructor
      * @param predicate1 the only predicate
      */
-    False2(const Predicate1& predicate1) throw ();
+    False2(const Predicate1& predicate1) noexcept;
 
     /**
      * Calls predicate(arg1, arg2)
@@ -203,7 +203,7 @@ namespace Gears
     bool
     operator ()(typename Predicate1::first_argument_type arg1,
       typename Predicate1::second_argument_type arg2) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -220,7 +220,7 @@ namespace Gears
      * Constructor
      * @param predicate1 the only predicate
      */
-    Not1(const Predicate1& predicate1) throw ();
+    Not1(const Predicate1& predicate1) noexcept;
 
     /**
      * Calls !predicate(arg)
@@ -229,7 +229,7 @@ namespace Gears
      */
     bool
     operator ()(typename Predicate1::argument_type arg) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -249,7 +249,7 @@ namespace Gears
      * Constructor
      * @param predicate1 the only predicate
      */
-    Not2(const Predicate1& predicate1) throw ();
+    Not2(const Predicate1& predicate1) noexcept;
 
     /**
      * Calls !predicate(arg1, arg2)
@@ -260,7 +260,7 @@ namespace Gears
     bool
     operator ()(typename Predicate1::first_argument_type arg1,
       typename Predicate1::second_argument_type arg2) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -281,7 +281,7 @@ namespace Gears
      * @param predicate2 the second predicate
      */
     And1(const Predicate1& predicate1, const Predicate2& predicate2)
-      throw ();
+      noexcept;
 
     /**
      * Calls predicate1(arg) && predicate2(arg)
@@ -290,7 +290,7 @@ namespace Gears
      */
     bool
     operator ()(typename Predicate1::argument_type arg) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -314,7 +314,7 @@ namespace Gears
      * @param predicate2 the second predicate
      */
     And2(const Predicate1& predicate1, const Predicate2& predicate2)
-      throw ();
+      noexcept;
 
     /**
      * Calls predicate1(arg1, arg2) && predicate2(arg1, arg2)
@@ -325,7 +325,7 @@ namespace Gears
     bool
     operator ()(typename Predicate1::first_argument_type arg1,
       typename Predicate1::second_argument_type arg2) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -346,7 +346,7 @@ namespace Gears
      * @param predicate2 the second predicate
      */
     Or1(const Predicate1& predicate1, const Predicate2& predicate2)
-      throw ();
+      noexcept;
 
     /**
      * Calls predicate1(arg) || predicate2(arg)
@@ -355,7 +355,7 @@ namespace Gears
      */
     bool
     operator ()(typename Predicate1::argument_type arg) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -378,7 +378,7 @@ namespace Gears
      * @param predicate2 the second predicate
      */
     Or2(const Predicate1& predicate1, const Predicate2& predicate2)
-      throw ();
+      noexcept;
 
     /**
      * Calls predicate1(arg1, arg2) || predicate2(arg1, arg2)
@@ -389,7 +389,7 @@ namespace Gears
     bool
     operator ()(typename Predicate1::first_argument_type arg1,
       typename Predicate1::second_argument_type arg2) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -416,7 +416,7 @@ namespace Gears
       const Predicate1& predicate1,
       const Predicate2& predicate2,
       const Predicate3& predicate3)
-      throw ();
+      noexcept;
 
     /**
      * Calls predicate1(arg) ? predicate2(arg) : predicate3(arg)
@@ -425,7 +425,7 @@ namespace Gears
      */
     bool
     operator ()(typename Predicate1::argument_type arg) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -455,7 +455,7 @@ namespace Gears
       const Predicate1& predicate1,
       const Predicate2& predicate2,
       const Predicate3& predicate3)
-      throw ();
+      noexcept;
 
     /**
      * Calls predicate1(arg1, arg2) ? predicate2(arg1, arg2) :
@@ -467,7 +467,7 @@ namespace Gears
     bool
     operator ()(typename Predicate1::first_argument_type arg1,
       typename Predicate1::second_argument_type arg2) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
   };
 
   /**
@@ -477,7 +477,7 @@ namespace Gears
    */
   template <typename Predicate1>
   True1<Predicate1>
-  true1(const Predicate1& predicate1) throw ();
+  true1(const Predicate1& predicate1) noexcept;
 
   /**
    * Helper function to construct True2 predicate
@@ -486,7 +486,7 @@ namespace Gears
    */
   template <typename Predicate1>
   True2<Predicate1>
-  true2(const Predicate1& predicate1) throw ();
+  true2(const Predicate1& predicate1) noexcept;
 
   /**
    * Helper function to construct False1 predicate
@@ -495,7 +495,7 @@ namespace Gears
    */
   template <typename Predicate1>
   False1<Predicate1>
-  false1(const Predicate1& predicate1) throw ();
+  false1(const Predicate1& predicate1) noexcept;
 
   /**
    * Helper function to construct False2 predicate
@@ -504,7 +504,7 @@ namespace Gears
    */
   template <typename Predicate1>
   False2<Predicate1>
-  false2(const Predicate1& predicate1) throw ();
+  false2(const Predicate1& predicate1) noexcept;
 
   /**
    * Helper function to construct Not1 predicate
@@ -513,7 +513,7 @@ namespace Gears
    */
   template <typename Predicate1>
   Not1<Predicate1>
-  not1(const Predicate1& predicate1) throw ();
+  not1(const Predicate1& predicate1) noexcept;
 
   /**
    * Helper function to construct Not2 predicate
@@ -522,7 +522,7 @@ namespace Gears
    */
   template <typename Predicate1>
   Not2<Predicate1>
-  not2(const Predicate1& predicate1) throw ();
+  not2(const Predicate1& predicate1) noexcept;
 
   /**
    * Helper function to construct And1 predicate
@@ -532,7 +532,7 @@ namespace Gears
    */
   template <typename Predicate1, typename Predicate2>
   And1<Predicate1, Predicate2>
-  and1(const Predicate1& predicate1, const Predicate2& predicate2) throw ();
+  and1(const Predicate1& predicate1, const Predicate2& predicate2) noexcept;
 
   /**
    * Helper function to construct And2 predicate
@@ -542,7 +542,7 @@ namespace Gears
    */
   template <typename Predicate1, typename Predicate2>
   And2<Predicate1, Predicate2>
-  and2(const Predicate1& predicate1, const Predicate2& predicate2) throw ();
+  and2(const Predicate1& predicate1, const Predicate2& predicate2) noexcept;
 
   /**
    * Helper function to construct Or1 predicate
@@ -552,7 +552,7 @@ namespace Gears
    */
   template <typename Predicate1, typename Predicate2>
   Or1<Predicate1, Predicate2>
-  or1(const Predicate1& predicate1, const Predicate2& predicate2) throw ();
+  or1(const Predicate1& predicate1, const Predicate2& predicate2) noexcept;
 
   /**
    * Helper function to construct Or2 predicate
@@ -562,7 +562,7 @@ namespace Gears
    */
   template <typename Predicate1, typename Predicate2>
   Or2<Predicate1, Predicate2>
-  or2(const Predicate1& predicate1, const Predicate2& predicate2) throw ();
+  or2(const Predicate1& predicate1, const Predicate2& predicate2) noexcept;
 
   /**
    * Helper function to construct Conditional1 predicate
@@ -575,7 +575,7 @@ namespace Gears
             typename Predicate3>
   Conditional1<Predicate1, Predicate2, Predicate3>
   conditional1(const Predicate1& predicate1, const Predicate2& predicate2,
-    const Predicate3& predicate3) throw ();
+    const Predicate3& predicate3) noexcept;
 
   /**
    * Helper function to construct Conditional2 predicate
@@ -588,7 +588,7 @@ namespace Gears
             typename Predicate3>
   Conditional2<Predicate1, Predicate2, Predicate3>
   conditional2(const Predicate1& predicate1, const Predicate2& predicate2,
-    const Predicate3& predicate3) throw ();
+    const Predicate3& predicate3) noexcept;
 }
 
 /*
@@ -605,7 +605,7 @@ namespace Gears
     template <typename Predicate1>
     inline
     PredicatesHolder1<Predicate1>::PredicatesHolder1(
-      const Predicate1& predicate1) throw ()
+      const Predicate1& predicate1) noexcept
       : predicate1_(predicate1)
     {}
 
@@ -616,7 +616,7 @@ namespace Gears
     inline
     PredicatesHolder2<Predicate1, Predicate2>::PredicatesHolder2(
       const Predicate1& predicate1, const Predicate2& predicate2)
-      throw ()
+      noexcept
       : predicate1_(predicate1), predicate2_(predicate2)
     {}
 
@@ -628,7 +628,7 @@ namespace Gears
     inline
     PredicatesHolder3<Predicate1, Predicate2, Predicate3>::PredicatesHolder3(
       const Predicate1& predicate1, const Predicate2& predicate2,
-      const Predicate3& predicate3) throw ()
+      const Predicate3& predicate3) noexcept
       : predicate1_(predicate1), predicate2_(predicate2),
         predicate3_(predicate3)
     {}
@@ -639,7 +639,7 @@ namespace Gears
    */
   template <typename Predicate1>
   inline
-  True1<Predicate1>::True1(const Predicate1& predicate1) throw ()
+  True1<Predicate1>::True1(const Predicate1& predicate1) noexcept
     : BoolFunctorsHelper::PredicatesHolder1<Predicate1>(predicate1)
   {}
 
@@ -648,7 +648,7 @@ namespace Gears
   bool
   True1<Predicate1>::operator ()(
     typename Predicate1::argument_type arg) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg), true;
   }
@@ -658,7 +658,7 @@ namespace Gears
    */
   template <typename Predicate1>
   inline
-  True2<Predicate1>::True2(const Predicate1& predicate1) throw ()
+  True2<Predicate1>::True2(const Predicate1& predicate1) noexcept
     : BoolFunctorsHelper::PredicatesHolder1<Predicate1>(predicate1)
   {}
 
@@ -668,7 +668,7 @@ namespace Gears
   True2<Predicate1>::operator ()(
     typename Predicate1::first_argument_type arg1,
     typename Predicate1::second_argument_type arg2) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg1, arg2), true;
   }
@@ -678,7 +678,7 @@ namespace Gears
    */
   template <typename Predicate1>
   inline
-  False1<Predicate1>::False1(const Predicate1& predicate1) throw ()
+  False1<Predicate1>::False1(const Predicate1& predicate1) noexcept
     : BoolFunctorsHelper::PredicatesHolder1<Predicate1>(predicate1)
   {}
 
@@ -687,7 +687,7 @@ namespace Gears
   bool
   False1<Predicate1>::operator ()(
     typename Predicate1::argument_type arg) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg), false;
   }
@@ -697,7 +697,7 @@ namespace Gears
    */
   template <typename Predicate1>
   inline
-  False2<Predicate1>::False2(const Predicate1& predicate1) throw ()
+  False2<Predicate1>::False2(const Predicate1& predicate1) noexcept
     : BoolFunctorsHelper::PredicatesHolder1<Predicate1>(predicate1)
   {}
 
@@ -707,7 +707,7 @@ namespace Gears
   False2<Predicate1>::operator ()(
     typename Predicate1::first_argument_type arg1,
     typename Predicate1::second_argument_type arg2) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg1, arg2), false;
   }
@@ -717,7 +717,7 @@ namespace Gears
    */
   template <typename Predicate1>
   inline
-  Not1<Predicate1>::Not1(const Predicate1& predicate1) throw ()
+  Not1<Predicate1>::Not1(const Predicate1& predicate1) noexcept
     : BoolFunctorsHelper::PredicatesHolder1<Predicate1>(predicate1)
   {}
 
@@ -729,7 +729,7 @@ namespace Gears
   bool
   Not1<Predicate1>::operator ()(
     typename Predicate1::argument_type arg) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return !this->predicate1_(arg);
   }
@@ -739,7 +739,7 @@ namespace Gears
    */
   template <typename Predicate1>
   inline
-  Not2<Predicate1>::Not2(const Predicate1& predicate1) throw ()
+  Not2<Predicate1>::Not2(const Predicate1& predicate1) noexcept
     : BoolFunctorsHelper::PredicatesHolder1<Predicate1>(predicate1)
   {}
 
@@ -749,7 +749,7 @@ namespace Gears
   Not2<Predicate1>::operator ()(
     typename Predicate1::first_argument_type arg1,
     typename Predicate1::second_argument_type arg2) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return !this->predicate1_(arg1, arg2);
   }
@@ -760,7 +760,7 @@ namespace Gears
   template <typename Predicate1, typename Predicate2>
   inline
   And1<Predicate1, Predicate2>::And1(const Predicate1& predicate1,
-    const Predicate2& predicate2) throw ()
+    const Predicate2& predicate2) noexcept
     : BoolFunctorsHelper::PredicatesHolder2<Predicate1, Predicate2>(
         predicate1, predicate2)
   {}
@@ -770,7 +770,7 @@ namespace Gears
   bool
   And1<Predicate1, Predicate2>::operator ()(
     typename Predicate1::argument_type arg) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg) && this->predicate2_(arg);
   }
@@ -781,7 +781,7 @@ namespace Gears
   template <typename Predicate1, typename Predicate2>
   inline
   And2<Predicate1, Predicate2>::And2(const Predicate1& predicate1,
-    const Predicate2& predicate2) throw ()
+    const Predicate2& predicate2) noexcept
     : BoolFunctorsHelper::PredicatesHolder2<Predicate1, Predicate2>(
         predicate1, predicate2)
   {}
@@ -792,7 +792,7 @@ namespace Gears
   And2<Predicate1, Predicate2>::operator ()(
     typename Predicate1::first_argument_type arg1,
     typename Predicate1::second_argument_type arg2) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg1, arg2) && this->predicate2_(arg1, arg2);
   }
@@ -803,7 +803,7 @@ namespace Gears
   template <typename Predicate1, typename Predicate2>
   inline
   Or1<Predicate1, Predicate2>::Or1(const Predicate1& predicate1,
-    const Predicate2& predicate2) throw ()
+    const Predicate2& predicate2) noexcept
     : BoolFunctorsHelper::PredicatesHolder2<Predicate1, Predicate2>(
         predicate1, predicate2)
   {}
@@ -813,7 +813,7 @@ namespace Gears
   bool
   Or1<Predicate1, Predicate2>::operator ()(
     typename Predicate1::argument_type arg) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg) || this->predicate2_(arg);
   }
@@ -824,7 +824,7 @@ namespace Gears
   template <typename Predicate1, typename Predicate2>
   inline
   Or2<Predicate1, Predicate2>::Or2(const Predicate1& predicate1,
-    const Predicate2& predicate2) throw ()
+    const Predicate2& predicate2) noexcept
     : BoolFunctorsHelper::PredicatesHolder2<Predicate1, Predicate2>(
         predicate1, predicate2)
   {}
@@ -835,7 +835,7 @@ namespace Gears
   Or2<Predicate1, Predicate2>::operator ()(
     typename Predicate1::first_argument_type arg1,
     typename Predicate1::second_argument_type arg2) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg1, arg2) || this->predicate2_(arg1, arg2);
   }
@@ -848,7 +848,7 @@ namespace Gears
   inline
   Conditional1<Predicate1, Predicate2, Predicate3>::Conditional1(
     const Predicate1& predicate1, const Predicate2& predicate2,
-    const Predicate3& predicate3) throw ()
+    const Predicate3& predicate3) noexcept
     : BoolFunctorsHelper::PredicatesHolder3
         <Predicate1, Predicate2, Predicate3>(
         predicate1, predicate2, predicate3)
@@ -860,7 +860,7 @@ namespace Gears
   bool
   Conditional1<Predicate1, Predicate2, Predicate3>::operator ()(
     typename Predicate1::argument_type arg) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg) ? this->predicate2_(arg) :
       this->predicate3_(arg);
@@ -876,7 +876,7 @@ namespace Gears
     const Predicate1& predicate1,
     const Predicate2& predicate2,
     const Predicate3& predicate3)
-    throw ()
+    noexcept
     : BoolFunctorsHelper::PredicatesHolder3<Predicate1, Predicate2, Predicate3>(
         predicate1, predicate2, predicate3)
   {}
@@ -888,7 +888,7 @@ namespace Gears
   Conditional2<Predicate1, Predicate2, Predicate3>::operator ()(
     typename Predicate1::first_argument_type arg1,
     typename Predicate1::second_argument_type arg2) const
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     return this->predicate1_(arg1, arg2) ? this->predicate2_(arg1, arg2) :
       this->predicate3_(arg1, arg2);
@@ -899,70 +899,70 @@ namespace Gears
    */
   template <typename Predicate1>
   True1<Predicate1>
-  true1(const Predicate1& predicate1) throw ()
+  true1(const Predicate1& predicate1) noexcept
   {
     return True1<Predicate1>(predicate1);
   }
 
   template <typename Predicate1>
   True2<Predicate1>
-  true2(const Predicate1& predicate1) throw ()
+  true2(const Predicate1& predicate1) noexcept
   {
     return True2<Predicate1>(predicate1);
   }
 
   template <typename Predicate1>
   False1<Predicate1>
-  false1(const Predicate1& predicate1) throw ()
+  false1(const Predicate1& predicate1) noexcept
   {
     return False1<Predicate1>(predicate1);
   }
 
   template <typename Predicate1>
   False2<Predicate1>
-  false2(const Predicate1& predicate1) throw ()
+  false2(const Predicate1& predicate1) noexcept
   {
     return False2<Predicate1>(predicate1);
   }
 
   template <typename Predicate1>
   Not1<Predicate1>
-  not1(const Predicate1& predicate1) throw ()
+  not1(const Predicate1& predicate1) noexcept
   {
     return Not1<Predicate1>(predicate1);
   }
 
   template <typename Predicate1>
   Not2<Predicate1>
-  not2(const Predicate1& predicate1) throw ()
+  not2(const Predicate1& predicate1) noexcept
   {
     return Not2<Predicate1>(predicate1);
   }
 
   template <typename Predicate1, typename Predicate2>
   And1<Predicate1, Predicate2>
-  and1(const Predicate1& predicate1, const Predicate2& predicate2) throw ()
+  and1(const Predicate1& predicate1, const Predicate2& predicate2) noexcept
   {
     return And1<Predicate1, Predicate2>(predicate1, predicate2);
   }
 
   template <typename Predicate1, typename Predicate2>
   And2<Predicate1, Predicate2>
-  and2(const Predicate1& predicate1, const Predicate2& predicate2) throw ()
+  and2(const Predicate1& predicate1, const Predicate2& predicate2) noexcept
   {
     return And2<Predicate1, Predicate2>(predicate1, predicate2);
   }
 
   template <typename Predicate1, typename Predicate2>
   Or1<Predicate1, Predicate2>
-  or1(const Predicate1& predicate1, const Predicate2& predicate2) throw ()
+  or1(const Predicate1& predicate1, const Predicate2& predicate2) noexcept
   {
     return Or1<Predicate1, Predicate2>(predicate1, predicate2);
   }
 
   template <typename Predicate1, typename Predicate2>
   Or2<Predicate1, Predicate2>
-  or2(const Predicate1& predicate1, const Predicate2& predicate2) throw ()
+  or2(const Predicate1& predicate1, const Predicate2& predicate2) noexcept
   {
     return Or2<Predicate1, Predicate2>(predicate1, predicate2);
   }
@@ -971,7 +971,7 @@ namespace Gears
     typename Predicate3>
   Conditional1<Predicate1, Predicate2, Predicate3>
   conditional1(const Predicate1& predicate1, const Predicate2& predicate2,
-    const Predicate3& predicate3) throw ()
+    const Predicate3& predicate3) noexcept
   {
     return Conditional1<Predicate1, Predicate2, Predicate3>(
       predicate1, predicate2, predicate3);
@@ -981,7 +981,7 @@ namespace Gears
     typename Predicate3>
   Conditional2<Predicate1, Predicate2, Predicate3>
   conditional2(const Predicate1& predicate1, const Predicate2& predicate2,
-    const Predicate3& predicate3) throw ()
+    const Predicate3& predicate3) noexcept
   {
     return Conditional2<Predicate1, Predicate2, Predicate3>(
       predicate1, predicate2, predicate3);

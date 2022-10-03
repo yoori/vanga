@@ -54,7 +54,7 @@ namespace Gears
      */
     size_t
     add(char* buffer, size_t size, const SubString& substr)
-      throw ();
+      noexcept;
 
     /**
      * Converts integer value into string
@@ -66,7 +66,7 @@ namespace Gears
      */
     template <typename Integer>
     size_t
-    int_to_str(Integer value, char* str, size_t size) throw ();
+    int_to_str(Integer value, char* str, size_t size) noexcept;
 
     /**
      * Safely concatenates several strings to the string buffer.
@@ -78,11 +78,11 @@ namespace Gears
     template <typename First, typename... Args>
     void
     concat(char* buffer, size_t size, First f, Args... args)
-      throw ();
+      noexcept;
 
     template <typename Integer>
     bool
-    str_to_int(const SubString& str, Integer& value) throw ();
+    str_to_int(const SubString& str, Integer& value) noexcept;
   } // namespace StringManip
 }
 
@@ -92,7 +92,7 @@ namespace Gears
   {
     inline
     size_t
-    append(char* buffer, size_t size, const char* str) throw ()
+    append(char* buffer, size_t size, const char* str) noexcept
     {
       size_t length = strlcpy(buffer, str, size);
       return length < size ? length : size;
@@ -100,14 +100,14 @@ namespace Gears
 
     inline
     size_t
-    append(char* buffer, size_t size, char* str) throw ()
+    append(char* buffer, size_t size, char* str) noexcept
     {
       return append(buffer, size, const_cast<const char*>(str));
     }
 
     inline
     size_t
-    append(char* buffer, size_t size, const SubString& str) throw ()
+    append(char* buffer, size_t size, const SubString& str) noexcept
     {
       //assert(size);
       if (str.size() >= size)
@@ -123,14 +123,14 @@ namespace Gears
 
     inline
     size_t
-    append(char* buffer, size_t size, const std::string& str) throw ()
+    append(char* buffer, size_t size, const std::string& str) noexcept
     {
       return append(buffer, size, SubString(str));
     }
 
     template <typename Integer>
     size_t
-    append(char* buffer, size_t size, Integer integer) throw ()
+    append(char* buffer, size_t size, Integer integer) noexcept
     {
       size_t res = int_to_str(integer, buffer, size);
 
@@ -147,7 +147,7 @@ namespace Gears
     inline
     void
     concat(char* buffer, size_t size)
-      throw ()
+      noexcept
     {
       assert(size);
       *buffer = '\0';
@@ -156,7 +156,7 @@ namespace Gears
     template <typename First, typename... Args>
     void
     concat(char* buffer, size_t size, First f, Args... args)
-      throw ()
+      noexcept
     {
       size_t length = append(buffer, size, f);
       if (length < size)
@@ -177,12 +177,12 @@ namespace Gears
       struct IntToStrSign<Integer, false>
       {
         static size_t
-        convert(Integer value, char* str) throw ();
+        convert(Integer value, char* str) noexcept;
       };
 
       template <typename Integer>
       size_t
-      IntToStrSign<Integer, false>::convert(Integer value, char* str) throw ()
+      IntToStrSign<Integer, false>::convert(Integer value, char* str) noexcept
       {
         char* ptr = str;
         do
@@ -202,12 +202,12 @@ namespace Gears
       struct IntToStrSign<Integer, true>
       {
         static size_t
-        convert(Integer value, char* str) throw ();
+        convert(Integer value, char* str) noexcept;
       };
 
       template <typename Integer>
       size_t
-      IntToStrSign<Integer, true>::convert(Integer value, char* str) throw ()
+      IntToStrSign<Integer, true>::convert(Integer value, char* str) noexcept
       {
         if (value < -std::numeric_limits<Integer>::max())
         {
@@ -228,13 +228,13 @@ namespace Gears
       struct IntToStrInt<Integer, true>
       {
         static size_t
-        convert(Integer value, char* str, size_t size) throw ();
+        convert(Integer value, char* str, size_t size) noexcept;
       };
 
       template <typename Integer>
       size_t
       IntToStrInt<Integer, true>::convert(Integer value, char* str,
-        size_t size) throw ()
+        size_t size) noexcept
       {
         if (size < std::numeric_limits<Integer>::digits10 + 3)
         {
@@ -248,7 +248,7 @@ namespace Gears
 
     template <typename Integer>
     size_t
-    int_to_str(Integer value, char* str, size_t size) throw ()
+    int_to_str(Integer value, char* str, size_t size) noexcept
     {
       return IntToStrHelper::IntToStrInt<Integer,
         std::numeric_limits<Integer>::is_integer>::convert(value, str, size);
@@ -256,7 +256,7 @@ namespace Gears
 
     template <typename Integer>
     bool
-    str_to_int(const SubString& str, Integer& value) throw ()
+    str_to_int(const SubString& str, Integer& value) noexcept
     {
       const char* src = str.begin();
       const char* const END = str.end();

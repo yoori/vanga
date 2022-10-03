@@ -50,7 +50,7 @@ namespace Gears
 
   public:
     RandomAccessFile(FileController* file_controller = 0)
-      throw();
+      noexcept;
 
     /**
      * This constructor open file_name with specified flag
@@ -58,31 +58,31 @@ namespace Gears
     RandomAccessFile(
       const char* file_name,
       FileController* file_controller = 0)
-      throw(PosixException);
+      /*throw(PosixException)*/;
 
     /**
      * Destructor close file
      */
-    ~RandomAccessFile() throw();
+    ~RandomAccessFile() noexcept;
 
     void
-    open(const char* file_name) throw(PosixException);
+    open(const char* file_name) /*throw(PosixException)*/;
 
     void
-    close() throw(PosixException);
+    close() /*throw(PosixException)*/;
 
     /**
      * @return information about a file - its size.
      */
     unsigned long
-    size() throw(PosixException);
+    size() /*throw(PosixException)*/;
 
     void
     pread(void* buf, unsigned long read_size, unsigned long pos)
-      throw(PosixException);
+      /*throw(PosixException)*/;
 
     int
-    fd() const throw();
+    fd() const noexcept;
 
   protected:
     FileController_var file_controller_;

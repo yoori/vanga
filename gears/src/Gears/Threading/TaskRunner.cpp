@@ -33,7 +33,7 @@ namespace Gears
     ActiveObjectCallback* callback,
     unsigned long number_of_threads,
     unsigned long max_pending_tasks)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
     : SingleJob(callback),
       NUMBER_OF_THREADS_(number_of_threads),
       new_task_(0),
@@ -41,11 +41,11 @@ namespace Gears
       LIMITED_(max_pending_tasks)
   {}
 
-  TaskRunner::TaskRunnerJob::~TaskRunnerJob() throw()
+  TaskRunner::TaskRunnerJob::~TaskRunnerJob() noexcept
   {}
 
   void
-  TaskRunner::TaskRunnerJob::clear() throw(Gears::Exception)
+  TaskRunner::TaskRunnerJob::clear() /*throw(Gears::Exception)*/
   {
     LockType::WriteGuard guard(mutex());
     if(LIMITED_)
@@ -62,7 +62,7 @@ namespace Gears
   TaskRunner::TaskRunnerJob::enqueue_task(
     Task* task,
     const Time* /*timeout*/)
-    throw(InvalidArgument, Overflow, NotActive, Gears::Exception)
+    /*throw(InvalidArgument, Overflow, NotActive, Gears::Exception)*/
   {
     static const char* FUN = "TaskRunner::TaskRunnerJob::enqueue_task()";
 
@@ -106,7 +106,7 @@ namespace Gears
   }
 
   void
-  TaskRunner::TaskRunnerJob::wait_for_queue_exhausting() throw(Gears::Exception)
+  TaskRunner::TaskRunnerJob::wait_for_queue_exhausting() /*throw(Gears::Exception)*/
   {
     for(;;)
     {
@@ -123,7 +123,7 @@ namespace Gears
   }
 
   void
-  TaskRunner::TaskRunnerJob::work() throw()
+  TaskRunner::TaskRunnerJob::work() noexcept
   {
     static const char* FUN = "TaskRunner::TaskRunnerJob::work()";
 
@@ -173,7 +173,7 @@ namespace Gears
   }
 
   void
-  TaskRunner::TaskRunnerJob::terminate() throw()
+  TaskRunner::TaskRunnerJob::terminate() noexcept
   {
     for(unsigned long i = NUMBER_OF_THREADS_; i; i--)
     {
@@ -190,7 +190,7 @@ namespace Gears
     unsigned int threads_number,
     size_t stack_size,
     unsigned long max_pending_tasks)
-    throw(InvalidArgument, Exception, Gears::Exception)
+    /*throw(InvalidArgument, Exception, Gears::Exception)*/
     : ActiveObjectCommonImpl(
         TaskRunnerJob_var(new TaskRunnerJob(
           callback,
@@ -200,6 +200,6 @@ namespace Gears
       job_(static_cast<TaskRunnerJob&>(*SINGLE_JOB_))
   {}
 
-  TaskRunner::~TaskRunner() throw()
+  TaskRunner::~TaskRunner() noexcept
   {}
 }

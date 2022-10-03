@@ -26,18 +26,18 @@ namespace Gears
   // SimpleLoggerHolder class
   //
 
-  SimpleLoggerHolder::SimpleLoggerHolder(Logger* logger) throw()
+  SimpleLoggerHolder::SimpleLoggerHolder(Logger* logger) noexcept
     : logger_(Gears::add_ref(logger))
   {}
 
   unsigned long
-  SimpleLoggerHolder::log_level() throw()
+  SimpleLoggerHolder::log_level() noexcept
   {
     return logger_->log_level();
   }
 
   void
-  SimpleLoggerHolder::log_level(unsigned long value) throw()
+  SimpleLoggerHolder::log_level(unsigned long value) noexcept
   {
     logger_->log_level(value);
   }
@@ -48,7 +48,7 @@ namespace Gears
     unsigned long severity,
     const Gears::SubString& aspect,
     const Gears::SubString& code)
-    throw()
+    noexcept
   {
     return logger_->log(text, severity, aspect, code);
   }
@@ -57,13 +57,13 @@ namespace Gears
   // LoggerHolder class
   //
 
-  LoggerHolder::LoggerHolder(Logger* logger) throw()
+  LoggerHolder::LoggerHolder(Logger* logger) noexcept
     : SimpleLoggerHolder(logger),
       log_level_(logger ? logger->log_level() : 0)
   {}
 
   void
-  LoggerHolder::logger(Logger* new_logger) throw()
+  LoggerHolder::logger(Logger* new_logger) noexcept
   {
     Logger_var nl(Gears::add_ref(new_logger));
 
@@ -75,13 +75,13 @@ namespace Gears
   }
 
   unsigned long
-  LoggerHolder::log_level() throw()
+  LoggerHolder::log_level() noexcept
   {
     return log_level_;
   }
 
   void
-  LoggerHolder::log_level(unsigned long value) throw()
+  LoggerHolder::log_level(unsigned long value) noexcept
   {
     Logger_var logger;
 
@@ -103,7 +103,7 @@ namespace Gears
     const Gears::SubString& text,
     unsigned long severity,
     const Gears::SubString& aspect,
-    const Gears::SubString& code) throw()
+    const Gears::SubString& code) noexcept
   {
     if (severity > static_cast<unsigned long>(log_level_))
     {
@@ -128,7 +128,7 @@ namespace Gears
     Logger* logger,
     const Gears::SubString& aspect,
     const Gears::SubString& code)
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
     : LoggerHolder(logger),
       aspect_(aspect.str()),
       code_(code.str())
@@ -140,7 +140,7 @@ namespace Gears
     unsigned long severity,
     const Gears::SubString& aspect,
     const Gears::SubString& code)
-    throw()
+    noexcept
   {
     return LoggerHolder::log(
       text,

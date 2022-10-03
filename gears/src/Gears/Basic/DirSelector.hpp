@@ -81,7 +81,7 @@ namespace Gears
        * Constructor
        * @param pattern sh(1)-like pattern
        */
-      NamePattern(const char* pattern) throw (Gears::Exception);
+      NamePattern(const char* pattern) /*throw (Gears::Exception)*/;
 
       /*
        * Matches file name by the pattern
@@ -91,7 +91,7 @@ namespace Gears
        */
       bool
       operator ()(const char* full_path, const struct stat& st) const
-        throw (Gears::Exception);
+        /*throw (Gears::Exception)*/;
 
     protected:
       std::string pattern_;
@@ -112,7 +112,7 @@ namespace Gears
        * to the functor
        */
       FunctorWrapper(Functor& predicate, bool file_name_only, bool result)
-        throw ();
+        noexcept;
 
       /**
        * Executes user-specified functor
@@ -122,7 +122,7 @@ namespace Gears
        */
       bool
       operator ()(const char* full_path, const struct stat& st) const
-        throw (Gears::Exception);
+        /*throw (Gears::Exception)*/;
 
     private:
       Functor& functor_;
@@ -141,7 +141,7 @@ namespace Gears
     template <typename Functor>
     FunctorWrapper<Functor>
     wrap_functor(Functor& functor,
-      bool file_name_only = false, bool result = true) throw ();
+      bool file_name_only = false, bool result = true) noexcept;
 
     /**
      * Helper function returning file name from the full path
@@ -149,14 +149,14 @@ namespace Gears
      * @return file name part of the path
      */
     const char*
-    file_name(const char* full_path) throw ();
+    file_name(const char* full_path) noexcept;
 
     /**
      * Default handler for opendir(2) fail
      */
     void
     default_failed_to_open_directory(const char* full_path)
-      throw (Exception);
+      /*throw (Exception)*/;
 
     /**
      * Default handler for stat(2) or lstat(2) fail
@@ -164,7 +164,7 @@ namespace Gears
      */
     void
     default_failed_to_stat_file(const char* full_path)
-      throw (Exception);
+      /*throw (Exception)*/;
 
     /**
      * Function crawls the supplied directory calculating supplied predicate
@@ -196,7 +196,7 @@ namespace Gears
       ErrorHandler failed_to_open_directory =
         default_failed_to_open_directory,
       ErrorHandler failed_to_stat_file =
-        default_failed_to_stat_file) throw (Gears::Exception);
+        default_failed_to_stat_file) /*throw (Gears::Exception)*/;
 
     enum DIRECTORY_SELECTOR_FLAGS
     {
@@ -238,7 +238,7 @@ namespace Gears
     template <typename Functor>
     void
     directory_selector(const char* path, Functor&& functor,
-      const char* mask, int flags = DSF_DEFAULT) throw (Gears::Exception);
+      const char* mask, int flags = DSF_DEFAULT) /*throw (Gears::Exception)*/;
 
     /**
      * Creates a list of matched file inside the supplied container
@@ -253,7 +253,7 @@ namespace Gears
        */
       explicit
       ListCreator(Iterator iterator)
-        throw ();
+        noexcept;
 
       /*
        * Adds another full file name to the container
@@ -262,7 +262,7 @@ namespace Gears
        */
       bool
       operator ()(const char* full_path, const struct stat& st)
-        throw (Gears::Exception);
+        /*throw (Gears::Exception)*/;
 
     private:
       Iterator iterator_;
@@ -270,7 +270,7 @@ namespace Gears
 
     template <typename Iterator>
     ListCreator<Iterator>
-    list_creator(Iterator iterator) throw (Gears::Exception);
+    list_creator(Iterator iterator) /*throw (Gears::Exception)*/;
   }
 }
 
@@ -285,7 +285,7 @@ namespace Gears
      * NamePattern class
      */
     inline
-    NamePattern::NamePattern(const char* pattern) throw (Gears::Exception)
+    NamePattern::NamePattern(const char* pattern) /*throw (Gears::Exception)*/
       : pattern_(pattern)
     {}
 
@@ -293,14 +293,14 @@ namespace Gears
     bool
     NamePattern::operator ()(const char* full_path,
       const struct stat&) const
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       return !fnmatch(pattern_.c_str(), file_name(full_path), FNM_PATHNAME);
     }
 
     inline
     const char*
-    file_name(const char* full_path) throw ()
+    file_name(const char* full_path) noexcept
     {
       const char* ptr = strrchr(full_path, '/');
       return ptr ? ptr + 1 : full_path;
@@ -310,7 +310,7 @@ namespace Gears
     inline
     FunctorWrapper<Functor>::FunctorWrapper(
       Functor& functor, bool file_name_only, bool result)
-      throw ()
+      noexcept
       : functor_(functor), file_name_only_(file_name_only),
         result_(result)
     {}
@@ -319,7 +319,7 @@ namespace Gears
     bool
     FunctorWrapper<Functor>::operator ()(
       const char* full_path, const struct stat& st) const
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       return functor_(file_name_only_ ? file_name(full_path) : full_path,
         st), result_;
@@ -328,7 +328,7 @@ namespace Gears
     template <typename Functor>
     FunctorWrapper<Functor>
     wrap_functor(Functor& functor,
-      bool file_name_only, bool result) throw ()
+      bool file_name_only, bool result) noexcept
     {
       return FunctorWrapper<Functor>(functor, file_name_only, result);
     }
@@ -336,7 +336,7 @@ namespace Gears
     inline
     void
     default_failed_to_open_directory(const char* full_path)
-      throw (Exception)
+      /*throw (Exception)*/
     {
       Gears::throw_errno_exception<FailedToOpenDirectory>(
         "default_failed_to_open_directory(): ",
@@ -348,7 +348,7 @@ namespace Gears
     inline
     void
     default_failed_to_stat_file(const char* full_path)
-      throw (Exception)
+      /*throw (Exception)*/
     {
       Gears::throw_errno_exception<FailedToStatFile>(
         "default_failed_to_stat_file()",
@@ -364,24 +364,24 @@ namespace Gears
       class DirPtr : private Uncopyable
       {
       public:
-        DirPtr(const char* path) throw ();
-        ~DirPtr() throw ();
+        DirPtr(const char* path) noexcept;
+        ~DirPtr() noexcept;
 
         DIR*
-        get() const throw ();
+        get() const noexcept;
 
       private:
         DIR* dir;
       };
 
       inline
-      DirPtr::DirPtr(const char* path) throw ()
+      DirPtr::DirPtr(const char* path) noexcept
       {
         dir = opendir(path);
       }
 
       inline
-      DirPtr::~DirPtr() throw ()
+      DirPtr::~DirPtr() noexcept
       {
         if (dir)
         {
@@ -391,7 +391,7 @@ namespace Gears
 
       inline
       DIR*
-      DirPtr::get() const throw ()
+      DirPtr::get() const noexcept
       {
         return dir;
       }
@@ -402,7 +402,7 @@ namespace Gears
       walkthrough(const char* path, StatFunc stat_func,
         const Predicate& predicate,
         ErrorHandler failed_to_open_directory,
-        ErrorHandler failed_to_stat_file) throw (Gears::Exception)
+        ErrorHandler failed_to_stat_file) /*throw (Gears::Exception)*/
       {
         struct stat st;
 
@@ -459,7 +459,7 @@ namespace Gears
     void
     directory_selector(const char* path, const Predicate& predicate,
       bool resolve_links, ErrorHandler failed_to_open_directory,
-      ErrorHandler failed_to_stat_file) throw (Gears::Exception)
+      ErrorHandler failed_to_stat_file) /*throw (Gears::Exception)*/
     {
       DirectoryFilterHelper::StatFunc stat_func =
         resolve_links ? stat : lstat;
@@ -472,7 +472,7 @@ namespace Gears
     template <typename Functor>
     void
     directory_selector(const char* path, Functor&& functor,
-      const char* mask, int flags) throw (Gears::Exception)
+      const char* mask, int flags) /*throw (Gears::Exception)*/
     {
       ErrorHandler failed_to_open_directory =
         flags & DSF_EXCEPTION_ON_OPEN ?
@@ -525,7 +525,7 @@ namespace Gears
      * ListCreator class
      */
     template <typename Iterator>
-    ListCreator<Iterator>::ListCreator(Iterator iterator) throw ()
+    ListCreator<Iterator>::ListCreator(Iterator iterator) noexcept
       : iterator_(iterator)
     {}
 
@@ -533,7 +533,7 @@ namespace Gears
     bool
     ListCreator<Iterator>::operator ()(
       const char* full_path, const struct stat&)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       *iterator_++ = full_path;
       return true;
@@ -542,7 +542,7 @@ namespace Gears
 
     template <typename Iterator>
     ListCreator<Iterator>
-    list_creator(Iterator iterator) throw (Gears::Exception)
+    list_creator(Iterator iterator) /*throw (Gears::Exception)*/
     {
       return ListCreator<Iterator>(iterator);
     }

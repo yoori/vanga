@@ -31,19 +31,19 @@ namespace Cpp
   class DeclareGenerator: public Code::ElementVisitor
   {
   public:
-    DeclareGenerator(std::ostream& out, std::ostream& out_cpp) throw();
+    DeclareGenerator(std::ostream& out, std::ostream& out_cpp) noexcept;
 
-    virtual ~DeclareGenerator() throw() {}
+    virtual ~DeclareGenerator() noexcept {}
 
-    virtual void visit_i(const Code::Element*) throw() {};
+    virtual void visit_i(const Code::Element*) noexcept {};
 
-    virtual void visit_i(const Code::IncludeElement*) throw();
+    virtual void visit_i(const Code::IncludeElement*) noexcept;
 
-    virtual void visit_i(const Code::NamespaceElement*) throw();
+    virtual void visit_i(const Code::NamespaceElement*) noexcept;
 
-    virtual void visit_i(const Code::TypeDefElement*) throw();
+    virtual void visit_i(const Code::TypeDefElement*) noexcept;
 
-    virtual void visit_i(const Code::TypeElement*) throw();
+    virtual void visit_i(const Code::TypeElement*) noexcept;
 
   private:
     std::ostream& out_;
@@ -55,19 +55,19 @@ namespace Cpp
   class ImplGenerator: public Code::ElementVisitor
   {
   public:
-    ImplGenerator(std::ostream& out, std::ostream& out_cpp) throw();
+    ImplGenerator(std::ostream& out, std::ostream& out_cpp) noexcept;
 
-    virtual ~ImplGenerator() throw() {}
+    virtual ~ImplGenerator() noexcept {}
 
-    virtual void visit_i(const Code::Element*) throw() {};
+    virtual void visit_i(const Code::Element*) noexcept {};
 
-    virtual void visit_i(const Code::IncludeElement*) throw() {};
+    virtual void visit_i(const Code::IncludeElement*) noexcept {};
 
-    virtual void visit_i(const Code::NamespaceElement*) throw();
+    virtual void visit_i(const Code::NamespaceElement*) noexcept;
 
-    virtual void visit_i(const Code::TypeDefElement*) throw() {};
+    virtual void visit_i(const Code::TypeDefElement*) noexcept {};
 
-    virtual void visit_i(const Code::TypeElement*) throw();
+    virtual void visit_i(const Code::TypeElement*) noexcept;
 
   private:
     std::ostream& out_;
@@ -78,7 +78,7 @@ namespace Cpp
   namespace Utils
   {
     bool is_struct(Declaration::BaseDescriptor* descriptor)
-      throw()
+      noexcept
     {
       return Declaration::StructDescriptor_var(
         descriptor->as_struct()).in();
@@ -89,19 +89,19 @@ namespace Cpp
   /* DeclareGenerator implementation */
   DeclareGenerator::DeclareGenerator(
     std::ostream& out,
-    std::ostream& out_cpp) throw()
+    std::ostream& out_cpp) noexcept
     : out_(out),
       out_cpp_(out_cpp)
   {}
 
   void
-  DeclareGenerator::visit_i(const Code::IncludeElement* elem) throw()
+  DeclareGenerator::visit_i(const Code::IncludeElement* elem) noexcept
   {
     out_ << "#include <" << elem->file() << ">" << std::endl;
   }
 
   void
-  DeclareGenerator::visit_i(const Code::NamespaceElement* elem) throw()
+  DeclareGenerator::visit_i(const Code::NamespaceElement* elem) noexcept
   {
     Declaration::Namespace_var namespace_decl = elem->namespace_decl();
     std::string prev_offset;
@@ -128,7 +128,7 @@ namespace Cpp
   }
 
   void
-  DeclareGenerator::visit_i(const Code::TypeDefElement* elem) throw()
+  DeclareGenerator::visit_i(const Code::TypeDefElement* elem) noexcept
   {
     out_ << offset_ << "typedef " << elem->base_type()->name() << " " <<
       elem->type_name() << ";" << std::endl;
@@ -136,7 +136,7 @@ namespace Cpp
 
   void
   DeclareGenerator::visit_i(
-    const Code::TypeElement* elem) throw()
+    const Code::TypeElement* elem) noexcept
   {
     Declaration::BaseType_var type = elem->type();
     Declaration::BaseDescriptor_var descriptor = type->as_descriptor();
@@ -183,13 +183,13 @@ namespace Cpp
   /* Generator::ImplGenerator */
   ImplGenerator::ImplGenerator(
     std::ostream& out,
-    std::ostream& out_cpp) throw()
+    std::ostream& out_cpp) noexcept
     : out_(out),
       out_cpp_(out_cpp)
   {}
 
   void
-  ImplGenerator::visit_i(const Code::NamespaceElement* elem) throw()
+  ImplGenerator::visit_i(const Code::NamespaceElement* elem) noexcept
   {
     Declaration::Namespace_var namespace_decl = elem->namespace_decl();
     std::string prev_offset;
@@ -219,7 +219,7 @@ namespace Cpp
   }
 
   void
-  ImplGenerator::visit_i(const Code::TypeElement* elem) throw()
+  ImplGenerator::visit_i(const Code::TypeElement* elem) noexcept
   {
     Declaration::BaseType_var type = elem->type();
     Declaration::BaseDescriptor_var descriptor = type->as_descriptor();
@@ -267,7 +267,7 @@ namespace Cpp
     std::ostream& out,
     std::ostream& out_inl_impl,
     std::ostream& out_cpp,
-    Code::ElementList* elements) throw()
+    Code::ElementList* elements) noexcept
   {
     if(INCLUDE_LIST[0])
     {

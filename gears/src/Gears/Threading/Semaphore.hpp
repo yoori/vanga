@@ -42,17 +42,17 @@ namespace Gears
   public:
     DECLARE_GEARS_EXCEPTION(Exception, DescriptiveException);
 
-    Semaphore(int count) throw(Exception);
+    Semaphore(int count) /*throw(Exception)*/;
 
-    ~Semaphore() throw();
+    ~Semaphore() noexcept;
 
-    void acquire() throw(Exception);
+    void acquire() /*throw(Exception)*/;
 
-    bool try_acquire() throw(Exception);
+    bool try_acquire() /*throw(Exception)*/;
 
-    void release() throw(Exception);
+    void release() /*throw(Exception)*/;
 
-    int value() throw(Exception);
+    int value() /*throw(Exception)*/;
 
   private:
 #if __APPLE__

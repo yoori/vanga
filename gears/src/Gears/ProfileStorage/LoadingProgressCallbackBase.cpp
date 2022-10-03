@@ -22,17 +22,17 @@
 
 namespace Gears
 {
-  LoadingProgressCallbackBase::LoadingProgressCallbackBase() throw()
+  LoadingProgressCallbackBase::LoadingProgressCallbackBase() noexcept
   {}
 
-  LoadingProgressCallbackBase::~LoadingProgressCallbackBase() throw()
-  {}
-
-  void
-  LoadingProgressCallbackBase::post_progress(double) throw()
+  LoadingProgressCallbackBase::~LoadingProgressCallbackBase() noexcept
   {}
 
   void
-  LoadingProgressCallbackBase::loading_is_finished() throw()
+  LoadingProgressCallbackBase::post_progress(double) noexcept
+  {}
+
+  void
+  LoadingProgressCallbackBase::loading_is_finished() noexcept
   {}
 }

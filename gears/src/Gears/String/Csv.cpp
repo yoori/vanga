@@ -39,7 +39,7 @@ namespace Gears
     std::string& res,
     const SubString& src,
     char separator)
-    throw()
+    noexcept
   {
     // fields that contain separator, double-quotes,
     //     or line-breaks must be quoted.

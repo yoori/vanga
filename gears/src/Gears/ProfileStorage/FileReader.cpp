@@ -35,7 +35,7 @@ namespace Gears
     bool exclusive,
     unsigned long buffer_size,
     FileController* file_controller)
-    throw(Exception)
+    /*throw(Exception)*/
     : exclusive_(exclusive),
       buffer_size_(buffer_size),
       direct_read_min_size_(buffer_size / 2),
@@ -67,7 +67,7 @@ namespace Gears
     unsigned long buffer_size,
     bool disable_caching,
     FileController* file_controller)
-    throw(Exception)
+    /*throw(Exception)*/
     : exclusive_(true),
       buffer_size_(buffer_size),
       direct_read_min_size_(
@@ -110,7 +110,7 @@ namespace Gears
     mem_buf_ = file_controller_->create_buffer();
   }
 
-  FileReader::~FileReader() throw()
+  FileReader::~FileReader() noexcept
   {
     if(fd_own_ && fd_ >= 0)
     {
@@ -120,7 +120,7 @@ namespace Gears
 
   unsigned long
   FileReader::read(void* read_buf, unsigned long read_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     if (eof_)
     {
@@ -204,20 +204,20 @@ namespace Gears
 
   unsigned long
   FileReader::pos()
-    const throw()
+    const noexcept
   {
     return fd_pos_ + mem_buf_pos_ - mem_buf_->membuf().size();
   }
 
   unsigned long
-  FileReader::file_size() const throw()
+  FileReader::file_size() const noexcept
   {
     return file_size_;
   }
 
   bool
   FileReader::eof()
-    const throw()
+    const noexcept
   {
     return fd_pos_ == file_size_ &&
       mem_buf_pos_ == mem_buf_->membuf().size();
@@ -225,7 +225,7 @@ namespace Gears
 
   unsigned long
   FileReader::skip(unsigned long skip_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     /*
     std::cout << "skip begin: fd_pos_ = " << fd_pos_ <<
@@ -349,7 +349,7 @@ namespace Gears
 
   unsigned long
   FileReader::read_(void* buf, unsigned long read_size)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     assert(!eof_);
 
@@ -385,7 +385,7 @@ namespace Gears
 
   unsigned long
   FileReader::read_mem_buf_()
-    throw(Exception)
+    /*throw(Exception)*/
   {
     if(mem_buf_->membuf().capacity() == 0)
     {

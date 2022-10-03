@@ -27,19 +27,19 @@ namespace Declaration
   BaseTemplate::BaseTemplate(
     const char* name,
     unsigned long args_count_val)
-    throw()
+    noexcept
     : BaseType(name),
       args_count_(args_count_val)
   {}
 
   BaseTemplate_var
-  BaseTemplate::as_template() throw()
+  BaseTemplate::as_template() noexcept
   {
     return Gears::add_ref(this);
   }
 
   unsigned long
-  BaseTemplate::args() const throw()
+  BaseTemplate::args() const noexcept
   {
     return args_count_;
   }
@@ -47,7 +47,7 @@ namespace Declaration
   CompleteTemplateDescriptor_var
   BaseTemplate::complete_template_descriptor(
     const BaseDescriptorList& args) const
-    throw(InvalidParam)
+    /*throw(InvalidParam)*/
   {
     if(args.size() != args_count_)
     {

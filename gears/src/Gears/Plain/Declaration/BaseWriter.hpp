@@ -44,24 +44,24 @@ namespace Declaration
     DECLARE_GEARS_EXCEPTION(Exception, Gears::DescriptiveException);
     DECLARE_GEARS_EXCEPTION(InvalidMappingSpecifier, Exception);
 
-    BaseWriter(const char* name_val) throw();
+    BaseWriter(const char* name_val) noexcept;
 
-    virtual BaseDescriptor_var descriptor() throw() = 0;
+    virtual BaseDescriptor_var descriptor() noexcept = 0;
 
     virtual void
     check_mapping_specifiers(
       const MappingSpecifierSet& mapping_specifiers)
-      throw(InvalidMappingSpecifier) = 0;
+      /*throw(InvalidMappingSpecifier)*/ = 0;
 
     /* non fixed field */
-    virtual SimpleWriter_var as_simple_writer() throw();
+    virtual SimpleWriter_var as_simple_writer() noexcept;
 
-    virtual StructWriter_var as_struct_writer() throw();
+    virtual StructWriter_var as_struct_writer() noexcept;
 
-    virtual BaseWriter_var as_writer() throw();
+    virtual BaseWriter_var as_writer() noexcept;
 
   protected:
-    virtual ~BaseWriter() throw() {}
+    virtual ~BaseWriter() noexcept {}
   };
 
   typedef Gears::IntrusivePtr<BaseWriter>

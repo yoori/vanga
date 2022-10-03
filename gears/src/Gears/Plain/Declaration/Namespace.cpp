@@ -24,7 +24,7 @@
 namespace Declaration
 {
   NamePath::NamePath(const char* abs_path, bool name_is_local)
-    throw(InvalidName)
+    /*throw(InvalidName)*/
   {
     /*
     if(!*abs_path)
@@ -55,7 +55,7 @@ namespace Declaration
   }
 
   std::string
-  NamePath::str() const throw()
+  NamePath::str() const noexcept
   {
     std::string ret;
     for(const_iterator it = begin(); it != end(); ++it)
@@ -74,19 +74,19 @@ namespace Declaration
   Namespace::Namespace(
     const char* name_val,
     Namespace* owner_val)
-    throw()
+    noexcept
     : name_(name_val ? name_val : ""),
       owner_(owner_val)
   {}
 
   const char*
-  Namespace::name() const throw()
+  Namespace::name() const noexcept
   {
     return name_.c_str();
   }
 
   NamePath
-  Namespace::abs_name() const throw()
+  Namespace::abs_name() const noexcept
   {
     NamePath ret(name(), true);
     Namespace_var cur = owner();
@@ -103,26 +103,26 @@ namespace Declaration
   }
 
   Namespace_var
-  Namespace::owner() const throw()
+  Namespace::owner() const noexcept
   {
     return Gears::add_ref(owner_);
   }
 
   const Namespace::BaseTypeMap&
-  Namespace::types() const throw()
+  Namespace::types() const noexcept
   {
     return types_;
   }
 
   const Namespace::NamespaceMap&
-  Namespace::namespaces() const throw()
+  Namespace::namespaces() const noexcept
   {
     return namespaces_;
   }
 
   BaseType_var
   Namespace::find_type(const NamePath& name_path) const
-    throw()
+    noexcept
   {
     const Namespace* search_ns = this;
     while(search_ns)
@@ -140,7 +140,7 @@ namespace Declaration
 
   BaseType_var
   Namespace::find_local_type(const char* name) const
-    throw()
+    noexcept
   {
     BaseTypeMap::const_iterator type_it = types().find(name);
     if(type_it != types().end())
@@ -153,7 +153,7 @@ namespace Declaration
 
   Namespace_var
   Namespace::add_namespace(const char* name_val)
-    throw()
+    noexcept
   {
     NamespaceMap::const_iterator ns_it = namespaces_.find(name_val);
     if(ns_it != namespaces_.end())
@@ -168,7 +168,7 @@ namespace Declaration
 
   void
   Namespace::add_type(BaseType* new_type)
-    throw(AlreadyDefined)
+    /*throw(AlreadyDefined)*/
   {
     types_.insert(std::make_pair(
       new_type->name(),
@@ -177,7 +177,7 @@ namespace Declaration
 
   BaseType_var
   Namespace::local_find_type_(const NamePath& name_path) const
-    throw()
+    noexcept
   {
     NamePath::const_iterator np_it = name_path.begin();
     const Namespace* search_ns = this;

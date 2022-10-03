@@ -50,7 +50,7 @@ namespace Gears
     virtual
     void
     activate_object()
-      throw(AlreadyActive, Exception, Gears::Exception);
+      /*throw(AlreadyActive, Exception, Gears::Exception)*/;
 
     /**
      * Initiate stopping of Active object
@@ -59,7 +59,7 @@ namespace Gears
     virtual
     void
     deactivate_object()
-      throw(Exception, Gears::Exception);
+      /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Waits for deactivation completion
@@ -67,7 +67,7 @@ namespace Gears
      */
     virtual
     void
-    wait_object() throw(Exception, Gears::Exception);
+    wait_object() /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Current status
@@ -75,7 +75,7 @@ namespace Gears
      */
     virtual
     bool
-    active() throw(Gears::Exception);
+    active() /*throw(Gears::Exception)*/;
 
   protected:
     /**
@@ -96,37 +96,37 @@ namespace Gears
        * @param callback callback to be called for error reporting
        */
       SingleJob(ActiveObjectCallback* callback)
-        throw(InvalidArgument, Gears::Exception);
+        /*throw(InvalidArgument, Gears::Exception)*/;
 
       /**
        * Stored callback
        * @return stored callback
        */
       const ActiveObjectCallback_var&
-      callback() throw();
+      callback() noexcept;
 
       /**
        * Mutex for operations synchronizations
        * @return stored mutex
        */
       Mutex&
-      mutex() throw();
+      mutex() noexcept;
 
       void
-      make_terminate() throw();
+      make_terminate() noexcept;
 
       void
-      terminated() throw();
+      terminated() noexcept;
 
       bool
-      is_terminating() throw();
+      is_terminating() noexcept;
 
       /**
        * Function must inform the object to stop jobs to work.
        */
       virtual
       void
-      terminate() throw() = 0;
+      terminate() noexcept = 0;
 
     protected:
       typedef Mutex LockType;
@@ -136,7 +136,7 @@ namespace Gears
        * Destructor
        */
       virtual
-      ~SingleJob() throw();
+      ~SingleJob() noexcept;
 
     private:
       mutable LockType mutex_;
@@ -162,27 +162,27 @@ namespace Gears
       SingleJob* job,
       unsigned int threads_number = 1,
       std::size_t stack_size = 0)
-      throw(InvalidArgument);
+      /*throw(InvalidArgument)*/;
 
     /**
      * Destructor
      */
     virtual
-    ~ActiveObjectCommonImpl() throw();
+    ~ActiveObjectCommonImpl() noexcept;
 
     /**
      * Provides number of work threads created
      * @return number of created threads
      */
     size_t
-    threads_number_() throw();
+    threads_number_() noexcept;
 
     /**
      * @return mutex that used in clients code for
      * data protection.
      */
     Mutex&
-    mutex_() throw();
+    mutex_() noexcept;
 
     const SingleJob_var SINGLE_JOB_;
 
@@ -207,14 +207,14 @@ namespace Gears
 
   inline
   size_t
-  ActiveObjectCommonImpl::threads_number_() throw()
+  ActiveObjectCommonImpl::threads_number_() noexcept
   {
     return thread_runner_.number_of_jobs();
   }
 
   inline
   Mutex&
-  ActiveObjectCommonImpl::mutex_() throw()
+  ActiveObjectCommonImpl::mutex_() noexcept
   {
     return work_mutex_;
   }
@@ -226,7 +226,7 @@ namespace Gears
   inline
   ActiveObjectCommonImpl::SingleJob::SingleJob(
     ActiveObjectCallback* callback)
-    throw(InvalidArgument, Gears::Exception)
+    /*throw(InvalidArgument, Gears::Exception)*/
     : callback_(Gears::add_ref(callback)),
       terminating_(false)
   {
@@ -241,26 +241,26 @@ namespace Gears
   }
 
   inline
-  ActiveObjectCommonImpl::SingleJob::~SingleJob() throw()
+  ActiveObjectCommonImpl::SingleJob::~SingleJob() noexcept
   {}
 
   inline
   const ActiveObjectCallback_var&
-  ActiveObjectCommonImpl::SingleJob::callback() throw()
+  ActiveObjectCommonImpl::SingleJob::callback() noexcept
   {
     return callback_;
   }
 
   inline
   Mutex&
-  ActiveObjectCommonImpl::SingleJob::mutex() throw()
+  ActiveObjectCommonImpl::SingleJob::mutex() noexcept
   {
     return mutex_;
   }
 
   inline
   void
-  ActiveObjectCommonImpl::SingleJob::make_terminate() throw()
+  ActiveObjectCommonImpl::SingleJob::make_terminate() noexcept
   {
     terminating_ = true;
     terminate();
@@ -268,14 +268,14 @@ namespace Gears
 
   inline
   void
-  ActiveObjectCommonImpl::SingleJob::terminated() throw()
+  ActiveObjectCommonImpl::SingleJob::terminated() noexcept
   {
     terminating_ = false;
   }
 
   inline
   bool
-  ActiveObjectCommonImpl::SingleJob::is_terminating() throw()
+  ActiveObjectCommonImpl::SingleJob::is_terminating() noexcept
   {
     return terminating_;
   }

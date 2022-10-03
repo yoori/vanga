@@ -49,49 +49,49 @@ namespace Gears
      * Constructor
      * Uses /dev/urandom for initialization
      */
-    ISAAC() throw ();
+    ISAAC() noexcept;
 
     /**
      * Constructor
      * @param value initial seed number
      */
     explicit
-    ISAAC(const uint32_t value) throw ();
+    ISAAC(const uint32_t value) noexcept;
 
     /**
      * Constructor
      * @param value pointer to data for initial seed (256 elements)
      */
     explicit
-    ISAAC(const uint32_t* value) throw ();
+    ISAAC(const uint32_t* value) noexcept;
 
     /**
      * Initializes object
      * Uses /dev/urandom for initialization
      */
     void
-    seed() throw ();
+    seed() noexcept;
 
     /**
      * Initializes object
      * @param value initial seed number
      */
     void
-    seed(uint32_t value) throw ();
+    seed(uint32_t value) noexcept;
 
     /**
      * Initializes object
      * @param value pointer to data for initial seed (256 elements)
      */
     void
-    seed(const uint32_t* value) throw ();
+    seed(const uint32_t* value) noexcept;
 
     /**
      * Creates next random number in the sequence
      * @return random number in [0..2^32-1] range
      */
     uint32_t
-    rand() throw ();
+    rand() noexcept;
 
   protected:
     /**
@@ -100,16 +100,16 @@ namespace Gears
      * @param use_rand use random_ data or not
      */
     void
-    initialize_(uint32_t value, bool use_rand) throw ();
+    initialize_(uint32_t value, bool use_rand) noexcept;
 
     void
-    reinit_() throw ();
+    reinit_() noexcept;
 
   private:
     static
     void
     rng_step_(uint32_t*& m, uint32_t*& m2, uint32_t*& r, uint32_t* mm,
-      uint32_t& a, uint32_t& b, uint32_t mix) throw ();
+      uint32_t& a, uint32_t& b, uint32_t mix) noexcept;
 
     static const size_t SIZE = 256;
 
@@ -126,26 +126,26 @@ namespace Gears
 namespace Gears
 {
   inline
-  ISAAC::ISAAC() throw ()
+  ISAAC::ISAAC() noexcept
   {
     seed();
   }
 
   inline
-  ISAAC::ISAAC(const uint32_t value) throw ()
+  ISAAC::ISAAC(const uint32_t value) noexcept
   {
     seed(value);
   }
 
   inline
-  ISAAC::ISAAC(const uint32_t* value) throw ()
+  ISAAC::ISAAC(const uint32_t* value) noexcept
   {
     seed(value);
   }
 
   inline
   uint32_t
-  ISAAC::rand() throw ()
+  ISAAC::rand() noexcept
   {
     if (!left_)
     {
@@ -159,7 +159,7 @@ namespace Gears
   inline
   void
   ISAAC::rng_step_(uint32_t*& m, uint32_t*& m2, uint32_t*& r, uint32_t* mm,
-    uint32_t& a, uint32_t& b, uint32_t mix) throw ()
+    uint32_t& a, uint32_t& b, uint32_t mix) noexcept
   {
     uint32_t x, y;
 
@@ -171,7 +171,7 @@ namespace Gears
 
   inline
   void
-  ISAAC::reinit_() throw ()
+  ISAAC::reinit_() noexcept
   {
     uint32_t a = aa_;
     uint32_t b = bb_ + ++cc_;
@@ -206,7 +206,7 @@ namespace Gears
 
   inline
   void
-  ISAAC::seed() throw ()
+  ISAAC::seed() noexcept
   {
     int urandom = open("/dev/urandom", O_RDONLY);
     if (urandom >= 0)
@@ -235,7 +235,7 @@ namespace Gears
 
   inline
   void
-  ISAAC::seed(uint32_t value) throw ()
+  ISAAC::seed(uint32_t value) noexcept
   {
     initialize_(value, false);
     reinit_();
@@ -243,7 +243,7 @@ namespace Gears
 
   inline
   void
-  ISAAC::seed(const uint32_t* value) throw ()
+  ISAAC::seed(const uint32_t* value) noexcept
   {
     if (value)
     {
@@ -254,18 +254,18 @@ namespace Gears
 
   inline
   void
-  ISAAC::initialize_(uint32_t value, bool use_rand) throw ()
+  ISAAC::initialize_(uint32_t value, bool use_rand) noexcept
   {
     class Mixer
     {
     public:
-      Mixer(uint32_t value) throw ()
+      Mixer(uint32_t value) noexcept
       {
         std::fill(data_, data_ + 8, value);
       }
 
       void
-      mix() throw ()
+      mix() noexcept
       {
         data_[0] ^= data_[1] << 11;
         data_[3] += data_[0];
@@ -294,7 +294,7 @@ namespace Gears
       }
 
       void
-      add(const uint32_t* source) throw ()
+      add(const uint32_t* source) noexcept
       {
         for (int i = 0; i < 8; i++)
         {
@@ -303,7 +303,7 @@ namespace Gears
       }
 
       void
-      copy_to(uint32_t* target) const throw ()
+      copy_to(uint32_t* target) const noexcept
       {
         std::copy(data_, data_ + 8, target);
       }

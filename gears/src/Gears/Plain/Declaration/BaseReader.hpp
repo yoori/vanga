@@ -38,19 +38,19 @@ namespace Declaration
   class BaseReader: public virtual BaseType
   {
   public:
-    BaseReader(const char* name_val) throw();
+    BaseReader(const char* name_val) noexcept;
 
-    virtual BaseDescriptor_var descriptor() throw() = 0;
+    virtual BaseDescriptor_var descriptor() noexcept = 0;
 
-    virtual SimpleReader_var as_simple_reader() throw();
+    virtual SimpleReader_var as_simple_reader() noexcept;
 
-    virtual StructReader_var as_struct_reader() throw();
+    virtual StructReader_var as_struct_reader() noexcept;
 
-    virtual BaseReader_var as_reader() throw();
+    virtual BaseReader_var as_reader() noexcept;
 
   protected:
     virtual
-    ~BaseReader() throw () = default;
+    ~BaseReader() noexcept = default;
   };
 
   typedef Gears::IntrusivePtr<BaseReader>

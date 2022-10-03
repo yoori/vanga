@@ -51,7 +51,7 @@ namespace Gears
       unsigned long max_levels0_val,
       const Time& expire_time_val,
       FileController* file_controller_val = 0)
-      throw()
+      noexcept
       : mode(mode_val),
         rw_buffer_size(rw_buffer_size_val),
         rwlevel_max_size(rwlevel_max_size_val),
@@ -89,20 +89,20 @@ namespace Gears
       const char* file_prefix,
       const LevelMapTraits& traits,
       LoadingProgressCallbackBase* progress_checker_parent = 0)
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
 
     virtual void
     wait_preconditions(const KeyType&, OperationPriority) const
-      throw(NotActive, Exception);
+      /*throw(NotActive, Exception)*/;
 
     virtual bool
-    check_profile(const KeyType& key) const throw(Exception);
+    check_profile(const KeyType& key) const /*throw(Exception)*/;
 
     virtual ConstSmartMemBuf_var
     get_profile(
       const KeyType& key,
       Time* last_access_time = 0)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual void
     save_profile(
@@ -110,43 +110,43 @@ namespace Gears
       ConstSmartMemBuf* mem_buf,
       const Time& now = Time::get_time_of_day(),
       OperationPriority op_priority = OP_RUNTIME)
-      throw(NotActive, Blocked, Exception);
+      /*throw(NotActive, Blocked, Exception)*/;
 
     virtual bool
     remove_profile(
       const KeyType& key,
       OperationPriority op_priority = OP_RUNTIME)
-      throw(NotActive, Blocked, Exception);
+      /*throw(NotActive, Blocked, Exception)*/;
 
     virtual void
-    copy_keys(typename ProfileMap<KeyType>::KeyList& keys) throw(Exception);
+    copy_keys(typename ProfileMap<KeyType>::KeyList& keys) /*throw(Exception)*/;
 
     virtual void
     clear_expired(const Time& /*expire_time*/)
-      throw(Exception)
+      /*throw(Exception)*/
     {}
 
     virtual unsigned long
-    size() const throw();
+    size() const noexcept;
 
     virtual uint64_t
-    area_size() const throw();
+    area_size() const noexcept;
 
     bool
-    empty() const throw();
+    empty() const noexcept;
 
     void
-    dump() throw();
+    dump() noexcept;
 
     // ActiveObject interface
     virtual void
-    activate_object() throw(ActiveObject::Exception);
+    activate_object() /*throw(ActiveObject::Exception)*/;
 
     void
-    deactivate_object() throw();
+    deactivate_object() noexcept;
 
     void
-    wait_object() throw();
+    wait_object() noexcept;
 
   public:
     class LevelAssigner;
@@ -158,7 +158,7 @@ namespace Gears
 
     struct LevelHolder: public Gears::AtomicRefCountable
     {
-      LevelHolder() throw();
+      LevelHolder() noexcept;
 
       unsigned long index;
       unsigned long sub_index;
@@ -170,7 +170,7 @@ namespace Gears
       bool backup;
 
     protected:
-      virtual ~LevelHolder() throw();
+      virtual ~LevelHolder() noexcept;
     };
 
     struct LevelHolderPtrLess;
@@ -185,7 +185,7 @@ namespace Gears
       LevelHolderArray levels;
 
     protected:
-      virtual ~MapHolder() throw()
+      virtual ~MapHolder() noexcept
       {}
     };
 
@@ -207,22 +207,22 @@ namespace Gears
 
   protected:
     virtual
-    ~LevelProfileMap() throw();
+    ~LevelProfileMap() noexcept;
 
     // task methods
     void
     exchange_rw_level_i_()
-      throw(Exception);
+      /*throw(Exception)*/;
 
     void
     dump_mem_level_(
       unsigned long index,
       unsigned long sub_index)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     void
     merge_levels_()
-      throw();
+      noexcept;
 
     void
     add_level_(
@@ -230,15 +230,15 @@ namespace Gears
       LoadingProgressCallbackBase_var progress_checker_parent,
       const char* directory,
       const char* file_name)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     typename ReadBaseLevel<KeyType>::Iterator_var
     create_filter_iterator_(
       typename ReadBaseLevel<KeyType>::Iterator* it)
-      throw();
+      noexcept;
 
     ConstMapHolder_var
-    get_map_holder_() const throw();
+    get_map_holder_() const noexcept;
 
     template<typename IteratorType, typename MapHolderType>
     IteratorType
@@ -246,60 +246,60 @@ namespace Gears
       MapHolderType* map_holder,
       unsigned long index,
       unsigned long sub_index)
-      throw();
+      noexcept;
 
     bool
     rw_level_dump_check_by_size_i_(
       const MapHolder* map_holder)
-      const throw();
+      const noexcept;
 
     bool
     rw_level_dump_check_by_time_i_(
       const Time& now)
-      const throw();
+      const noexcept;
 
     static
     bool
     merge_check_(const MapHolder* map_holder)
-      throw();
+      noexcept;
 
     FileNames
     index_file_name_(
       unsigned long index,
       unsigned long sub_index,
       unsigned long uniq_index)
-      const throw();
+      const noexcept;
 
     FileNames
     body_file_name_(
       unsigned long index,
       unsigned long sub_index,
       unsigned long uniq_index)
-      const throw();
+      const noexcept;
 
     std::string
     index_merge_file_name_()
-      const throw();
+      const noexcept;
 
     std::string
     body_merge_file_name_()
-      const throw();
+      const noexcept;
 
     static void
     print_levels_(std::ostream& ostr, const MapHolder* map_holder)
-      throw();
+      noexcept;
 
     bool
     signal_by_undumped_size_(
       unsigned long prev_undumped_size,
       unsigned long new_undumped_size)
-      const throw();
+      const noexcept;
 
     bool
     signal_by_levels_change_(
       unsigned long prev_levels0,
       unsigned long new_levels0)
-      const throw();
+      const noexcept;
 
   private:
     const std::string file_directory_;
@@ -327,7 +327,7 @@ namespace Gears
 
     mutable MapHolderChangeSyncPolicy map_holder_change_lock_;
 
-    mutable OpSyncPolicy::Mutex rw_level_lock_;
+    mutable typename OpSyncPolicy::Mutex rw_level_lock_;
     mutable Gears::Condition undumped_size_change_;
     bool active_;
     uint64_t undumped_size_;

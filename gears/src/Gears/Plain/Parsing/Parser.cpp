@@ -31,7 +31,7 @@ namespace Parsing
     Code::ElementList* elements,
     std::istream& istr,
     Declaration::Namespace_var* root_namespace)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     Parsing::Processor_var processor = new Parsing::Processor(elements);
 

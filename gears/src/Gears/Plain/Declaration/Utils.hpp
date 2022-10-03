@@ -34,7 +34,7 @@
 namespace Declaration
 {
   void type_traits(std::ostream& out, Declaration::BaseType* type)
-    throw();  
+    noexcept;  
 }
 
 namespace Declaration
@@ -42,7 +42,7 @@ namespace Declaration
   inline
   void type_traits(
     std::ostream& out, Declaration::BaseType* type)
-    throw()
+    noexcept
   {
     Declaration::BaseDescriptor_var type_descriptor =
       type->as_descriptor();

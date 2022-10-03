@@ -37,16 +37,16 @@ namespace Gears
     DECLARE_GEARS_EXCEPTION(Exception, Gears::DescriptiveException);
 
     bool
-    dir_exists(const Gears::SubString& path) throw();
+    dir_exists(const Gears::SubString& path) noexcept;
 
     bool
-    file_exists(const Gears::SubString& path) throw();
+    file_exists(const Gears::SubString& path) noexcept;
 
     void
     rename(const Gears::SubString& src,
       const Gears::SubString& dst,
       bool ignore_non_existing)
-      throw(Gears::Exception);
+      /*throw(Gears::Exception)*/;
 
     void
     split_path(
@@ -54,7 +54,7 @@ namespace Gears
       std::string* path,
       std::string* name,
       bool strip_slash = true)
-      throw();
+      noexcept;
   }
 }
 
@@ -63,7 +63,7 @@ namespace Gears
 namespace FileManip
 {
   inline bool
-  dir_exists(const Gears::SubString& path) throw()
+  dir_exists(const Gears::SubString& path) noexcept
   {
     struct stat info;
 
@@ -80,7 +80,7 @@ namespace FileManip
   }
 
   inline bool
-  file_exists(const Gears::SubString& path) throw()
+  file_exists(const Gears::SubString& path) noexcept
   {
     struct stat info;
 
@@ -100,7 +100,7 @@ namespace FileManip
   rename(const Gears::SubString& src,
     const Gears::SubString& dst,
     bool ignore_non_existing)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
   {
     static const char* FUN = "rename()";
 
@@ -125,7 +125,7 @@ namespace FileManip
     std::string* path,
     std::string* name,
     bool strip_slash)
-    throw()
+    noexcept
   {
     std::string path_pattern_s(path_name);
     std::string::size_type pos = path_pattern_s.find_last_of('/');

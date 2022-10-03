@@ -30,18 +30,18 @@ namespace Gears
   {
   public:
     void
-    add_ref() const throw();
+    add_ref() const noexcept;
 
     void
-    remove_ref() const throw();
+    remove_ref() const noexcept;
 
   protected:
-    AtomicRefCountable() throw();
+    AtomicRefCountable() noexcept;
 
-    AtomicRefCountable(const volatile AtomicRefCountable&) throw();
+    AtomicRefCountable(const volatile AtomicRefCountable&) noexcept;
 
     virtual
-    ~AtomicRefCountable() throw();
+    ~AtomicRefCountable() noexcept;
 
   protected:
     mutable Gears::AtomicCounter ref_count_;
@@ -51,31 +51,31 @@ namespace Gears
 namespace Gears
 {
   inline
-  AtomicRefCountable::AtomicRefCountable() throw()
+  AtomicRefCountable::AtomicRefCountable() noexcept
     : ref_count_(1)
   {}
 
   inline
   AtomicRefCountable::AtomicRefCountable(
     const volatile AtomicRefCountable&)
-    throw()
+    noexcept
     : ref_count_(1)
   {}
 
   inline
-  AtomicRefCountable::~AtomicRefCountable() throw()
+  AtomicRefCountable::~AtomicRefCountable() noexcept
   {}
 
   inline
   void
-  AtomicRefCountable::add_ref() const throw()
+  AtomicRefCountable::add_ref() const noexcept
   {
     ref_count_.add(1);
   }
 
   inline
   void
-  AtomicRefCountable::remove_ref() const throw()
+  AtomicRefCountable::remove_ref() const noexcept
   {
     int result_counter = ref_count_.add_and_fetch(-1);
     assert(result_counter >= 0);

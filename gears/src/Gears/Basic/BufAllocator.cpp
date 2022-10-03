@@ -40,7 +40,7 @@ namespace Gears
   BasicBufAllocator::default_allocator_;
 
   BasicBufAllocator*
-  BasicBufAllocator::get_default_allocator() throw (Gears::Exception)
+  BasicBufAllocator::get_default_allocator() /*throw (Gears::Exception)*/
   {
     if(!default_allocator_initialized_)
     {
@@ -60,20 +60,20 @@ namespace Gears
   }
 
   inline void
-  BasicBufAllocator::align_(size_t& number, size_t mask) throw ()
+  BasicBufAllocator::align_(size_t& number, size_t mask) noexcept
   {
     number += (-number) & mask;
   }
 
   size_t
-  BasicBufAllocator::cached() const throw (Gears::Exception)
+  BasicBufAllocator::cached() const /*throw (Gears::Exception)*/
   {
     return 0;
   }
 
   void
   BasicBufAllocator::print_cached(std::ostream& ostr) const
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
   {
     ostr << '0';
   }
@@ -85,13 +85,13 @@ namespace Gears
   const size_t DefaultBufAllocator::DEF_ALIGN;
 
   DefaultBufAllocator::DefaultBufAllocator(size_t align_code)
-    throw()
+    noexcept
     : MASK_((1 << align_code) - 1)
   {}
 
   BasicBufAllocator::Pointer
   DefaultBufAllocator::allocate(size_t& size)
-    throw(Gears::Exception, OutOfMemory)
+    /*throw(Gears::Exception, OutOfMemory)*/
   {
     align_(size, MASK_);
     return new unsigned char[size];
@@ -99,7 +99,7 @@ namespace Gears
 
   void
   DefaultBufAllocator::deallocate(Pointer ptr, size_t size)
-    throw()
+    noexcept
   {
     (void)size;
     assert(!(size & MASK_));
@@ -116,13 +116,13 @@ namespace Gears
   AlignBufAllocator::AlignBufAllocator(
     size_t ptr_align_code,
     size_t align_code)
-    throw()
+    noexcept
     : ALIGN_(1 << ptr_align_code), MASK_((1 << align_code) - 1)
   {}
 
   BasicBufAllocator::Pointer
   AlignBufAllocator::allocate(size_t& size)
-    throw(Gears::Exception, OutOfMemory)
+    /*throw(Gears::Exception, OutOfMemory)*/
   {
     static const char* FUN = "AlignBufAllocator::allocate()";
 
@@ -138,7 +138,7 @@ namespace Gears
 
   void
   AlignBufAllocator::deallocate(Pointer ptr, size_t size)
-    throw()
+    noexcept
   {
     (void)size;
     assert(!(size & MASK_));

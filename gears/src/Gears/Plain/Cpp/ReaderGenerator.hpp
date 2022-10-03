@@ -36,24 +36,24 @@ namespace Cpp
   {
   public:
     ReaderGenerator(std::ostream& out, const char* offset)
-      throw();
+      noexcept;
 
     void generate_decl(
       Declaration::StructReader* struct_reader)
-      throw();
+      noexcept;
 
     void generate_impl(
       Declaration::StructReader* struct_reader)
-      throw();
+      noexcept;
 
   private:
     void generate_ctor_impl_(
       const Declaration::StructReader* struct_reader)
-      throw();
+      noexcept;
 
     void generate_field_funs_impl_(
       const Declaration::StructReader* struct_reader)
-      throw();
+      noexcept;
 
   private:
     std::ostream& out_;

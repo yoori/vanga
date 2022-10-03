@@ -38,7 +38,7 @@ namespace Gears
     U* u_ptr;
 
   private:
-    ArrayAutoPtrRef(U* src) throw();
+    ArrayAutoPtrRef(U* src) noexcept;
 
     friend class ArrayAutoPtr<U>;
   };
@@ -56,20 +56,20 @@ namespace Gears
      * @param size size of the array to allocate (zero - not to allocate)
      */
     explicit
-    ArrayAutoPtr(size_t size = 0) throw();
+    ArrayAutoPtr(size_t size = 0) noexcept;
 
     /**
      * Move constructor
      * Transforms ownership from src to the constructed object
      * @param src former owner of the array
      */
-    ArrayAutoPtr(ArrayAutoPtr<ElementType>& src) throw();
+    ArrayAutoPtr(ArrayAutoPtr<ElementType>& src) noexcept;
 
     /**
      * Destructor
      * Deallocates owned array
      */
-    ~ArrayAutoPtr() throw();
+    ~ArrayAutoPtr() noexcept;
 
     /**
      * Assignment operator
@@ -77,14 +77,14 @@ namespace Gears
      * @param src former owner of the array
      */
     ArrayAutoPtr<ElementType>&
-    operator=(ArrayAutoPtr<ElementType>& src) throw();
+    operator=(ArrayAutoPtr<ElementType>& src) noexcept;
 
     /**
      * Accessor for the array
      * @return pointer to stored array
      */
     ElementType*
-    get() const throw();
+    get() const noexcept;
 
     /**
      * Accessor for element of the array
@@ -92,7 +92,7 @@ namespace Gears
      * @return reference to element
      */
     ElementType&
-    operator[](unsigned index) throw();
+    operator[](unsigned index) noexcept;
 
     /**
      * Accessor for constant element of the array
@@ -100,14 +100,14 @@ namespace Gears
      * @return constant reference to element
      */
     const ElementType&
-    operator[](unsigned index) const throw();
+    operator[](unsigned index) const noexcept;
 
     /**
      * Releases ownership
      * @return previously stored pointer to the array
      */
     ElementType*
-    release() throw();
+    release() noexcept;
 
     /**
      * Releases stored array (if any) and allocated a new one (if size is
@@ -115,7 +115,7 @@ namespace Gears
      * @param size size of a new array
      */
     void
-    reset(unsigned size) throw();
+    reset(unsigned size) noexcept;
 
     /**
      * Releases stored array (if any) and resets the pointer with a new one.
@@ -123,21 +123,21 @@ namespace Gears
      * @param ptr new pointer to hold
      */
     void
-    unsafe_reset(ElementType* ptr) throw();
+    unsafe_reset(ElementType* ptr) noexcept;
 
     /**
      * Never implemented thus usage will lead to error messages.
      */
     template<typename U>
     void
-    unsafe_reset(U*) throw();
+    unsafe_reset(U*) noexcept;
 
     /**
      * Swaps pointers of the object and src
      * @param src another object to swap pointers with
      */
     void
-    swap(ArrayAutoPtr<ElementType>& src) throw();
+    swap(ArrayAutoPtr<ElementType>& src) noexcept;
 
     /**X
      * Special conversions to enable copies and assignments
@@ -145,12 +145,12 @@ namespace Gears
      * ArrayAutoPtr<Class1>  func_returning_ArrayAutoPtr(.....);
      */
 
-    ArrayAutoPtr(ArrayAutoPtrRef<ElementType> src) throw();
+    ArrayAutoPtr(ArrayAutoPtrRef<ElementType> src) noexcept;
 
     ArrayAutoPtr&
-    operator=(ArrayAutoPtrRef<ElementType> rh) throw();
+    operator=(ArrayAutoPtrRef<ElementType> rh) noexcept;
 
-    operator ArrayAutoPtrRef<ElementType>() throw();
+    operator ArrayAutoPtrRef<ElementType>() noexcept;
 
   private:
     ElementType* ptr_;
@@ -171,7 +171,7 @@ namespace Gears
   //
 
   template<typename U>
-  ArrayAutoPtrRef<U>::ArrayAutoPtrRef(U* src) throw()
+  ArrayAutoPtrRef<U>::ArrayAutoPtrRef(U* src) noexcept
     : u_ptr(src)
   {}
 
@@ -181,28 +181,28 @@ namespace Gears
 
   template<typename ElementType>
   ElementType*
-  ArrayAutoPtr<ElementType>::get() const throw()
+  ArrayAutoPtr<ElementType>::get() const noexcept
   {
     return ptr_;
   }
 
   template<typename ElementType>
   ElementType&
-  ArrayAutoPtr<ElementType>::operator [](unsigned index) throw()
+  ArrayAutoPtr<ElementType>::operator [](unsigned index) noexcept
   {
     return ptr_[index];
   }
 
   template<typename ElementType>
   const ElementType&
-  ArrayAutoPtr<ElementType>::operator[](unsigned index) const throw()
+  ArrayAutoPtr<ElementType>::operator[](unsigned index) const noexcept
   {
     return ptr_[index];
   }
 
   template<typename ElementType>
   ElementType*
-  ArrayAutoPtr<ElementType>::release() throw()
+  ArrayAutoPtr<ElementType>::release() noexcept
   {
     ElementType* ptr(ptr_);
     ptr_ = 0;
@@ -211,7 +211,7 @@ namespace Gears
 
   template<typename ElementType>
   void
-  ArrayAutoPtr<ElementType>::unsafe_reset(ElementType* ptr) throw()
+  ArrayAutoPtr<ElementType>::unsafe_reset(ElementType* ptr) noexcept
   {
     if(ptr_ != ptr)
     {
@@ -226,7 +226,7 @@ namespace Gears
 
   template<typename ElementType>
   void
-  ArrayAutoPtr<ElementType>::reset(unsigned size) throw()
+  ArrayAutoPtr<ElementType>::reset(unsigned size) noexcept
   {
     ElementType* ptr = size ? new ElementType[size] : 0;
 
@@ -240,30 +240,30 @@ namespace Gears
 
   template<typename ElementType>
   void
-  ArrayAutoPtr<ElementType>::swap(ArrayAutoPtr<ElementType>& src) throw()
+  ArrayAutoPtr<ElementType>::swap(ArrayAutoPtr<ElementType>& src) noexcept
   {
     std::swap(ptr_, src.ptr_);
   }
 
   template<typename ElementType>
-  ArrayAutoPtr<ElementType>::ArrayAutoPtr(size_t size) throw()
+  ArrayAutoPtr<ElementType>::ArrayAutoPtr(size_t size) noexcept
     : ptr_(size ? new ElementType[size] : 0)
   {}
 
   template<typename ElementType>
-  ArrayAutoPtr<ElementType>::ArrayAutoPtr(ArrayAutoPtr<ElementType>& src) throw()
+  ArrayAutoPtr<ElementType>::ArrayAutoPtr(ArrayAutoPtr<ElementType>& src) noexcept
     : ptr_(src.release())
   {}
 
   template<typename ElementType>
-  ArrayAutoPtr<ElementType>::~ArrayAutoPtr() throw()
+  ArrayAutoPtr<ElementType>::~ArrayAutoPtr() noexcept
   {
     unsafe_reset(0);
   }
 
   template<typename ElementType>
   ArrayAutoPtr<ElementType>&
-  ArrayAutoPtr<ElementType>::operator=(ArrayAutoPtr<ElementType>& src) throw()
+  ArrayAutoPtr<ElementType>::operator=(ArrayAutoPtr<ElementType>& src) noexcept
   {
     if(this != &src)
     {
@@ -274,20 +274,20 @@ namespace Gears
   }
 
   template<typename ElementType>
-  ArrayAutoPtr<ElementType>::ArrayAutoPtr(ArrayAutoPtrRef<ElementType> src) throw()
+  ArrayAutoPtr<ElementType>::ArrayAutoPtr(ArrayAutoPtrRef<ElementType> src) noexcept
     : ptr_(src.u_ptr)
   {}
 
   template<typename ElementType>
   ArrayAutoPtr<ElementType>&
-  ArrayAutoPtr<ElementType>::operator=(ArrayAutoPtrRef<ElementType> rh) throw()
+  ArrayAutoPtr<ElementType>::operator=(ArrayAutoPtrRef<ElementType> rh) noexcept
   {
     unsafe_reset(rh.u_ptr);
     return *this;
   }
 
   template<typename ElementType>
-  ArrayAutoPtr<ElementType>::operator ArrayAutoPtrRef<ElementType>() throw()
+  ArrayAutoPtr<ElementType>::operator ArrayAutoPtrRef<ElementType>() noexcept
   {
     return ArrayAutoPtrRef<ElementType>(release());
   }

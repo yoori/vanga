@@ -25,21 +25,21 @@ namespace Gears
   template<typename Elem, typename Traits>
   InputMemoryStreamBuffer<Elem, Traits>::InputMemoryStreamBuffer(
     Pointer ptr,
-    Size size) throw(Gears::Exception)
+    Size size) /*throw(Gears::Exception)*/
   {
     this->setg(ptr, ptr, ptr + size);
   }
 
   template<typename Elem, typename Traits>
   typename InputMemoryStreamBuffer<Elem, Traits>::ConstPointer
-  InputMemoryStreamBuffer<Elem, Traits>::data() const throw()
+  InputMemoryStreamBuffer<Elem, Traits>::data() const noexcept
   {
     return this->gptr();
   }
 
   template<typename Elem, typename Traits>
   typename InputMemoryStreamBuffer<Elem, Traits>::Size
-  InputMemoryStreamBuffer<Elem, Traits>::size() const throw()
+  InputMemoryStreamBuffer<Elem, Traits>::size() const noexcept
   {
     return this->egptr() - this->gptr();
   }
@@ -50,7 +50,7 @@ namespace Gears
     Offset off,
     std::ios_base::seekdir way,
     std::ios_base::openmode which)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
   {
     if (which != std::ios_base::in)
     {
@@ -84,7 +84,7 @@ namespace Gears
   InputMemoryStreamBuffer<Elem, Traits>::seekpos(
     Position pos,
     std::ios_base::openmode which)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
   {
     if (which != std::ios_base::in)
     {
@@ -103,7 +103,7 @@ namespace Gears
 
   template<typename Elem, typename Traits>
   typename InputMemoryStreamBuffer<Elem, Traits>::Int
-  InputMemoryStreamBuffer<Elem, Traits>::underflow() throw()
+  InputMemoryStreamBuffer<Elem, Traits>::underflow() noexcept
   {
     return this->gptr() < this->egptr() ? *(this->gptr()) : Traits::eof();
   }
@@ -112,14 +112,14 @@ namespace Gears
 
   template<typename Elem, typename Traits>
   InputMemoryStream<Elem, Traits>::InputMemoryStream(ConstPointer data)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
     : StreamBuffer(const_cast<Pointer>(data), Traits::length(data)),
       Stream(this)
   {}
 
   template<typename Elem, typename Traits>
   InputMemoryStream<Elem, Traits>::InputMemoryStream(
-    ConstPointer data, Size size) throw(Gears::Exception)
+    ConstPointer data, Size size) /*throw(Gears::Exception)*/
     : StreamBuffer(const_cast<Pointer>(data), size),
       Stream(this)
   {}
@@ -127,7 +127,7 @@ namespace Gears
   template<typename Elem, typename Traits>
   template<typename Allocator>
   InputMemoryStream<Elem, Traits>::InputMemoryStream(
-    const std::basic_string<Elem, Allocator>& str) throw(Gears::Exception)
+    const std::basic_string<Elem, Allocator>& str) /*throw(Gears::Exception)*/
     : StreamBuffer(const_cast<Pointer>(str.data()), str.size()),
       Stream(this)
   {}

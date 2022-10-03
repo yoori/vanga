@@ -47,17 +47,17 @@ namespace Gears
 
     virtual void
     wait_preconditions(const KeyType&, OperationPriority) const
-      throw(Exception)
+      /*throw(Exception)*/
     {}
 
     virtual bool
-    check_profile(const KeyType& key) const throw(Exception) = 0;
+    check_profile(const KeyType& key) const /*throw(Exception)*/ = 0;
 
     virtual Gears::ConstSmartMemBuf_var
     get_profile(
       const KeyType& key,
       Gears::Time* last_access_time = 0)
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     virtual void
     save_profile(
@@ -65,36 +65,36 @@ namespace Gears
       Gears::ConstSmartMemBuf* mem_buf,
       const Gears::Time& now = Gears::Time::get_time_of_day(),
       OperationPriority op_priority = OP_RUNTIME)
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     virtual bool
     remove_profile(
       const KeyType& key,
       OperationPriority op_priority = OP_RUNTIME)
-      throw(Exception) = 0;
+      /*throw(Exception)*/ = 0;
 
     virtual void
     clear_expired(const Gears::Time& /*expire_time*/)
-      throw(Exception)
+      /*throw(Exception)*/
     {
       throw Exception("clear_expired isn't supported");
     }
 
     virtual void
-    copy_keys(KeyList& /*keys*/) throw(Exception)
+    copy_keys(KeyList& /*keys*/) /*throw(Exception)*/
     {
       throw Exception("copy_keys isn't supported");
     };
 
     virtual unsigned long
-    size() const throw() = 0;
+    size() const noexcept = 0;
 
     virtual unsigned long
-    area_size() const throw() = 0;
+    area_size() const noexcept = 0;
 
   protected:
     virtual
-    ~ProfileMap() throw () = default;
+    ~ProfileMap() noexcept = default;
   };
 }
 

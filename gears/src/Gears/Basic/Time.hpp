@@ -64,7 +64,7 @@ OPEN_NAMESPACE(Gears)
      */
     static void
     print(const Time& tv, std::ostream& ostr)
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
 
     /**
      * Gives month name by its number (0-11)
@@ -73,7 +73,7 @@ OPEN_NAMESPACE(Gears)
      */
     static const char*
     month(unsigned month)
-      throw (InvalidArgument, Exception);
+      /*throw (InvalidArgument, Exception)*/;
 
     /**
      * Gives week day name by its index
@@ -82,7 +82,7 @@ OPEN_NAMESPACE(Gears)
      */
     static const char*
     week_day(unsigned day)
-      throw (InvalidArgument, Exception);
+      /*throw (InvalidArgument, Exception)*/;
 
     /**
      * Compares two tm dates. No TZ check is performed
@@ -91,28 +91,28 @@ OPEN_NAMESPACE(Gears)
      * @return Negative if less, zero if equal, positive if greater
      */
     static int
-    compare(const tm& t1, const tm& t2) throw ();
+    compare(const tm& t1, const tm& t2) noexcept;
 
     /**
      * Creates Time object holding current time value
      * @return current time
      */
     static Time
-    get_time_of_day() throw ();
+    get_time_of_day() noexcept;
 
 
   public:
     /**
      * Default constructor
      */
-    Time() throw ();
+    Time() noexcept;
 
     /**
      * Constructor
      * @param time provided time
      */
     explicit
-    Time(const timeval& time) throw ();
+    Time(const timeval& time) noexcept;
 
     /**
      * Constructor
@@ -120,7 +120,7 @@ OPEN_NAMESPACE(Gears)
      * @param usec provided time (microseconds)
      */
     explicit
-    Time(time_t time_sec, suseconds_t usec = 0) throw ();
+    Time(time_t time_sec, suseconds_t usec = 0) noexcept;
 
     /**
      * Constructor
@@ -129,11 +129,11 @@ OPEN_NAMESPACE(Gears)
      * @param format format string
      */
     Time(const char* value, const char* format)
-      throw (InvalidArgument, Exception, Gears::Exception);
+      /*throw (InvalidArgument, Exception, Gears::Exception)*/;
 
     /*
     explicit
-    Time(double value) throw ();
+    Time(double value) noexcept;
     */
 
     /**
@@ -143,21 +143,21 @@ OPEN_NAMESPACE(Gears)
      */
     ExtendedTime
     get_time(TimeZone tz) const
-      throw (Exception, Gears::Exception);
+      /*throw (Exception, Gears::Exception)*/;
 
     /**
      * Convertor to ExtendedTime
      * @return ExtendedTime GMT presentation based on current value
      */
     ExtendedTime
-    get_gm_time() const throw (Exception, Gears::Exception);
+    get_gm_time() const /*throw (Exception, Gears::Exception)*/;
 
     /**
      * Convertor to ExtendedTime
      * @return ExtendedTime localtime presentation based on current value
      */
     ExtendedTime
-    get_local_time() const throw (Exception, Gears::Exception);
+    get_local_time() const /*throw (Exception, Gears::Exception)*/;
 
     /**
      * Resets current value
@@ -165,7 +165,7 @@ OPEN_NAMESPACE(Gears)
      * @param usec microseconds
      */
     void
-    set(time_t time_sec, suseconds_t usec = 0) throw ();
+    set(time_t time_sec, suseconds_t usec = 0) noexcept;
 
     /**
      * Parses string time representation.
@@ -175,7 +175,7 @@ OPEN_NAMESPACE(Gears)
      */
     void
     set(const char* value, const char* format)
-      throw (InvalidArgument, Exception, Gears::Exception);
+      /*throw (InvalidArgument, Exception, Gears::Exception)*/;
 
     /**
      * [sign]integer.fractional
@@ -183,7 +183,7 @@ OPEN_NAMESPACE(Gears)
      * @return 1, 0 or -1
      */
     int
-    sign() const throw ();
+    sign() const noexcept;
 
     /**
      * [sign]integer.fractional
@@ -191,7 +191,7 @@ OPEN_NAMESPACE(Gears)
      * @return integer part of symbolic time representation (seconds)
      */
     time_t
-    integer_part() const throw ();
+    integer_part() const noexcept;
 
     /**
      * [sign]integer.fractional
@@ -199,34 +199,34 @@ OPEN_NAMESPACE(Gears)
      * @return fractional part of symbolic time representation (microseconds)
      */
     suseconds_t
-    fractional_part() const throw ();
+    fractional_part() const noexcept;
 
     /**
      * Inverts sign of the time interval
      */
     void
-    invert_sign() throw ();
+    invert_sign() noexcept;
 
     /**
      * Returns tv_sec * USEC_MAX + tv_usec
      * @return microseconds representation of time value
      */
     long long
-    microseconds() const throw ();
+    microseconds() const noexcept;
 
     /**
      * Packs current value into TIME_PACK_LEN bytes long buffer
      * @param buffer pointer to TIME_PACK_LEN bytes long buffer
      */
     void
-    pack(void* buffer) const throw ();
+    pack(void* buffer) const noexcept;
 
     /**
      * Unpacks current value from TIME_PACK_LEN bytes long buffer
      * @param buffer pointer to TIME_PACK_LEN bytes long buffer
      */
     void
-    unpack(const void* buffer) throw ();
+    unpack(const void* buffer) noexcept;
 
     /**
      * Adds another time interval to the current
@@ -234,7 +234,7 @@ OPEN_NAMESPACE(Gears)
      * @return reference to the object
      */
     Time&
-    operator +=(const Time& time) throw ();
+    operator +=(const Time& time) noexcept;
 
     /**
      * Adds another time interval to the current
@@ -242,7 +242,7 @@ OPEN_NAMESPACE(Gears)
      * @return reference to the object
      */
     Time&
-    operator +=(time_t time) throw ();
+    operator +=(time_t time) noexcept;
 
     /**
      * Subtracts another time interval from the current
@@ -250,7 +250,7 @@ OPEN_NAMESPACE(Gears)
      * @return reference to the object
      */
     Time&
-    operator -=(const Time& time) throw ();
+    operator -=(const Time& time) noexcept;
 
     /**
      * Subtracts another time interval from the current
@@ -258,7 +258,7 @@ OPEN_NAMESPACE(Gears)
      * @return reference to the object
      */
     Time&
-    operator -=(time_t time) throw ();
+    operator -=(time_t time) noexcept;
 
     /**
      * Multiplies current time interval on non-negative integer multiplier
@@ -266,7 +266,7 @@ OPEN_NAMESPACE(Gears)
      * @return reference to the object
      */
     Time&
-    operator *=(int multiplier) throw ();
+    operator *=(int multiplier) noexcept;
 
     /**
      * Divides current time interval on non-negative integer divisor
@@ -274,14 +274,14 @@ OPEN_NAMESPACE(Gears)
      * @return reference to the object
      */
     Time&
-    operator /=(int divisor) throw ();
+    operator /=(int divisor) noexcept;
 
     /**
      * Quicker way to call get_gm_time().format("%F %T")
      * @return formatted GM time
      */
     std::string
-    gm_ft() const throw (Gears::Exception);
+    gm_ft() const /*throw (Gears::Exception)*/;
 
     double
     as_double() const;
@@ -327,7 +327,7 @@ OPEN_NAMESPACE(Gears)
      * @param usec microseconds
      * @param tz TZ for supplied time
      */
-    ExtendedTime(const tm& time, suseconds_t usec, Time::TimeZone tz) throw ();
+    ExtendedTime(const tm& time, suseconds_t usec, Time::TimeZone tz) noexcept;
     /**
      * Constructor
      * @param sec seconds from Epoch
@@ -335,7 +335,7 @@ OPEN_NAMESPACE(Gears)
      * @param tz TZ to convert to
      */
     ExtendedTime(time_t sec, suseconds_t usec, Time::TimeZone tz)
-      throw (Exception, Gears::Exception);
+      /*throw (Exception, Gears::Exception)*/;
 
     /**
      * Constructor
@@ -355,14 +355,14 @@ OPEN_NAMESPACE(Gears)
       unsigned int hour,
       unsigned int min,
       unsigned int sec,
-      suseconds_t usec) throw ();
+      suseconds_t usec) noexcept;
 
     /**
      * Time convertion operator
      * @return Time object representing current value
      */
     operator Time() const
-      throw (Exception, Gears::Exception);
+      /*throw (Exception, Gears::Exception)*/;
 
     /**
      * Formats time represented by this object according to fmt.
@@ -372,42 +372,42 @@ OPEN_NAMESPACE(Gears)
      */
     std::string
     format(const char* fmt) const
-      throw (InvalidArgument, Exception, Gears::Exception);
+      /*throw (InvalidArgument, Exception, Gears::Exception)*/;
 
     /**
      * Provides time normalization (i.e. 32nd of October becomes
      * 1st of November)
      */
     void
-    normalize() throw (Exception, Gears::Exception);
+    normalize() /*throw (Exception, Gears::Exception)*/;
 
     /**
      * Gives time part of the current value
      * @return time part of the current value (date fields are zeroed)
      */
     ExtendedTime
-    get_time() const throw (Gears::Exception);
+    get_time() const /*throw (Gears::Exception)*/;
 
     /**
      * Copies time part of supplied value
      * @param time time to copy
      */
     void
-    set_time(const ExtendedTime& time) throw ();
+    set_time(const ExtendedTime& time) noexcept;
 
     /**
      * Gives date part of the current value
      * @return date part of the current value (time fields are zeroed)
      */
     ExtendedTime
-    get_date() const throw (Gears::Exception);
+    get_date() const /*throw (Gears::Exception)*/;
 
     /**
      * Copies date part of supplied value
      * @param time date to copy
      */
     void
-    set_date(const ExtendedTime& time) throw ();
+    set_date(const ExtendedTime& time) noexcept;
   };
 
   /**
@@ -416,7 +416,7 @@ OPEN_NAMESPACE(Gears)
    * @return seconds since epoch
    */
   time_t
-  gm_to_time(const tm& et) throw ();
+  gm_to_time(const tm& et) noexcept;
 
   /**
    * gmtime_r(3) analogue
@@ -424,64 +424,64 @@ OPEN_NAMESPACE(Gears)
    * @param et resulted split time
    */
   void
-  time_to_gm(time_t time, tm& et) throw ();
+  time_to_gm(time_t time, tm& et) noexcept;
 
 CLOSE_NAMESPACE
 
 // Comparance functions (for Time class)
 bool
-operator ==(const Gears::Time& tv1, const timeval& tv2) throw ();
+operator ==(const Gears::Time& tv1, const timeval& tv2) noexcept;
 
 bool
-operator !=(const Gears::Time& tv1, const timeval& tv2) throw ();
+operator !=(const Gears::Time& tv1, const timeval& tv2) noexcept;
 
 bool
-operator <(const Gears::Time& tv1, const timeval& tv2) throw ();
+operator <(const Gears::Time& tv1, const timeval& tv2) noexcept;
 
 bool
-operator >(const Gears::Time& tv1, const timeval& tv2) throw ();
+operator >(const Gears::Time& tv1, const timeval& tv2) noexcept;
 
 bool
-operator <=(const Gears::Time& tv1, const timeval& tv2) throw ();
+operator <=(const Gears::Time& tv1, const timeval& tv2) noexcept;
 
 bool
-operator >=(const Gears::Time& tv1, const timeval& tv2) throw ();
+operator >=(const Gears::Time& tv1, const timeval& tv2) noexcept;
 
 // Arithmetics functions (for Time class)
 Gears::Time
-operator +(const Gears::Time& tv1, const timeval& tv2) throw ();
+operator +(const Gears::Time& tv1, const timeval& tv2) noexcept;
 
 Gears::Time
-operator +(const Gears::Time& tv, time_t time) throw ();
+operator +(const Gears::Time& tv, time_t time) noexcept;
 
 Gears::Time
-operator -(const Gears::Time& tv1, const timeval& tv2) throw ();
+operator -(const Gears::Time& tv1, const timeval& tv2) noexcept;
 
 Gears::Time
-operator -(const Gears::Time& tv, time_t time) throw ();
+operator -(const Gears::Time& tv, time_t time) noexcept;
 
 Gears::Time
-operator *(const Gears::Time& tv, int multiplier) throw ();
+operator *(const Gears::Time& tv, int multiplier) noexcept;
 
 Gears::Time
-operator /(const Gears::Time& tv, int divisor) throw ();
+operator /(const Gears::Time& tv, int divisor) noexcept;
 
 // Stream functions
 std::ostream&
 operator <<(std::ostream& ostr, const Gears::Time& time)
-  throw (Gears::Exception);
+  /*throw (Gears::Exception)*/;
 
 std::ostream&
 operator <<(std::ostream& ostr, const Gears::ExtendedTime& time)
-  throw (Gears::Exception);
+  /*throw (Gears::Exception)*/;
 
 std::istream&
 operator >>(std::istream& istr, Gears::Time& time)
-  throw (Gears::Time::Exception, Gears::Exception);
+  /*throw (Gears::Time::Exception, Gears::Exception)*/;
 
 std::istream&
 operator >>(std::istream& istr, Gears::ExtendedTime& time)
-  throw (Gears::ExtendedTime::Exception, Gears::Exception);
+  /*throw (Gears::ExtendedTime::Exception, Gears::Exception)*/;
 
 //
 // Inlines
@@ -495,7 +495,7 @@ OPEN_NAMESPACE(Gears)
 
   inline
   ExtendedTime::ExtendedTime(const tm& time, suseconds_t usec,
-    Time::TimeZone tz) throw ()
+    Time::TimeZone tz) noexcept
     : tm(time),
       tm_usec(usec),
       timezone(tz)
@@ -509,7 +509,7 @@ OPEN_NAMESPACE(Gears)
     unsigned int hour,
     unsigned int min,
     unsigned int sec,
-    suseconds_t usec) throw ()
+    suseconds_t usec) noexcept
   {
     tm_year = year - 1900;
     tm_mon = month - 1;
@@ -525,7 +525,7 @@ OPEN_NAMESPACE(Gears)
 
   inline
   ExtendedTime::operator Time() const
-    throw (Exception, Gears::Exception)
+    /*throw (Exception, Gears::Exception)*/
   {
     time_t sec = 0;
     switch (timezone)
@@ -546,7 +546,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline void
-  ExtendedTime::normalize() throw (Exception, Gears::Exception)
+  ExtendedTime::normalize() /*throw (Exception, Gears::Exception)*/
   {
     const time_t invalid = static_cast<time_t>(-1);
     time_t res = invalid;
@@ -570,7 +570,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline ExtendedTime
-  ExtendedTime::get_time() const throw (Gears::Exception)
+  ExtendedTime::get_time() const /*throw (Gears::Exception)*/
   {
     ExtendedTime res(*this);
     res.tm_mday = 0;
@@ -582,7 +582,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline void
-  ExtendedTime::set_time(const ExtendedTime& time) throw ()
+  ExtendedTime::set_time(const ExtendedTime& time) noexcept
   {
     tm_hour = time.tm_hour;
     tm_min = time.tm_min;
@@ -591,7 +591,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline ExtendedTime
-  ExtendedTime::get_date() const throw (Gears::Exception)
+  ExtendedTime::get_date() const /*throw (Gears::Exception)*/
   {
     ExtendedTime res(*this);
     res.tm_hour = 0;
@@ -602,7 +602,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline void
-  ExtendedTime::set_date(const ExtendedTime& time) throw ()
+  ExtendedTime::set_date(const ExtendedTime& time) noexcept
   {
     tm_mday = time.tm_mday;
     tm_mon = time.tm_mon;
@@ -614,7 +614,7 @@ OPEN_NAMESPACE(Gears)
   //
 
   inline Time
-  Time::get_time_of_day() throw ()
+  Time::get_time_of_day() noexcept
   {
     Time time;
     gettimeofday(&time, NULL);
@@ -622,26 +622,26 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline
-  Time::Time() throw ()
+  Time::Time() noexcept
   {
     tv_sec = 0;
     tv_usec = 0;
   }
 
   inline
-  Time::Time(const timeval& time) throw ()
+  Time::Time(const timeval& time) noexcept
     : timeval(time)
   {}
 
   inline
-  Time::Time(time_t time_sec, suseconds_t usec) throw ()
+  Time::Time(time_t time_sec, suseconds_t usec) noexcept
   {
     tv_sec = time_sec;
     tv_usec = usec;
   }
 
   inline void
-  Time::set(time_t time_sec, suseconds_t usec) throw ()
+  Time::set(time_t time_sec, suseconds_t usec) noexcept
   {
     tv_sec = time_sec;
     tv_usec = usec;
@@ -649,14 +649,14 @@ OPEN_NAMESPACE(Gears)
 
   inline
   Time::Time(const char* value, const char* format)
-    throw (InvalidArgument, Exception, Gears::Exception)
+    /*throw (InvalidArgument, Exception, Gears::Exception)*/
   {
     set(value, format);
   }
 
   /*
   inline
-  Time::Time(double value) throw ()
+  Time::Time(double value) noexcept
   {
     double floor_value = ::floor(value);
     tv_sec = static_cast<int>(floor_value);
@@ -667,13 +667,13 @@ OPEN_NAMESPACE(Gears)
   inline
   void
   Time::print(const Time& time, std::ostream& ostr)
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
   {
     ostr << Time(time);
   }
 
   inline int
-  Time::compare(const tm& t1, const tm& t2) throw ()
+  Time::compare(const tm& t1, const tm& t2) noexcept
   {
     int diff = t1.tm_year - t2.tm_year;
 
@@ -706,7 +706,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline const char*
-  Time::month(unsigned month) throw (InvalidArgument, Exception)
+  Time::month(unsigned month) /*throw (InvalidArgument, Exception)*/
   {
     if (month > 11)
     {
@@ -719,7 +719,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline const char*
-  Time::week_day(unsigned day) throw (InvalidArgument, Exception)
+  Time::week_day(unsigned day) /*throw (InvalidArgument, Exception)*/
   {
     if (day > 6)
     {
@@ -733,43 +733,43 @@ OPEN_NAMESPACE(Gears)
 
   inline ExtendedTime
   Time::get_time(TimeZone tz) const
-    throw (Exception, Gears::Exception)
+    /*throw (Exception, Gears::Exception)*/
   {
     return ExtendedTime(tv_sec, tv_usec, tz);
   }
 
   inline ExtendedTime
-  Time::get_gm_time() const throw (Exception, Gears::Exception)
+  Time::get_gm_time() const /*throw (Exception, Gears::Exception)*/
   {
     return ExtendedTime(tv_sec, tv_usec, TZ_GMT);
   }
 
   inline ExtendedTime
-  Time::get_local_time() const throw (Exception, Gears::Exception)
+  Time::get_local_time() const /*throw (Exception, Gears::Exception)*/
   {
     return ExtendedTime(tv_sec, tv_usec, TZ_LOCAL);
   }
 
   inline int
-  Time::sign() const throw ()
+  Time::sign() const noexcept
   {
     return tv_sec > 0 ? 1 : tv_sec ? -1 : 0;
   }
 
   inline time_t
-  Time::integer_part() const throw ()
+  Time::integer_part() const noexcept
   {
     return tv_sec >= 0 ? tv_sec : tv_usec ? -tv_sec - 1 : -tv_sec;
   }
 
   inline suseconds_t
-  Time::fractional_part() const throw ()
+  Time::fractional_part() const noexcept
   {
     return tv_sec >= 0 || !tv_usec ? tv_usec : USEC_MAX - tv_usec;
   }
 
   inline void
-  Time::invert_sign() throw ()
+  Time::invert_sign() noexcept
   {
     if (tv_usec)
     {
@@ -783,14 +783,14 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline long long
-  Time::microseconds() const throw ()
+  Time::microseconds() const noexcept
   {
     return tv_sec * static_cast<long long>(USEC_MAX) + tv_usec;
   }
 
   inline void
   Time::set(const char* value, const char* format)
-    throw (InvalidArgument, Exception, Gears::Exception)
+    /*throw (InvalidArgument, Exception, Gears::Exception)*/
   {
     if (value == 0 || format == 0)
     {
@@ -813,7 +813,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline void
-  Time::pack(void* buffer) const throw ()
+  Time::pack(void* buffer) const noexcept
   {
     int32_t* buf = static_cast<int32_t*>(buffer);
     buf[0] = static_cast<int32_t>(tv_sec);
@@ -821,14 +821,14 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline void
-  Time::unpack(const void* buffer) throw ()
+  Time::unpack(const void* buffer) noexcept
   {
     const int32_t* buf = static_cast<const int32_t*>(buffer);
     set(static_cast<time_t>(buf[0]), static_cast<suseconds_t>(buf[1]));
   }
 
   inline Time&
-  Time::operator +=(const Time& time) throw ()
+  Time::operator +=(const Time& time) noexcept
   {
     tv_sec += time.tv_sec;
     tv_usec += time.tv_usec;
@@ -841,14 +841,14 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline Time&
-  Time::operator +=(time_t time) throw ()
+  Time::operator +=(time_t time) noexcept
   {
     tv_sec += time;
     return *this;
   }
 
   inline Time&
-  Time::operator -=(const Time& time) throw ()
+  Time::operator -=(const Time& time) noexcept
   {
     tv_sec -= time.tv_sec;
     if (tv_usec < time.tv_usec)
@@ -864,14 +864,14 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline Time&
-  Time::operator -=(time_t time) throw ()
+  Time::operator -=(time_t time) noexcept
   {
     tv_sec -= time;
     return *this;
   }
 
   inline Time&
-  Time::operator *=(int multiplier) throw ()
+  Time::operator *=(int multiplier) noexcept
   {
     const bool INVERT_SIGN = tv_sec < 0;
     const bool NEG_MULTIPLIER = multiplier < 0;
@@ -907,7 +907,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline Time&
-  Time::operator /=(int divisor) throw ()
+  Time::operator /=(int divisor) noexcept
   {
     const bool INVERT_SIGN = tv_sec < 0;
     const bool NEG_DIVISOR = divisor < 0;
@@ -944,7 +944,7 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline std::string
-  Time::gm_ft() const throw (Gears::Exception)
+  Time::gm_ft() const /*throw (Gears::Exception)*/
   {
     return get_gm_time().format("%F %T");
   }
@@ -961,7 +961,7 @@ namespace TimeHelper
 {
   inline
   Gears::Time
-  mul(const timeval& tv, int multiplier) throw ()
+  mul(const timeval& tv, int multiplier) noexcept
   {
     return Gears::Time(tv.tv_sec * multiplier +
       static_cast<time_t>(tv.tv_usec) * multiplier /
@@ -972,7 +972,7 @@ namespace TimeHelper
 
   inline
   Gears::Time
-  div(const timeval& tv, int divisor) throw ()
+  div(const timeval& tv, int divisor) noexcept
   {
     return Gears::Time(tv.tv_sec / divisor,
       static_cast<suseconds_t>((
@@ -989,21 +989,21 @@ namespace TimeHelper
 
 inline
 bool
-operator ==(const Gears::Time& tv1, const timeval& tv2) throw ()
+operator ==(const Gears::Time& tv1, const timeval& tv2) noexcept
 {
   return tv1.tv_sec == tv2.tv_sec && tv1.tv_usec == tv2.tv_usec;
 }
 
 inline
 bool
-operator !=(const Gears::Time& tv1, const timeval& tv2) throw ()
+operator !=(const Gears::Time& tv1, const timeval& tv2) noexcept
 {
   return tv1.tv_sec != tv2.tv_sec || tv1.tv_usec != tv2.tv_usec;
 }
 
 inline
 bool
-operator <(const Gears::Time& tv1, const timeval& tv2) throw ()
+operator <(const Gears::Time& tv1, const timeval& tv2) noexcept
 {
   return tv1.tv_sec < tv2.tv_sec ||
     (tv1.tv_sec == tv2.tv_sec && tv1.tv_usec < tv2.tv_usec);
@@ -1011,7 +1011,7 @@ operator <(const Gears::Time& tv1, const timeval& tv2) throw ()
 
 inline
 bool
-operator >(const Gears::Time& tv1, const timeval& tv2) throw ()
+operator >(const Gears::Time& tv1, const timeval& tv2) noexcept
 {
   return tv1.tv_sec > tv2.tv_sec ||
     (tv1.tv_sec == tv2.tv_sec && tv1.tv_usec > tv2.tv_usec);
@@ -1019,7 +1019,7 @@ operator >(const Gears::Time& tv1, const timeval& tv2) throw ()
 
 inline
 bool
-operator <=(const Gears::Time& tv1, const timeval& tv2) throw ()
+operator <=(const Gears::Time& tv1, const timeval& tv2) noexcept
 {
   return tv1.tv_sec < tv2.tv_sec ||
     (tv1.tv_sec == tv2.tv_sec && tv1.tv_usec <= tv2.tv_usec);
@@ -1027,7 +1027,7 @@ operator <=(const Gears::Time& tv1, const timeval& tv2) throw ()
 
 inline
 bool
-operator >=(const Gears::Time& tv1, const timeval& tv2) throw ()
+operator >=(const Gears::Time& tv1, const timeval& tv2) noexcept
 {
   return tv1.tv_sec > tv2.tv_sec ||
     (tv1.tv_sec == tv2.tv_sec && tv1.tv_usec >= tv2.tv_usec);
@@ -1037,7 +1037,7 @@ operator >=(const Gears::Time& tv1, const timeval& tv2) throw ()
 
 inline
 Gears::Time
-operator -(const Gears::Time& tv) throw ()
+operator -(const Gears::Time& tv) noexcept
 {
   return tv.tv_usec ? Gears::Time(-tv.tv_sec - 1,
     Gears::Time::USEC_MAX - tv.tv_usec) : Gears::Time(-tv.tv_sec, 0);
@@ -1045,14 +1045,14 @@ operator -(const Gears::Time& tv) throw ()
 
 inline
 Gears::Time
-abs(const Gears::Time& tv) throw ()
+abs(const Gears::Time& tv) noexcept
 {
   return tv.tv_sec < 0 ? -Gears::Time(tv) : Gears::Time(tv);
 }
 
 inline
 Gears::Time
-operator +(const Gears::Time& tv1, const timeval& tv2) throw ()
+operator +(const Gears::Time& tv1, const timeval& tv2) noexcept
 {
   return tv1.tv_usec + tv2.tv_usec >= Gears::Time::USEC_MAX ?
     Gears::Time(tv1.tv_sec + tv2.tv_sec + 1,
@@ -1062,14 +1062,14 @@ operator +(const Gears::Time& tv1, const timeval& tv2) throw ()
 
 inline
 Gears::Time
-operator +(const Gears::Time& tv, time_t time) throw ()
+operator +(const Gears::Time& tv, time_t time) noexcept
 {
   return Gears::Time(tv.tv_sec + time, tv.tv_usec);
 }
 
 inline
 Gears::Time
-operator -(const Gears::Time& tv1, const timeval& tv2) throw ()
+operator -(const Gears::Time& tv1, const timeval& tv2) noexcept
 {
   return tv1.tv_usec < tv2.tv_usec ?
     Gears::Time(tv1.tv_sec - tv2.tv_sec - 1,
@@ -1079,14 +1079,14 @@ operator -(const Gears::Time& tv1, const timeval& tv2) throw ()
 
 inline
 Gears::Time
-operator -(const Gears::Time& tv, time_t time) throw ()
+operator -(const Gears::Time& tv, time_t time) noexcept
 {
   return Gears::Time(tv.tv_sec - time, tv.tv_usec);
 }
 
 inline
 Gears::Time
-operator *(const Gears::Time& tv, int multiplier) throw ()
+operator *(const Gears::Time& tv, int multiplier) noexcept
 {
   return (tv.tv_sec < 0) == (multiplier < 0) ?
     TimeHelper::mul(abs(tv), std::abs(multiplier)) :
@@ -1095,7 +1095,7 @@ operator *(const Gears::Time& tv, int multiplier) throw ()
 
 inline
 Gears::Time
-operator /(const Gears::Time& tv, int divisor) throw ()
+operator /(const Gears::Time& tv, int divisor) noexcept
 {
   return (tv.tv_sec < 0) == (divisor < 0) ?
     TimeHelper::div(abs(tv), std::abs(divisor)) :

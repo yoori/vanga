@@ -54,7 +54,7 @@ namespace Gears
      */
     virtual
     Pointer
-    allocate(size_t& size) throw (Exception, OutOfMemory) = 0;
+    allocate(size_t& size) /*throw (Exception, OutOfMemory)*/ = 0;
 
     /**
      * All size T objects in the area pointed
@@ -67,7 +67,7 @@ namespace Gears
      * throw exceptions. [Note: p shall not be null.]
      */
     virtual void
-    deallocate(Pointer ptr, size_t size) throw () = 0;
+    deallocate(Pointer ptr, size_t size) noexcept = 0;
 
     /**
      * Approximated cached memory size.
@@ -75,28 +75,28 @@ namespace Gears
      */
     virtual size_t
     cached() const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
 
     /**
      * Print detailed approximate cached memory information.
      */
     virtual void
     print_cached(std::ostream& ostr) const
-      throw (Gears::Exception);
+      /*throw (Gears::Exception)*/;
 
     /**
      * @return application level default allocator. Usually
      * simple new/delete behavior.
      */
     static BasicBufAllocator*
-    get_default_allocator() throw (Gears::Exception);
+    get_default_allocator() /*throw (Gears::Exception)*/;
 
   protected:
     /**
      * protected destructor because reference counting.
      */
     virtual
-    ~BasicBufAllocator() throw() = default;
+    ~BasicBufAllocator() noexcept = default;
       
     /**
      * Align number to 2^mask number
@@ -104,7 +104,7 @@ namespace Gears
      * @param mask power of 2 to be aligned.
      */ 
     static void
-    align_(size_t& number, size_t mask) throw();
+    align_(size_t& number, size_t mask) noexcept;
 
   private:
     typedef StaticInitializedMutex Lock;
@@ -127,7 +127,7 @@ namespace Gears
     static const size_t DEF_ALIGN = 10;
 
     explicit
-    DefaultBufAllocator(size_t align_code = DEF_ALIGN) throw ();
+    DefaultBufAllocator(size_t align_code = DEF_ALIGN) noexcept;
 
     /**
      * Align request size bytes according to MASK_
@@ -136,7 +136,7 @@ namespace Gears
      * @return pointer to allocated memory block
      */
     virtual Pointer
-    allocate(size_t& size) throw (Gears::Exception, OutOfMemory);
+    allocate(size_t& size) /*throw (Gears::Exception, OutOfMemory)*/;
 
     /**
      * Deallocate 
@@ -144,14 +144,14 @@ namespace Gears
      * @param size not used in this allocator.
      */
     virtual void
-    deallocate(Pointer ptr, size_t size) throw ();
+    deallocate(Pointer ptr, size_t size) noexcept;
 
   protected:
     /**
      * Destructor
      */
     virtual
-    ~DefaultBufAllocator() throw () = default;
+    ~DefaultBufAllocator() noexcept = default;
 
   private:
     const size_t MASK_;
@@ -171,7 +171,7 @@ namespace Gears
     AlignBufAllocator(
       size_t ptr_align_code = DEF_PTR_ALIGN,
       size_t align_code = DEF_ALIGN)
-      throw ();
+      noexcept;
 
     /**
      * Align request size bytes according to MASK_
@@ -181,7 +181,7 @@ namespace Gears
      */
     virtual
     Pointer
-    allocate(size_t& size) throw (Gears::Exception, OutOfMemory);
+    allocate(size_t& size) /*throw (Gears::Exception, OutOfMemory)*/;
 
     /**
      * Deallocate 
@@ -190,14 +190,14 @@ namespace Gears
      */
     virtual
     void
-    deallocate(Pointer ptr, size_t size) throw ();
+    deallocate(Pointer ptr, size_t size) noexcept;
 
   protected:
     /**
      * Destructor
      */
     virtual
-    ~AlignBufAllocator() throw () = default;
+    ~AlignBufAllocator() noexcept = default;
 
   private:
     const size_t ALIGN_;

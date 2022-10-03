@@ -31,21 +31,21 @@ namespace Code
   public:
     NamespaceElement(
       NamespaceElement* owner,
-      Declaration::Namespace* namespace_decl) throw();
+      Declaration::Namespace* namespace_decl) noexcept;
 
-    Declaration::Namespace_var namespace_decl() const throw();
+    Declaration::Namespace_var namespace_decl() const noexcept;
 
-    ElementList_var elements() const throw();
+    ElementList_var elements() const noexcept;
 
-    void add_element(Element* elem) throw();
+    void add_element(Element* elem) noexcept;
 
     Gears::IntrusivePtr<NamespaceElement>
-    owner() throw();
+    owner() noexcept;
 
-    virtual void visited(ElementVisitor* visitor) const throw();
+    virtual void visited(ElementVisitor* visitor) const noexcept;
 
   protected:
-    virtual ~NamespaceElement() throw() {}
+    virtual ~NamespaceElement() noexcept {}
     
   private:
     NamespaceElement* owner_;
@@ -62,7 +62,7 @@ namespace Code
   inline
   NamespaceElement::NamespaceElement(
     NamespaceElement* owner,
-    Declaration::Namespace* namespace_decl) throw()
+    Declaration::Namespace* namespace_decl) noexcept
     : owner_(owner),
       namespace_(Gears::add_ref(namespace_decl)),
       elements_(new ElementList)
@@ -70,35 +70,35 @@ namespace Code
 
   inline
   Declaration::Namespace_var
-  NamespaceElement::namespace_decl() const throw()
+  NamespaceElement::namespace_decl() const noexcept
   {
     return namespace_;
   }
 
   inline
   ElementList_var
-  NamespaceElement::elements() const throw()
+  NamespaceElement::elements() const noexcept
   {
     return elements_;
   }
 
   inline
   void
-  NamespaceElement::add_element(Element* elem) throw()
+  NamespaceElement::add_element(Element* elem) noexcept
   {
     elements_->push_back(Gears::add_ref(elem));
   }
 
   inline
   Gears::IntrusivePtr<NamespaceElement>
-  NamespaceElement::owner() throw()
+  NamespaceElement::owner() noexcept
   {
     return Gears::add_ref(owner_);
   }
 
   inline
   void
-  NamespaceElement::visited(ElementVisitor* visitor) const throw()
+  NamespaceElement::visited(ElementVisitor* visitor) const noexcept
   {
     visitor->visit_i(this);
   }

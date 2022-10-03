@@ -43,10 +43,10 @@ namespace Cpp
       std::ostream& out,
       std::ostream& out_inl_impl,
       std::ostream& out_cpp,
-      Code::ElementList* elements) throw();
+      Code::ElementList* elements) noexcept;
 
   protected:
-    virtual ~Generator() throw() {}
+    virtual ~Generator() noexcept {}
   };
 
   typedef Gears::IntrusivePtr<Generator>

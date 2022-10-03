@@ -31,22 +31,22 @@ namespace Gears
   class BaseTimer
   {
   public:
-    BaseTimer() throw ();
+    BaseTimer() noexcept;
 
     void
-    start() throw ();
+    start() noexcept;
 
     void
-    stop() throw ();
+    stop() noexcept;
 
     Time
-    elapsed_time() const throw ();
+    elapsed_time() const noexcept;
 
     const Time&
-    start_time() const throw();
+    start_time() const noexcept;
 
     const Time&
-    stop_time() const throw();
+    stop_time() const noexcept;
 
   private:
     Clock clock_;
@@ -58,13 +58,13 @@ namespace Gears
   class ClockTimeOfDay
   {
   public:
-    Time operator ()() const throw();
+    Time operator ()() const noexcept;
   };
 
   class ClockCPUUsage
   {
   public:
-    Time operator ()() const throw();
+    Time operator ()() const noexcept;
   };
 
   typedef BaseTimer<ClockTimeOfDay> Timer;
@@ -76,14 +76,14 @@ namespace Gears
 {
   inline
   Time
-  ClockTimeOfDay::operator()() const throw()
+  ClockTimeOfDay::operator()() const noexcept
   {
     return Time::get_time_of_day();
   }
 
   inline
   Time
-  ClockCPUUsage::operator()() const throw()
+  ClockCPUUsage::operator()() const noexcept
   {
     rusage usage;
     ::getrusage(RUSAGE_SELF, &usage);
@@ -91,13 +91,13 @@ namespace Gears
   }
 
   template<typename ClockType>
-  BaseTimer<ClockType>::BaseTimer() throw()
+  BaseTimer<ClockType>::BaseTimer() noexcept
     : started_(false)
   {}
 
   template<typename ClockType>
   void
-  BaseTimer<ClockType>::start() throw()
+  BaseTimer<ClockType>::start() noexcept
   {
     started_ = true;
     start_ = clock_();
@@ -105,7 +105,7 @@ namespace Gears
 
   template<typename ClockType>
   void
-  BaseTimer<ClockType>::stop() throw()
+  BaseTimer<ClockType>::stop() noexcept
   {
     Time stop = clock_();
     if (started_)
@@ -117,21 +117,21 @@ namespace Gears
 
   template<typename ClockType>
   Time
-  BaseTimer<ClockType>::elapsed_time() const throw()
+  BaseTimer<ClockType>::elapsed_time() const noexcept
   {
     return stop_ - start_;
   }
 
   template<typename ClockType>
   const Time&
-  BaseTimer<ClockType>::start_time() const throw()
+  BaseTimer<ClockType>::start_time() const noexcept
   {
     return start_;
   }
 
   template<typename ClockType>
   const Time&
-  BaseTimer<ClockType>::stop_time() const throw()
+  BaseTimer<ClockType>::stop_time() const noexcept
   {
     return stop_;
   }

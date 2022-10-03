@@ -373,7 +373,7 @@ namespace Gears
     RangeInputInteratorType range_begin,
     RangeInputInteratorType range_end,
     OutputIteratorType output_it,
-    LessOpType less_op) throw (Gears::Exception)
+    LessOpType less_op) /*throw (Gears::Exception)*/
   {
     typedef typename std::iterator_traits<
       RangeInputInteratorType>::value_type::const_iterator SubIterator;

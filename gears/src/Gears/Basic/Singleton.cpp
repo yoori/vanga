@@ -35,7 +35,7 @@ namespace Gears
   AtExitDestroying* AtExitDestroying::lower_priority_head_ = 0;
   bool AtExitDestroying::registered_ = false;
 
-  AtExitDestroying::AtExitDestroying(int priority) throw ()
+  AtExitDestroying::AtExitDestroying(int priority) noexcept
     : priority_(priority)
   {
     Lock::WriteGuard guard(mutex_);
@@ -64,7 +64,7 @@ namespace Gears
   }
 
   void
-  AtExitDestroying::destroy_at_exit_() throw ()
+  AtExitDestroying::destroy_at_exit_() noexcept
   {
     Lock::WriteGuard guard(mutex_);
     for (AtExitDestroying* current_priority = lower_priority_head_;

@@ -36,35 +36,35 @@ namespace Declaration
     CompleteTemplateDescriptor(
       const char* name,
       const BaseDescriptorList& args)
-      throw();
+      noexcept;
 
-    virtual bool is_fixed() const throw() = 0;
+    virtual bool is_fixed() const noexcept = 0;
 
-    virtual SizeType fixed_size() const throw() = 0;
+    virtual SizeType fixed_size() const noexcept = 0;
 
     CompleteTemplateDescriptor_var
-    as_complete_template() throw();
+    as_complete_template() noexcept;
 
     BaseReader_var
     complete_template_reader(const BaseReaderList& args)
-      throw(InvalidParam);
+      /*throw(InvalidParam)*/;
 
     BaseWriter_var
     complete_template_writer(const BaseWriterList& args)
-      throw(InvalidParam);
+      /*throw(InvalidParam)*/;
 
-    const BaseDescriptorList& args() const throw();
+    const BaseDescriptorList& args() const noexcept;
 
   protected:
-    virtual ~CompleteTemplateDescriptor() throw() {}
+    virtual ~CompleteTemplateDescriptor() noexcept {}
 
     virtual BaseReader_var
     create_template_reader_(const BaseReaderList& args)
-      throw(InvalidParam) = 0;
+      /*throw(InvalidParam)*/ = 0;
 
     virtual BaseWriter_var
     create_template_writer_(const BaseWriterList& args)
-      throw(InvalidParam) = 0;
+      /*throw(InvalidParam)*/ = 0;
 
   private:
     BaseDescriptorList args_;

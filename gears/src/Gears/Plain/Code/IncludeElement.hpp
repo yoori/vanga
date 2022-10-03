@@ -28,14 +28,14 @@ namespace Code
   class IncludeElement: public Element
   {
   public:
-    IncludeElement(const char* file_val) throw();
+    IncludeElement(const char* file_val) noexcept;
 
-    const char* file() const throw();
+    const char* file() const noexcept;
 
-    virtual void visited(ElementVisitor* visitor) const throw();
+    virtual void visited(ElementVisitor* visitor) const noexcept;
 
   protected:
-    virtual ~IncludeElement() throw() {}
+    virtual ~IncludeElement() noexcept {}
     
   private:
     std::string file_;
@@ -45,20 +45,20 @@ namespace Code
 namespace Code
 {
   inline
-  IncludeElement::IncludeElement(const char* file_val) throw()
+  IncludeElement::IncludeElement(const char* file_val) noexcept
     : file_(file_val)
   {}
 
   inline
   const char*
-  IncludeElement::file() const throw()
+  IncludeElement::file() const noexcept
   {
     return file_.c_str();
   }
   
   inline
   void
-  IncludeElement::visited(ElementVisitor* visitor) const throw()
+  IncludeElement::visited(ElementVisitor* visitor) const noexcept
   {
     visitor->visit_i(this);
   }

@@ -58,7 +58,7 @@ namespace yy
     void set_debug(bool debug);
 
   protected:
-    virtual ~PlainScanner() throw();
+    virtual ~PlainScanner() noexcept;
   };
 
   typedef Gears::IntrusivePtr<PlainScanner>

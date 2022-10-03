@@ -24,24 +24,24 @@
 
 namespace Declaration
 {
-  BaseReader::BaseReader(const char* name_val) throw()
+  BaseReader::BaseReader(const char* name_val) noexcept
     : BaseType(name_val)
   {}
 
   BaseReader_var
-  BaseReader::as_reader() throw()
+  BaseReader::as_reader() noexcept
   {
     return Gears::add_ref(this);
   }
 
   SimpleReader_var
-  BaseReader::as_simple_reader() throw()
+  BaseReader::as_simple_reader() noexcept
   {
     return SimpleReader_var();
   }
 
   StructReader_var
-  BaseReader::as_struct_reader() throw()
+  BaseReader::as_struct_reader() noexcept
   {
     return StructReader_var();
   }

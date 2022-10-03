@@ -43,17 +43,17 @@ namespace Gears
     public:
       KeyIteratorImpl(
         const RWMemLevel<KeyType, KeySerializerType>* read_mem_level)
-        throw();
+        noexcept;
 
       virtual bool
       get_next(
         KeyType& key,
         ProfileOperation& operation,
         Time& access_time)
-        throw();
+        noexcept;
 
     protected:
-      virtual ~KeyIteratorImpl() throw()
+      virtual ~KeyIteratorImpl() noexcept
       {}
 
     private:
@@ -68,21 +68,21 @@ namespace Gears
     public:
       IteratorImpl(
         const RWMemLevel<KeyType, KeySerializerType>* read_mem_level)
-        throw();
+        noexcept;
 
       virtual bool
       get_next(
         KeyType& key,
         ProfileOperation& operation,
         Time& access_time)
-        throw(typename ReadBaseLevel<KeyType>::Exception);
+        /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
       virtual ConstSmartMemBuf_var
       get_profile()
-        throw(typename ReadBaseLevel<KeyType>::Exception);
+        /*throw(typename ReadBaseLevel<KeyType>::Exception)*/;
 
     protected:
-      virtual ~IteratorImpl() throw()
+      virtual ~IteratorImpl() noexcept
       {}
 
     private:
@@ -94,39 +94,39 @@ namespace Gears
 
     IntrusivePtr<ReadMemLevel<KeyType> >
     convert_to_read_mem_level()
-      throw();
+      noexcept;
 
     virtual CheckProfileResult
     check_profile(const KeyType& key) const
-      throw(typename RWBaseLevel<KeyType>::Exception);
+      /*throw(typename RWBaseLevel<KeyType>::Exception)*/;
 
     virtual GetProfileResult
     get_profile(const KeyType& key) const
-      throw(typename RWBaseLevel<KeyType>::Exception);
+      /*throw(typename RWBaseLevel<KeyType>::Exception)*/;
 
     virtual typename ReadBaseLevel<KeyType>::KeyIterator_var
     get_key_iterator() const
-      throw();
+      noexcept;
 
     virtual typename ReadBaseLevel<KeyType>::Iterator_var
     get_iterator(unsigned long read_buffer_size) const
-      throw();
+      noexcept;
 
     virtual unsigned long
     size() const
-      throw();
+      noexcept;
 
     virtual uint64_t
     area_size() const
-      throw();
+      noexcept;
 
     virtual unsigned long
     merge_free_size() const
-      throw();
+      noexcept;
 
     virtual Time
     min_access_time() const
-      throw();
+      noexcept;
 
     virtual ConstSmartMemBuf_var
     save_profile(
@@ -135,26 +135,26 @@ namespace Gears
       ProfileOperation operation,
       unsigned long next_size,
       const Time& now)
-      throw(typename RWBaseLevel<KeyType>::Exception);
+      /*throw(typename RWBaseLevel<KeyType>::Exception)*/;
 
     virtual unsigned long
     remove_profile(
       const KeyType& key,
       unsigned long next_size)
-      throw(typename RWBaseLevel<KeyType>::Exception);
+      /*throw(typename RWBaseLevel<KeyType>::Exception)*/;
 
     void
     clear_expired(
       const Time& expire_time)
-      throw(typename RWBaseLevel<KeyType>::Exception);
+      /*throw(typename RWBaseLevel<KeyType>::Exception)*/;
 
   protected:
-    virtual ~RWMemLevel() throw()
+    virtual ~RWMemLevel() noexcept
     {}
 
     unsigned long
     eval_area_size_(const KeyType& key) const
-      throw();
+      noexcept;
 
   private:
     typedef Gears::RWLock SyncPolicy;

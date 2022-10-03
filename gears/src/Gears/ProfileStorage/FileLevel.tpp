@@ -45,7 +45,7 @@ namespace Gears
   ReadFileLevel<KeyType, KeySerializerType>::
   KeyIteratorImpl::KeyIteratorImpl(
     const ReadFileLevel<KeyType, KeySerializerType>* read_file_level)
-    throw()
+    noexcept
     : read_file_level_(add_ref(read_file_level)),
       profiles_it_(read_file_level->profiles_.end())
   {}
@@ -57,7 +57,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Gears::Time& access_time)
-    throw()
+    noexcept
   {
     if(profiles_it_ == read_file_level_->profiles_.end())
     {
@@ -87,7 +87,7 @@ namespace Gears
     unsigned long read_buffer_size,
     bool disable_caching,
     FileController* file_controller)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   try
     : read_file_level_(add_ref(read_file_level)),
       file_reader_(
@@ -115,7 +115,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Gears::Time& access_time)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     static const char* FUN = "ReadFileLevel<>::IteratorImpl::get_next()";
     //std::cout << "get_next: file_reader_.pos() = " << file_reader_.pos() << std::endl;
@@ -169,7 +169,7 @@ namespace Gears
   Gears::ConstSmartMemBuf_var
   ReadFileLevel<KeyType, KeySerializerType>::
   IteratorImpl::get_profile()
-    throw (typename ReadBaseLevel<KeyType>::Exception)
+    /*throw (typename ReadBaseLevel<KeyType>::Exception)*/
   {
     static const char* FUN = "ReadFileLevel<>::IteratorImpl::get_profile()";
 
@@ -201,7 +201,7 @@ namespace Gears
     bool disable_caching_on_fetch,
     FileController* file_controller,
     LoadingProgressCallbackBase* progress_checker_parent)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
     : key_serializer_(KeySerializerType()),
       disable_caching_on_fetch_(disable_caching_on_fetch),
       index_file_name_(index_file_name),
@@ -407,7 +407,7 @@ namespace Gears
     bool disable_caching_on_fetch,
     volatile sig_atomic_t* interrupter,
     FileController* file_controller)
-    throw(Interrupted, typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(Interrupted, typename ReadBaseLevel<KeyType>::Exception)*/
     : key_serializer_(KeySerializerType()),
       disable_caching_on_fetch_(disable_caching_on_fetch),
       index_file_name_(index_file_name),
@@ -610,7 +610,7 @@ namespace Gears
   CheckProfileResult
   ReadFileLevel<KeyType, KeySerializerType>::check_profile(
     const KeyType& key)
-    const throw(typename ReadBaseLevel<KeyType>::Exception)
+    const /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     CheckProfileResult result;
 
@@ -636,7 +636,7 @@ namespace Gears
   GetProfileResult
   ReadFileLevel<KeyType, KeySerializerType>::get_profile(
     const KeyType& key)
-    const throw(typename ReadBaseLevel<KeyType>::Exception)
+    const /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     GetProfileResult result;
     const typename ProfileRefs::const_iterator it = 
@@ -667,7 +667,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   typename ReadBaseLevel<KeyType>::KeyIterator_var
   ReadFileLevel<KeyType, KeySerializerType>::get_key_iterator()
-    const throw()
+    const noexcept
   {
     return new KeyIteratorImpl(this);
   }
@@ -676,7 +676,7 @@ namespace Gears
   typename ReadBaseLevel<KeyType>::Iterator_var
   ReadFileLevel<KeyType, KeySerializerType>::get_iterator(
     unsigned long read_buffer_size) const
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     return new IteratorImpl(
       this,
@@ -687,7 +687,7 @@ namespace Gears
 
   template<typename KeyType, typename KeySerializerType>
   unsigned long
-  ReadFileLevel<KeyType, KeySerializerType>::size() const throw()
+  ReadFileLevel<KeyType, KeySerializerType>::size() const noexcept
   {
     return size_;
   }
@@ -695,7 +695,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   unsigned long
   ReadFileLevel<KeyType, KeySerializerType>::area_size()
-    const throw()
+    const noexcept
   {
     return area_size_;
   }
@@ -703,7 +703,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   unsigned long
   ReadFileLevel<KeyType, KeySerializerType>::merge_free_size()
-    const throw()
+    const noexcept
   {
     return merge_free_size_;
   }
@@ -711,7 +711,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   Gears::Time
   ReadFileLevel<KeyType, KeySerializerType>::min_access_time()
-    const throw()
+    const noexcept
   {
     return min_access_time_;
   }
@@ -721,7 +721,7 @@ namespace Gears
   ReadFileLevel<KeyType, KeySerializerType>::rename_files(
     const char* new_index_file_name,
     const char* new_body_file_name)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     static const char* FUN = "ReadFileLevel<>::rename_files()";
 
@@ -755,7 +755,7 @@ namespace Gears
   ReadFileLevel<KeyType, KeySerializerType>::read_index_profile_ref_(
     ProfileRef& profile_ref,
     FileReader& reader) const 
-    throw (FileReader::Exception)
+    /*throw (FileReader::Exception)*/
   {
     uint32_t operation;
     uint64_t pos;
@@ -776,7 +776,7 @@ namespace Gears
   ReadFileLevel<KeyType, KeySerializerType>::write_index_profile_ref_(
     FileWriter& writer,
     const ProfileRef& profile_ref)
-    const throw(FileWriter::Exception)
+    const /*throw(FileWriter::Exception)*/
   {
     uint32_t operation = profile_ref.operation;
     uint64_t pos = profile_ref.pos;
@@ -828,7 +828,7 @@ namespace Gears
   void
   ReadFileLevel<KeyType, KeySerializerType>::write_null_key_(
     FileWriter& writer)
-    const throw(FileWriter::Exception)
+    const /*throw(FileWriter::Exception)*/
   {
     writer.write(&RESERVED_KEY_SIZE, sizeof(RESERVED_KEY_SIZE));
   }
@@ -887,7 +887,7 @@ namespace Gears
     FileReader& reader,
     unsigned long& version,
     unsigned long& id)
-    throw(FileReader::Exception)
+    /*throw(FileReader::Exception)*/
   {
     uint32_t res_version;
     uint32_t res_id;
@@ -902,7 +902,7 @@ namespace Gears
   void
   ReadFileLevel<KeyType, KeySerializerType>::skip_body_head_(
     FileReader& reader)
-    throw(FileReader::Exception)
+    /*throw(FileReader::Exception)*/
   {
     reader.skip(
       sizeof(uint32_t) + // version
@@ -945,7 +945,7 @@ namespace Gears
   Gears::ConstSmartMemBuf_var
   ReadFileLevel<KeyType, KeySerializerType>::read_body_profile_(
     FileReader& reader)
-    const throw(FileReader::Exception, Gears::Exception)
+    const /*throw(FileReader::Exception, Gears::Exception)*/
   {
     uint32_t size;
     reader.read(&size, sizeof(size));
@@ -958,7 +958,7 @@ namespace Gears
   void
   ReadFileLevel<KeyType, KeySerializerType>::skip_body_profile_(
     FileReader& reader)
-    const throw(FileReader::Exception)
+    const /*throw(FileReader::Exception)*/
   {
     uint32_t size;
     reader.read(&size, sizeof(size));

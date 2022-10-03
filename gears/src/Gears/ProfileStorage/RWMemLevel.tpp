@@ -24,7 +24,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   RWMemLevel<KeyType, KeySerializerType>::KeyIteratorImpl::KeyIteratorImpl(
     const RWMemLevel<KeyType, KeySerializerType>* rw_mem_level)
-    throw()
+    noexcept
     : rw_mem_level_(add_ref(rw_mem_level)),
       initialized_(false)
   {}
@@ -35,7 +35,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Gears::Time& access_time)
-    throw()
+    noexcept
   {
     RWMemLevel<KeyType, KeySerializerType>::SyncPolicy::ReadGuard lock(rw_mem_level_->lock_);
     typename MemLevelHolder<KeyType>::ProfileHolderMap::const_iterator it;
@@ -71,7 +71,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   RWMemLevel<KeyType, KeySerializerType>::IteratorImpl::IteratorImpl(
     const RWMemLevel<KeyType, KeySerializerType>* rw_mem_level)
-    throw()
+    noexcept
     : rw_mem_level_(add_ref(rw_mem_level)),
       initialized_(false)
   {}
@@ -82,7 +82,7 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     Gears::Time& access_time)
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     RWMemLevel<KeyType, KeySerializerType>::SyncPolicy::ReadGuard lock(rw_mem_level_->lock_);
     typename MemLevelHolder<KeyType>::ProfileHolderMap::const_iterator it;
@@ -118,7 +118,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   Gears::ConstSmartMemBuf_var
   RWMemLevel<KeyType, KeySerializerType>::IteratorImpl::get_profile()
-    throw(typename ReadBaseLevel<KeyType>::Exception)
+    /*throw(typename ReadBaseLevel<KeyType>::Exception)*/
   {
     RWMemLevel<KeyType, KeySerializerType>::SyncPolicy::ReadGuard lock(rw_mem_level_->lock_);
     typename MemLevelHolder<KeyType>::ProfileHolderMap::const_iterator
@@ -135,7 +135,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   IntrusivePtr<ReadMemLevel<KeyType> >
   RWMemLevel<KeyType, KeySerializerType>::convert_to_read_mem_level()
-    throw()
+    noexcept
   {
     RWMemLevel<KeyType, KeySerializerType>::SyncPolicy::WriteGuard lock(lock_);
     IntrusivePtr<ReadMemLevel<KeyType> > read_mem_level(
@@ -150,7 +150,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   CheckProfileResult
   RWMemLevel<KeyType, KeySerializerType>::check_profile(const KeyType& key)
-    const throw(typename RWBaseLevel<KeyType>::Exception)
+    const /*throw(typename RWBaseLevel<KeyType>::Exception)*/
   {
     SyncPolicy::ReadGuard lock(lock_);
     return this->check_profile_i(key);
@@ -160,7 +160,7 @@ namespace Gears
   GetProfileResult
   RWMemLevel<KeyType, KeySerializerType>::get_profile(
     const KeyType& key)
-    const throw(typename RWBaseLevel<KeyType>::Exception)
+    const /*throw(typename RWBaseLevel<KeyType>::Exception)*/
   {
     SyncPolicy::ReadGuard lock(lock_);
     return this->get_profile_i(key);
@@ -169,7 +169,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   typename ReadBaseLevel<KeyType>::KeyIterator_var
   RWMemLevel<KeyType, KeySerializerType>::get_key_iterator() const
-    throw()
+    noexcept
   {
     return new KeyIteratorImpl(this);
   }
@@ -178,14 +178,14 @@ namespace Gears
   typename ReadBaseLevel<KeyType>::Iterator_var
   RWMemLevel<KeyType, KeySerializerType>::get_iterator(
     unsigned long /*read_buffer_size*/)
-    const throw()
+    const noexcept
   {
     return new IteratorImpl(this);
   }
 
   template<typename KeyType, typename KeySerializerType>
   unsigned long
-  RWMemLevel<KeyType, KeySerializerType>::size() const throw()
+  RWMemLevel<KeyType, KeySerializerType>::size() const noexcept
   {
     SyncPolicy::ReadGuard lock(lock_);
     return this->size_i();
@@ -193,7 +193,7 @@ namespace Gears
 
   template<typename KeyType, typename KeySerializerType>
   uint64_t
-  RWMemLevel<KeyType, KeySerializerType>::area_size() const throw()
+  RWMemLevel<KeyType, KeySerializerType>::area_size() const noexcept
   {
     SyncPolicy::ReadGuard lock(lock_);
     return this->area_size_i();
@@ -201,7 +201,7 @@ namespace Gears
 
   template<typename KeyType, typename KeySerializerType>
   unsigned long
-  RWMemLevel<KeyType, KeySerializerType>::merge_free_size() const throw()
+  RWMemLevel<KeyType, KeySerializerType>::merge_free_size() const noexcept
   {
     SyncPolicy::ReadGuard lock(lock_);
     return this->merge_free_size_i();
@@ -210,7 +210,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   Gears::Time
   RWMemLevel<KeyType, KeySerializerType>::min_access_time() const
-    throw()
+    noexcept
   {
     return Gears::Time::ZERO;
   }
@@ -223,7 +223,7 @@ namespace Gears
     ProfileOperation operation,
     unsigned long next_size,
     const Gears::Time& now)
-    throw(typename RWBaseLevel<KeyType>::Exception)
+    /*throw(typename RWBaseLevel<KeyType>::Exception)*/
   {
     Gears::ConstSmartMemBuf_var old_mem_buf;
 
@@ -263,7 +263,7 @@ namespace Gears
   RWMemLevel<KeyType, KeySerializerType>::remove_profile(
     const KeyType& key,
     unsigned long next_size)
-    throw(typename RWBaseLevel<KeyType>::Exception)
+    /*throw(typename RWBaseLevel<KeyType>::Exception)*/
   {
     // deallocate outside lock
     Gears::ConstSmartMemBuf_var old_mem_buf;
@@ -311,7 +311,7 @@ namespace Gears
   void
   RWMemLevel<KeyType, KeySerializerType>::clear_expired(
     const Gears::Time& /*expire_time*/)
-    throw(typename RWBaseLevel<KeyType>::Exception)
+    /*throw(typename RWBaseLevel<KeyType>::Exception)*/
   {
   }
 
@@ -319,7 +319,7 @@ namespace Gears
   unsigned long
   RWMemLevel<KeyType, KeySerializerType>::eval_area_size_(
     const KeyType& key) const
-    throw()
+    noexcept
   {
     return 3*sizeof(void*) + key_serializer_.size(key);
   }

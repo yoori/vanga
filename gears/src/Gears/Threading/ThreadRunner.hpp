@@ -43,14 +43,14 @@ namespace Gears
      * Work process for the job.
      */
     virtual void
-    work() throw() = 0;
+    work() noexcept = 0;
 
   protected:
     /**
      * Destructor.
      */
     virtual
-    ~ThreadJob() throw();
+    ~ThreadJob() noexcept;
   };
 
   typedef IntrusivePtr<ThreadJob> ThreadJob_var;
@@ -74,7 +74,7 @@ namespace Gears
        * Constructor
        * @param stack_size stack size for the thread.
        */
-      Options(size_t stack_size = 0) throw();
+      Options(size_t stack_size = 0) noexcept;
 
       // Default stack size for threads
       static const size_t DEFAULT_STACK_SIZE = 1024 * 1024;
@@ -93,7 +93,7 @@ namespace Gears
       ThreadJob* job,
       unsigned int number_of_jobs,
       const Options& options = Options())
-      throw(Gears::Exception, PosixException);
+      /*throw(Gears::Exception, PosixException)*/;
 
     /**
      * Constructor
@@ -106,7 +106,7 @@ namespace Gears
       size_t number_of_jobs,
       Functor functor,
       const Options& options = Options())
-      throw(Gears::Exception, PosixException);
+      /*throw(Gears::Exception, PosixException)*/;
 
     /**
      * Constructor
@@ -119,49 +119,49 @@ namespace Gears
       ForwardIterator begin,
       ForwardIterator end,
       const Options& options = Options())
-      throw(Gears::Exception, PosixException);
+      /*throw(Gears::Exception, PosixException)*/;
 
     /**
      * Destructor
      * Waits for threads' completion if they are not terminated yet.
      */
-    ~ThreadRunner() throw();
+    ~ThreadRunner() noexcept;
 
     /**
      * Number of jobs to execute
      * @return number of jobs
      */
     size_t
-    number_of_jobs() const throw();
+    number_of_jobs() const noexcept;
 
     /**
      * Return if jobs are running or not. Thread unsafe.
      * @return jobs running status
      */
     bool
-    running() const throw();
+    running() const noexcept;
 
     /**
      * Creates threads and runs the jobs. If creation of a thread fails,
      * no jobs will run. Thread unsafe.
      */
     void
-    start() throw(AlreadyStarted, PosixException, Gears::Exception);
+    start() /*throw(AlreadyStarted, PosixException, Gears::Exception)*/;
 
     /**
      * Waits for termination of previously started threads.
      * Thread unsafe.
      */
     void
-    wait_for_completion() throw(PosixException);
+    wait_for_completion() /*throw(PosixException)*/;
 
   private:
     class PThreadAttr
     {
     public:
-      PThreadAttr() throw(PosixException);
-      ~PThreadAttr() throw();
-      operator pthread_attr_t*() throw();
+      PThreadAttr() /*throw(PosixException)*/;
+      ~PThreadAttr() noexcept;
+      operator pthread_attr_t*() noexcept;
     private:
       pthread_attr_t attr_;
     };
@@ -175,10 +175,10 @@ namespace Gears
 
   private:
     static void*
-    thread_func_(void* arg) throw();
+    thread_func_(void* arg) noexcept;
 
     void
-    thread_func_(ThreadJob& job) throw();
+    thread_func_(ThreadJob& job) noexcept;
 
   private:
     Options options_;
@@ -196,7 +196,7 @@ namespace Gears
   //
 
   inline
-  ThreadJob::~ThreadJob() throw()
+  ThreadJob::~ThreadJob() noexcept
   {}
 
   //
@@ -204,7 +204,7 @@ namespace Gears
   //
 
   inline
-  ThreadRunner::Options::Options(size_t stack_size) throw()
+  ThreadRunner::Options::Options(size_t stack_size) noexcept
     : stack_size(stack_size < PTHREAD_STACK_MIN ? DEFAULT_STACK_SIZE :
         stack_size)
   {}
@@ -214,7 +214,7 @@ namespace Gears
   //
 
   inline
-  ThreadRunner::PThreadAttr::PThreadAttr() throw(PosixException)
+  ThreadRunner::PThreadAttr::PThreadAttr() /*throw(PosixException)*/
   {
     static const char* FUN = "ThreadRunner::PThreadAttr::PThreadAttr()";
 
@@ -228,13 +228,13 @@ namespace Gears
   }
 
   inline
-  ThreadRunner::PThreadAttr::~PThreadAttr() throw()
+  ThreadRunner::PThreadAttr::~PThreadAttr() noexcept
   {
     ::pthread_attr_destroy(&attr_);
   }
 
   inline
-  ThreadRunner::PThreadAttr::operator pthread_attr_t*() throw()
+  ThreadRunner::PThreadAttr::operator pthread_attr_t*() noexcept
   {
     return &attr_;
   }
@@ -244,7 +244,7 @@ namespace Gears
   //
 
   inline
-  ThreadRunner::~ThreadRunner() throw()
+  ThreadRunner::~ThreadRunner() noexcept
   {
     try
     {
@@ -256,21 +256,21 @@ namespace Gears
 
   inline
   size_t
-  ThreadRunner::number_of_jobs() const throw()
+  ThreadRunner::number_of_jobs() const noexcept
   {
     return number_of_jobs_;
   }
 
   inline
   bool
-  ThreadRunner::running() const throw()
+  ThreadRunner::running() const noexcept
   {
     return is_running_ != 0;
   }
 
   inline
   void*
-  ThreadRunner::thread_func_(void* arg) throw()
+  ThreadRunner::thread_func_(void* arg) noexcept
   {
     JobInfo* info = static_cast<JobInfo*>(arg);
     info->runner->thread_func_(*info->job);

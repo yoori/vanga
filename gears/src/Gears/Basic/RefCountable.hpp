@@ -33,18 +33,18 @@ namespace Gears
   {
   public:
     void
-    add_ref() const throw();
+    add_ref() const noexcept;
 
     void
-    remove_ref() const throw();
+    remove_ref() const noexcept;
 
   protected:
-    RefCountable() throw();
+    RefCountable() noexcept;
 
-    RefCountable(const volatile RefCountable& impl) throw();
+    RefCountable(const volatile RefCountable& impl) noexcept;
 
     virtual
-    ~RefCountable() throw();
+    ~RefCountable() noexcept;
 
   private:
     mutable unsigned long ref_count_;
@@ -54,30 +54,30 @@ namespace Gears
 namespace Gears
 {
   inline
-  RefCountable::RefCountable() throw()
+  RefCountable::RefCountable() noexcept
     : ref_count_(1)
   {}
 
   inline
   RefCountable::RefCountable(const volatile RefCountable&)
-    throw()
+    noexcept
     : ref_count_(1)
   {}
 
   inline
-  RefCountable::~RefCountable() throw()
+  RefCountable::~RefCountable() noexcept
   {}
 
   inline
   void
-  RefCountable::add_ref() const throw()
+  RefCountable::add_ref() const noexcept
   {
     ++ref_count_;
   }
 
   inline
   void
-  RefCountable::remove_ref() const throw()
+  RefCountable::remove_ref() const noexcept
   {
     if(!--ref_count_)
     {

@@ -30,21 +30,21 @@ namespace Gears
   public:
     typedef typename ProfileMap<KeyType>::Exception Exception;
 
-    DelegateProfileMap(ProfileMap<KeyType>* profile_map) throw();
+    DelegateProfileMap(ProfileMap<KeyType>* profile_map) noexcept;
 
     virtual void
     wait_preconditions(const KeyType&, OperationPriority op_priority) const
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual bool
-    check_profile(const KeyType& key) const throw(Exception);
+    check_profile(const KeyType& key) const /*throw(Exception)*/;
 
     virtual
     ConstSmartMemBuf_var
     get_profile(
       const KeyType& key,
       Gears::Time* last_access_time)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual void
     save_profile(
@@ -52,27 +52,27 @@ namespace Gears
       Gears::ConstSmartMemBuf* mem_buf,
       const Gears::Time& now,
       OperationPriority priority)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual bool
     remove_profile(
       const KeyType& key,
       OperationPriority priority)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual void copy_keys(
       typename ProfileMap<KeyType>::KeyList& keys)
-      throw(Exception);
+      /*throw(Exception)*/;
 
     virtual void clear_expired(const Gears::Time& expire_time)
-      throw(Exception);
+      /*throw(Exception)*/;
 
-    virtual unsigned long size() const throw();
+    virtual unsigned long size() const noexcept;
 
-    virtual unsigned long area_size() const throw();
+    virtual unsigned long area_size() const noexcept;
 
   protected:
-    ProfileMap<KeyType>* no_add_ref_delegate_map_() const /*throw()*/;
+    ProfileMap<KeyType>* no_add_ref_delegate_map_() const /*noexcept*/;
 
   private:
     IntrusivePtr<ProfileMap<KeyType> > profile_map_;
@@ -86,7 +86,7 @@ namespace Gears
   DelegateProfileMap<KeyType>::
   DelegateProfileMap(
     ProfileMap<KeyType>* profile_map)
-    throw()
+    noexcept
     : profile_map_(Gears::add_ref(profile_map))
   {}
 
@@ -96,7 +96,7 @@ namespace Gears
   get_profile(
     const KeyType& key,
     Gears::Time* last_access_time)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     return profile_map_->get_profile(key, last_access_time);
   }
@@ -106,7 +106,7 @@ namespace Gears
   DelegateProfileMap<KeyType>::wait_preconditions(
     const KeyType& key,
     OperationPriority op_priority) const
-    throw(Exception)
+    /*throw(Exception)*/
   {
     return profile_map_->wait_preconditions(key, op_priority);
   }
@@ -114,7 +114,7 @@ namespace Gears
   template<typename KeyType>
   bool
   DelegateProfileMap<KeyType>::
-  check_profile(const KeyType& key) const throw(Exception)
+  check_profile(const KeyType& key) const /*throw(Exception)*/
   {
     return profile_map_->check_profile(key);
   }
@@ -127,7 +127,7 @@ namespace Gears
     Gears::ConstSmartMemBuf* mem_buf,
     const Gears::Time& now,
     OperationPriority priority)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     profile_map_->save_profile(key, mem_buf, now, priority);
   }
@@ -138,7 +138,7 @@ namespace Gears
   remove_profile(
     const KeyType& key,
     OperationPriority priority)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     return profile_map_->remove_profile(key, priority);
   }
@@ -147,7 +147,7 @@ namespace Gears
   void
   DelegateProfileMap<KeyType>::copy_keys(
     typename ProfileMap<KeyType>::KeyList& keys)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     profile_map_->copy_keys(keys);
   }
@@ -156,21 +156,21 @@ namespace Gears
   void
   DelegateProfileMap<KeyType>::
   clear_expired(const Gears::Time& expire_time)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     profile_map_->clear_expired(expire_time);
   }
 
   template<typename KeyType>
   unsigned long
-  DelegateProfileMap<KeyType>::size() const throw()
+  DelegateProfileMap<KeyType>::size() const noexcept
   {
     return profile_map_->size();
   }
 
   template<typename KeyType>
   unsigned long
-  DelegateProfileMap<KeyType>::area_size() const throw()
+  DelegateProfileMap<KeyType>::area_size() const noexcept
   {
     return profile_map_->area_size();
   }

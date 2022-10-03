@@ -50,20 +50,20 @@ namespace Gears
     normalize(
       const ValueType& min = std::numeric_limits<ValueType>::min(),
       const ValueType& max = std::numeric_limits<ValueType>::max())
-      throw();
+      noexcept;
 
     bool
-    contains(const ValueType& val) const throw();
+    contains(const ValueType& val) const noexcept;
 
     void
     cross(IntervalSet<ValueType>& res,
       const ValueType& min,
       const ValueType& max)
-      const throw();
+      const noexcept;
 
     void
     cross(const IntervalSet<ValueType>& res)
-      throw();
+      noexcept;
   };
 }
 
@@ -97,7 +97,7 @@ namespace Gears
   IntervalSet<ValueType>::normalize(
     const ValueType& min,
     const ValueType& max)
-    throw()
+    noexcept
   {
     std::set<Interval<ValueType> > ints;
 
@@ -130,7 +130,7 @@ namespace Gears
 
   template<typename ValueType>
   bool
-  IntervalSet<ValueType>::contains(const ValueType& val) const throw()
+  IntervalSet<ValueType>::contains(const ValueType& val) const noexcept
   {
     typename std::set<Interval<ValueType> >::const_iterator lit =
       this->upper_bound(Interval<ValueType>(val, 0));
@@ -145,7 +145,7 @@ namespace Gears
     const ValueType& min,
     const ValueType& max)
     const
-    throw()
+    noexcept
   {
     typedef typename std::set<Interval<ValueType> >::const_iterator
       ConstIterator;
@@ -183,7 +183,7 @@ namespace Gears
   template<typename ValueType>
   void
   IntervalSet<ValueType>::cross(const IntervalSet<ValueType>& right)
-    throw()
+    noexcept
   {
     IntervalSet<ValueType> res;
     for(typename IntervalSet<ValueType>::const_iterator rit =

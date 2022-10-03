@@ -35,9 +35,9 @@ namespace Declaration
     DECLARE_GEARS_EXCEPTION(InvalidName, Gears::DescriptiveException);
     
     NamePath(const char* abs_path, bool name_is_local = false)
-      throw(InvalidName);
+      /*throw(InvalidName)*/;
 
-    std::string str() const throw();
+    std::string str() const noexcept;
   };
 
   class Namespace;
@@ -60,31 +60,31 @@ namespace Declaration
     Namespace(
       const char* name_val = 0,
       Namespace* owner_val = 0)
-      throw();
+      noexcept;
 
-    const char* name() const throw();
+    const char* name() const noexcept;
 
-    NamePath abs_name() const throw();
+    NamePath abs_name() const noexcept;
 
-    Namespace_var owner() const throw();
+    Namespace_var owner() const noexcept;
 
-    const BaseTypeMap& types() const throw();
+    const BaseTypeMap& types() const noexcept;
 
-    const NamespaceMap& namespaces() const throw();
+    const NamespaceMap& namespaces() const noexcept;
 
-    BaseType_var find_type(const NamePath& name) const throw();
+    BaseType_var find_type(const NamePath& name) const noexcept;
 
-    BaseType_var find_local_type(const char* name) const throw();
+    BaseType_var find_local_type(const char* name) const noexcept;
 
     Gears::IntrusivePtr<Namespace>
-    add_namespace(const char* name) throw();
+    add_namespace(const char* name) noexcept;
 
-    void add_type(BaseType*) throw(AlreadyDefined);
+    void add_type(BaseType*) /*throw(AlreadyDefined)*/;
 
   private:
-    virtual ~Namespace() throw() {}
+    virtual ~Namespace() noexcept {}
     
-    BaseType_var local_find_type_(const NamePath& name) const throw();
+    BaseType_var local_find_type_(const NamePath& name) const noexcept;
     
   private:
     std::string name_;

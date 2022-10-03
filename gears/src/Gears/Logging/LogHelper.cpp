@@ -41,7 +41,7 @@ namespace Gears
   void
   LogHelper::get_buffer_(
     std::list<Buffer_var>& res_buffers)
-    throw()
+    noexcept
   {
     {
       SyncPolicy::WriteGuard lock(lock_);
@@ -62,7 +62,7 @@ namespace Gears
     const unsigned long* severity,
     const Gears::SubString* aspect,
     const Gears::SubString* code)
-    throw()
+    noexcept
   {
     buf.prepare(
       text.size() +

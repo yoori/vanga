@@ -40,36 +40,36 @@ namespace Code
   {
   public:
     virtual
-    ~ElementVisitor() throw() {}
+    ~ElementVisitor() noexcept {}
 
     virtual void
-    visit(const Element*) throw();
+    visit(const Element*) noexcept;
 
     virtual void
-    visit_i(const Element*) throw() = 0;
+    visit_i(const Element*) noexcept = 0;
 
     virtual void
-    visit_i(const IncludeElement*) throw();
+    visit_i(const IncludeElement*) noexcept;
 
     virtual void
-    visit_i(const NamespaceElement*) throw();
+    visit_i(const NamespaceElement*) noexcept;
 
     virtual void
-    visit_i(const TypeDefElement*) throw();
+    visit_i(const TypeDefElement*) noexcept;
 
     virtual void
-    visit_i(const TypeElement*) throw();
+    visit_i(const TypeElement*) noexcept;
   };
   
   class Element: public virtual Gears::AtomicRefCountable
   {
   public:
     virtual void
-    visited(ElementVisitor* visitor) const throw();
+    visited(ElementVisitor* visitor) const noexcept;
 
   protected:
     virtual
-    ~Element() throw() {}
+    ~Element() noexcept {}
   };
 
   typedef Gears::IntrusivePtr<Element> Element_var;
@@ -80,7 +80,7 @@ namespace Code
   {
   protected:
     virtual
-    ~ElementList() throw() {}
+    ~ElementList() noexcept {}
   };
   
   typedef Gears::IntrusivePtr<ElementList>
@@ -90,7 +90,7 @@ namespace Code
 namespace Code
 {
   inline void
-  ElementVisitor::visit(const Element* elem) throw()
+  ElementVisitor::visit(const Element* elem) noexcept
   {
     elem->visited(this);
   }

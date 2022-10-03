@@ -55,7 +55,7 @@ namespace Gears
     /**
      *  Constructor initialize condition variable
      */
-    Condition() throw(ResourceError, Gears::Exception);
+    Condition() /*throw(ResourceError, Gears::Exception)*/;
 
     /**
      * Destructor destroy condition variable
@@ -64,7 +64,7 @@ namespace Gears
      * Attempting to destroy a condition variable upon which other threads
      * are currently blocked results in undefined behavior.
      */
-    ~Condition() throw();
+    ~Condition() noexcept;
 
     /**
      * Block on condition.
@@ -74,7 +74,7 @@ namespace Gears
      * or undefined behavior results.
      */
     void
-    wait(Mutex& mutex) throw(ResourceError, Gears::Exception);
+    wait(Mutex& mutex) /*throw(ResourceError, Gears::Exception)*/;
 
     /**
      * Block on condition, or until absolute time-of-day has passed.
@@ -94,7 +94,7 @@ namespace Gears
     timed_wait(Mutex& mutex,
       const Time* time,
       bool time_is_relative = false)
-      throw(ResourceError, Gears::Exception);
+      /*throw(ResourceError, Gears::Exception)*/;
 
     /**
      * Signal one waiting thread. This method shall unblock at least one
@@ -102,14 +102,14 @@ namespace Gears
      * (if any threads are blocked on this).
      */
     void
-    signal() throw(ResourceError, Gears::Exception);
+    signal() /*throw(ResourceError, Gears::Exception)*/;
 
     /**
      * Signal *all* waiting threads. This method shall unblock all threads
      * currently blocked on Condition
      */
     void
-    broadcast() throw(ResourceError, Gears::Exception);
+    broadcast() /*throw(ResourceError, Gears::Exception)*/;
 
   private:
     pthread_cond_t cond_;
@@ -132,13 +132,13 @@ namespace Gears
      * @param mutex lock mutex for conditional using
      */
     ConditionGuard(Mutex& mutex, Condition& condition)
-      throw();
+      noexcept;
 
     /**
      * Block on condition. Delegate call to conditional.
      */
     void
-    wait() throw(Condition::ResourceError, Gears::Exception);
+    wait() /*throw(Condition::ResourceError, Gears::Exception)*/;
 
     /**
      * Block on condition or until absolute time-of-day has passed.
@@ -155,7 +155,7 @@ namespace Gears
     timed_wait(
       const Time* time,
       bool time_is_relative = false)
-      throw(Condition::ResourceError, Gears::Exception);
+      /*throw(Condition::ResourceError, Gears::Exception)*/;
 
   private:
     Condition& condition_;

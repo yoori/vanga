@@ -28,7 +28,7 @@
 
 std::ostream&
 operator <<(std::ostream& ostr, const Gears::Time& time)
-  throw (Gears::Exception)
+  /*throw (Gears::Exception)*/
 {
   char buf[256];
   snprintf(buf, sizeof(buf), "%s%lu:%.6ld (sec:usec)",
@@ -40,7 +40,7 @@ operator <<(std::ostream& ostr, const Gears::Time& time)
 
 std::ostream&
 operator <<(std::ostream& ostr, const Gears::ExtendedTime& time)
-  throw (Gears::Exception)
+  /*throw (Gears::Exception)*/
 {
   ostr.width(4);
   ostr.fill('0');
@@ -75,7 +75,7 @@ operator <<(std::ostream& ostr, const Gears::ExtendedTime& time)
 
 std::istream&
 operator >>(std::istream& istr, Gears::Time& time)
-  throw (Gears::Time::Exception, Gears::Exception)
+  /*throw (Gears::Time::Exception, Gears::Exception)*/
 {
   std::string timestr, suffix;
   time_t sec;
@@ -103,7 +103,7 @@ operator >>(std::istream& istr, Gears::Time& time)
 
 std::istream&
 operator >>(std::istream& istr, Gears::ExtendedTime& time)
-  throw (Gears::ExtendedTime::Exception, Gears::Exception)
+  /*throw (Gears::ExtendedTime::Exception, Gears::Exception)*/
 {
   std::string tmstr;
   istr >> tmstr;
@@ -196,7 +196,7 @@ namespace Gears
   };
 
   time_t
-  gm_to_time(const tm& et) throw ()
+  gm_to_time(const tm& et) noexcept
   {
     const long YEARS = et.tm_year - 70;
     return ((YEARS * 365) + (YEARS + 1) / 4 +
@@ -205,7 +205,7 @@ namespace Gears
   }
 
   void
-  time_to_gm(time_t time, tm& et) throw ()
+  time_to_gm(time_t time, tm& et) noexcept
   {
     memset(&et, 0, sizeof(et));
     et.tm_sec = time % 60;
@@ -250,7 +250,7 @@ namespace Gears
   }
 
   ExtendedTime::ExtendedTime(time_t sec, suseconds_t usec, Time::TimeZone tz)
-    throw (Exception, Gears::Exception)
+    /*throw (Exception, Gears::Exception)*/
   {
     switch (tz)
     {
@@ -283,7 +283,7 @@ namespace Gears
 
   std::string
   ExtendedTime::format(const char* fmt) const
-    throw (InvalidArgument, Exception, Gears::Exception)
+    /*throw (InvalidArgument, Exception, Gears::Exception)*/
   {
 	  static const char* FUN = "ExtendedTime::format()";
 

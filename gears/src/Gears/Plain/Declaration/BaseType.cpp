@@ -37,25 +37,25 @@ namespace Declaration
   }
 
   BaseDescriptor_var
-  BaseType::as_descriptor() throw()
+  BaseType::as_descriptor() noexcept
   {
     return BaseDescriptor_var();
   }
 
   BaseReader_var
-  BaseType::as_reader() throw()
+  BaseType::as_reader() noexcept
   {
     return BaseReader_var();
   }
 
   BaseWriter_var
-  BaseType::as_writer() throw()
+  BaseType::as_writer() noexcept
   {
     return BaseWriter_var();
   }
 
   BaseTemplate_var
-  BaseType::as_template() throw()
+  BaseType::as_template() noexcept
   {
     return BaseTemplate_var();
   }

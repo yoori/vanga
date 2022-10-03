@@ -39,57 +39,57 @@ namespace Cpp
       std::ostream& out_hpp,
       std::ostream& out_cpp,
       const char* offset)
-      throw();
+      noexcept;
 
     /* X_DefaultBuffers */
     void generate_default_buffers_decl(
       Declaration::StructDescriptor* struct_descriptor)
-      throw();
+      noexcept;
 
     void generate_default_buffers_impl(
       Declaration::StructDescriptor* struct_descriptor)
-      throw();
+      noexcept;
 
     /* X_ProtectedWriter */
     void generate_protected_decl(
       Declaration::StructDescriptor* struct_descriptor)
-      throw();
+      noexcept;
 
     void generate_protected_impl(
       Declaration::StructDescriptor* struct_descriptor)
-      throw();
+      noexcept;
 
     /* X */
     void generate_decl(
       Declaration::StructWriter* struct_writer)
-      throw();
+      noexcept;
 
     void generate_impl(
       Declaration::StructWriter* struct_writer)
-      throw();
+      noexcept;
 
   private:
     /* X_ProtectedWriter & X */
-    void generate_common_funs_decl_(const char* name) throw();
+    void generate_common_funs_decl_(const char* name) noexcept;
 
     void generate_common_funs_impl_(
       const char* class_name,
       const Declaration::StructDescriptor* struct_descriptor)
-      throw();
+      noexcept;
 
     void generate_swap_impl_(
       const char* class_name,
-      Declaration::StructDescriptor* struct_descriptor) throw();
+      Declaration::StructDescriptor* struct_descriptor) noexcept;
 
     /* X */
     void generate_field_types_decl_(
-      Declaration::StructWriter* writer) throw();
+      Declaration::StructWriter* writer) noexcept;
 
     void generate_accessors_decl_(
-      Declaration::StructWriter* writer) throw();
+      Declaration::StructWriter* writer) noexcept;
 
     void generate_accessors_impl_(
-      Declaration::StructWriter* writer) throw();
+      Declaration::StructWriter* writer) noexcept;
 
   private:
     std::ostream& out_;

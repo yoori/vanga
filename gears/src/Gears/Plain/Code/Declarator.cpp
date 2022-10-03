@@ -26,7 +26,7 @@ namespace Code
   Declarator::Declarator(
     Declaration::Namespace* root_namespace_val,
     Code::ElementList* elements_val)
-    throw()
+    noexcept
     : root_namespace_(Gears::add_ref(root_namespace_val)),
       elements_(Gears::add_ref(elements_val)),
       current_namespace_(Gears::add_ref(root_namespace_val))
@@ -170,18 +170,18 @@ namespace Code
       )));
   }
 
-  void Declarator::open_namespace(const char* name) throw()
+  void Declarator::open_namespace(const char* name) noexcept
   {
     current_namespace_ = current_namespace_->add_namespace(name);
   }
 
-  void Declarator::close_namespace() throw()
+  void Declarator::close_namespace() noexcept
   {
     current_namespace_ = current_namespace_->owner();
   }
 
   Declaration::Namespace_var
-  Declarator::current_namespace() throw()
+  Declarator::current_namespace() noexcept
   {
     return current_namespace_;
   }
@@ -190,7 +190,7 @@ namespace Code
   Declarator::declare_struct(
     const char* name,
     Declaration::StructDescriptor::FieldList* fields)
-    throw()
+    noexcept
   {
     Declaration::StructDescriptor_var new_struct_descriptor(
       new Declaration::StructDescriptor(name, fields));
@@ -205,7 +205,7 @@ namespace Code
     const char* name,
     Declaration::StructDescriptor* struct_descriptor,
     Declaration::StructReader::FieldReaderList* fields)
-    throw()
+    noexcept
   {
     Declaration::StructReader_var new_struct_reader(
       new Declaration::StructReader(name, struct_descriptor, fields));
@@ -220,7 +220,7 @@ namespace Code
     const char* name,
     Declaration::StructDescriptor* struct_descriptor,
     Declaration::StructWriter::FieldWriterList* fields)
-    throw()
+    noexcept
   {
     Declaration::StructWriter_var new_struct_writer(
       new Declaration::StructWriter(name, struct_descriptor, fields));

@@ -40,18 +40,18 @@ namespace Declaration
     {
     public:
       Field(BaseDescriptor* descriptor_val, const char* name_val)
-        throw (Gears::Exception);
+        /*throw (Gears::Exception)*/;
 
       Field(const Field& other)
-        throw (Gears::Exception);
+        /*throw (Gears::Exception)*/;
 
       const char*
-      name() const throw();
+      name() const noexcept;
 
-      BaseDescriptor_var descriptor() const throw();
+      BaseDescriptor_var descriptor() const noexcept;
 
     protected:
-      virtual ~Field() throw() {}
+      virtual ~Field() noexcept {}
 
     private:
       BaseDescriptor_var descriptor_;
@@ -65,7 +65,7 @@ namespace Declaration
       public Gears::AtomicRefCountable
     {
     protected:
-      virtual ~FieldList() throw() {}
+      virtual ~FieldList() noexcept {}
     };
 
     typedef Gears::IntrusivePtr<FieldList>
@@ -75,13 +75,13 @@ namespace Declaration
     {
     public:
       PosedField(const Field& field_val, unsigned long pos_val)
-        throw();
+        noexcept;
 
       unsigned long
-      pos() const throw();
+      pos() const noexcept;
 
     protected:
-      virtual ~PosedField() throw() {}
+      virtual ~PosedField() noexcept {}
 
     private:
       unsigned long pos_;
@@ -94,7 +94,7 @@ namespace Declaration
       public Gears::AtomicRefCountable
     {
     protected:
-      virtual ~PosedFieldList() throw() {}
+      virtual ~PosedFieldList() noexcept {}
     };
 
     typedef Gears::IntrusivePtr<PosedFieldList>
@@ -103,20 +103,20 @@ namespace Declaration
   public:
     StructDescriptor(
       const char* name_val,
-      FieldList* fields_val) throw();
+      FieldList* fields_val) noexcept;
 
-    PosedFieldList_var fields() const throw();
+    PosedFieldList_var fields() const noexcept;
 
-    PosedField_var find_field(const char* name) const throw();
+    PosedField_var find_field(const char* name) const noexcept;
 
-    virtual bool is_fixed() const throw();
+    virtual bool is_fixed() const noexcept;
 
-    virtual SizeType fixed_size() const throw();
+    virtual SizeType fixed_size() const noexcept;
 
-    virtual StructDescriptor_var as_struct() throw();
+    virtual StructDescriptor_var as_struct() noexcept;
 
   protected:
-    virtual ~StructDescriptor() throw() {}
+    virtual ~StructDescriptor() noexcept {}
 
   private:
     PosedFieldList_var fields_;
@@ -134,7 +134,7 @@ namespace Declaration
   StructDescriptor::Field::Field(
     BaseDescriptor* descriptor_val,
     const char* name_val)
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
     : descriptor_(Gears::add_ref(descriptor_val)),
       name_(name_val)
   {}
@@ -142,7 +142,7 @@ namespace Declaration
   inline
   StructDescriptor::Field::Field(
     const Field& other)
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
     : Gears::AtomicRefCountable(),
       descriptor_(other.descriptor_),
       name_(other.name_)
@@ -151,7 +151,7 @@ namespace Declaration
   inline
   const char*
   StructDescriptor::Field::name() const
-    throw()
+    noexcept
   {
     return name_.c_str();
   }
@@ -160,7 +160,7 @@ namespace Declaration
   StructDescriptor::PosedField::PosedField(
     const StructDescriptor::Field& field_val,
     unsigned long pos_val)
-    throw()
+    noexcept
     : StructDescriptor::Field(field_val),
       pos_(pos_val)
   {}
@@ -168,7 +168,7 @@ namespace Declaration
   inline
   unsigned long
   StructDescriptor::PosedField::pos() const
-    throw()
+    noexcept
   {
     return pos_;
   }
@@ -176,7 +176,7 @@ namespace Declaration
   inline
   BaseDescriptor_var
   StructDescriptor::Field::descriptor() const
-    throw()
+    noexcept
   {
     return descriptor_;
   }
@@ -185,7 +185,7 @@ namespace Declaration
   StructDescriptor::StructDescriptor(
     const char* name_val,
     FieldList* fields_val)
-    throw()
+    noexcept
     : BaseType(name_val),
       BaseDescriptor(name_val),
       fields_(new PosedFieldList()),
@@ -205,14 +205,14 @@ namespace Declaration
 
   inline
   StructDescriptor::PosedFieldList_var
-  StructDescriptor::fields() const throw()
+  StructDescriptor::fields() const noexcept
   {
     return fields_;
   }
 
   inline
   StructDescriptor::PosedField_var
-  StructDescriptor::find_field(const char* name) const throw()
+  StructDescriptor::find_field(const char* name) const noexcept
   {
     for(StructDescriptor::PosedFieldList::const_iterator fit =
           fields_->begin();
@@ -229,21 +229,21 @@ namespace Declaration
 
   inline
   bool
-  StructDescriptor::is_fixed() const throw()
+  StructDescriptor::is_fixed() const noexcept
   {
     return is_fixed_;
   }
 
   inline
   SizeType
-  StructDescriptor::fixed_size() const throw()
+  StructDescriptor::fixed_size() const noexcept
   {
     return fixed_size_;
   }
 
   inline
   StructDescriptor_var
-  StructDescriptor::as_struct() throw()
+  StructDescriptor::as_struct() noexcept
   {
     return Gears::add_ref(this);
   }

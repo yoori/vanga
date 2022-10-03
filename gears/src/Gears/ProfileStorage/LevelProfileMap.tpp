@@ -48,7 +48,7 @@ namespace Gears
       LoadingProgressCallbackBase_var progress_checker,
       const char* file_directory,
       const char* file_prefix)
-      throw()
+      noexcept
       : level_profile_map_(level_profile_map),
         map_holder_(Gears::add_ref(map_holder)),
         progress_checker_(progress_checker),
@@ -58,7 +58,7 @@ namespace Gears
 
     bool
     operator()(const char* file_path, const struct stat& /*st*/)
-      throw (Gears::Exception)
+      /*throw (Gears::Exception)*/
     {
       if(::strncmp(file_path,
         file_prefix_.c_str(), file_prefix_.size()) == 0)
@@ -103,14 +103,14 @@ namespace Gears
       Gears::TaskRunner* task_runner,
       ThisMap* level_profile_map,
       bool periodic)
-      throw();
+      noexcept;
 
     virtual void
-    execute() throw();
+    execute() noexcept;
 
   protected:
     virtual
-    ~DumpRWLevelTask() throw()
+    ~DumpRWLevelTask() noexcept
     {}
 
   protected:
@@ -128,14 +128,14 @@ namespace Gears
       ThisMap* level_profile_map,
       unsigned long index,
       unsigned long sub_index)
-      throw();
+      noexcept;
 
     virtual void
-    execute() throw();
+    execute() noexcept;
 
   protected:
     virtual
-    ~DumpMemLevelTask() throw()
+    ~DumpMemLevelTask() noexcept
     {}
 
   protected:
@@ -152,14 +152,14 @@ namespace Gears
     MergeLevelTask(
       Gears::TaskRunner* task_runner,
       ThisMap* level_profile_map)
-      throw();
+      noexcept;
 
     virtual void
-    execute() throw();
+    execute() noexcept;
 
   protected:
     virtual
-    ~MergeLevelTask() throw()
+    ~MergeLevelTask() noexcept
     {}
 
   protected:
@@ -173,14 +173,14 @@ namespace Gears
   {
   public:
     ClearExpiredTask(ThisMap* level_profile_map)
-      throw();
+      noexcept;
 
     virtual void
-    execute() throw();
+    execute() noexcept;
 
   protected:
     virtual
-    ~ClearExpiredTask() throw()
+    ~ClearExpiredTask() noexcept
     {}
 
   protected:
@@ -194,7 +194,7 @@ namespace Gears
     Gears::TaskRunner* task_runner,
     LevelProfileMap<KeyType, KeySerializerType>* level_profile_map,
     bool periodic)
-    throw()
+    noexcept
     : Gears::TaskGoal(task_runner),
       level_profile_map_(Gears::add_ref(level_profile_map)),
       periodic_(periodic)
@@ -204,7 +204,7 @@ namespace Gears
   void
   LevelProfileMap<KeyType, KeySerializerType>::
   DumpRWLevelTask::execute()
-    throw()
+    noexcept
   {
     Gears::Time now = Gears::Time::get_time_of_day();
 
@@ -225,7 +225,7 @@ namespace Gears
     LevelProfileMap<KeyType, KeySerializerType>* level_profile_map,
     unsigned long index,
     unsigned long sub_index)
-    throw()
+    noexcept
     : Gears::TaskGoal(task_runner),
       level_profile_map_(Gears::add_ref(level_profile_map)),
       index_(index),
@@ -236,7 +236,7 @@ namespace Gears
   void
   LevelProfileMap<KeyType, KeySerializerType>::
   DumpMemLevelTask::execute()
-    throw()
+    noexcept
   {
     try
     {
@@ -262,7 +262,7 @@ namespace Gears
   MergeLevelTask::MergeLevelTask(
     Gears::TaskRunner* task_runner,
     LevelProfileMap<KeyType, KeySerializerType>* level_profile_map)
-    throw()
+    noexcept
     : Gears::TaskGoal(task_runner),
       level_profile_map_(Gears::add_ref(level_profile_map))
   {}
@@ -271,7 +271,7 @@ namespace Gears
   void
   LevelProfileMap<KeyType, KeySerializerType>::
   MergeLevelTask::execute()
-    throw()
+    noexcept
   {
     level_profile_map_->merge_levels_();
   }
@@ -281,7 +281,7 @@ namespace Gears
   LevelProfileMap<KeyType, KeySerializerType>::
   ClearExpiredTask::ClearExpiredTask(
     LevelProfileMap<KeyType, KeySerializerType>* level_profile_map)
-    throw()
+    noexcept
     : level_profile_map_(Gears::add_ref(level_profile_map))
   {}
 
@@ -289,7 +289,7 @@ namespace Gears
   void
   LevelProfileMap<KeyType, KeySerializerType>::
   ClearExpiredTask::execute()
-    throw()
+    noexcept
   {
   }
 
@@ -299,14 +299,14 @@ namespace Gears
     IndexFileChecker(
       unsigned int& index_number,
       const std::string& file_prefix)
-      throw()
+      noexcept
       : index_number_(index_number),
         file_prefix_(file_prefix)
     {}
 
     bool
     operator()(const char* file_path, const struct stat& /*st*/)
-      throw ()
+      noexcept
     {
       if(::strncmp(file_path,
         file_prefix_.c_str(), file_prefix_.size()) == 0)
@@ -329,7 +329,7 @@ namespace Gears
   // LevelProfileMap::LevelHolder
   template<typename KeyType, typename KeySerializerType>
   LevelProfileMap<KeyType, KeySerializerType>::LevelHolder::LevelHolder()
-    throw()
+    noexcept
     : index(0),
       sub_index(0),
       uniq_index(0),
@@ -339,7 +339,7 @@ namespace Gears
 
   template<typename KeyType, typename KeySerializerType>
   LevelProfileMap<KeyType, KeySerializerType>::LevelHolder::~LevelHolder()
-    throw()
+    noexcept
   {
     read_level = Gears::IntrusivePtr<ReadBaseLevel<KeyType> >();
 
@@ -374,7 +374,7 @@ namespace Gears
     const char* file_prefix,
     const LevelMapTraits& traits,
     LoadingProgressCallbackBase* progress_checker_parent)
-    throw (Gears::Exception)
+    /*throw (Gears::Exception)*/
     : file_directory_(directory),
       file_prefix_(file_prefix),
       mode_(traits.mode),
@@ -445,12 +445,12 @@ namespace Gears
   }
 
   template<typename KeyType, typename KeySerializerType>
-  LevelProfileMap<KeyType, KeySerializerType>::~LevelProfileMap() throw()
+  LevelProfileMap<KeyType, KeySerializerType>::~LevelProfileMap() noexcept
   {}
 
   template<typename KeyType, typename KeySerializerType>
   typename LevelProfileMap<KeyType, KeySerializerType>::ConstMapHolder_var
-  LevelProfileMap<KeyType, KeySerializerType>::get_map_holder_() const throw()
+  LevelProfileMap<KeyType, KeySerializerType>::get_map_holder_() const noexcept
   {
     SyncPolicy::ReadGuard lock(map_holder_lock_);
     return map_holder_;
@@ -460,7 +460,7 @@ namespace Gears
   void
   LevelProfileMap<KeyType, KeySerializerType>::wait_preconditions(
     const KeyType&, OperationPriority priority) const
-    throw(NotActive, Exception)
+    /*throw(NotActive, Exception)*/
   {
     if(priority == OP_BACKGROUND)
     {
@@ -486,7 +486,7 @@ namespace Gears
   bool
   LevelProfileMap<KeyType, KeySerializerType>::check_profile(
     const KeyType& key)
-    const throw(Exception)
+    const /*throw(Exception)*/
   {
     ConstMapHolder_var map_holder = get_map_holder_();
 
@@ -529,7 +529,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   void
   LevelProfileMap<KeyType, KeySerializerType>::activate_object()
-    throw (ActiveObject::Exception)
+    /*throw (ActiveObject::Exception)*/
   {
     try
     {
@@ -549,7 +549,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   void
   LevelProfileMap<KeyType, KeySerializerType>::deactivate_object()
-    throw()
+    noexcept
   {
     // don't deactivate child objects,
     // because operations can enter after deactivation
@@ -561,7 +561,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   void
   LevelProfileMap<KeyType, KeySerializerType>::wait_object()
-    throw()
+    noexcept
   {
     // trust that all operations to storage finished
     // set active_ marker for interrupt unfinished operations
@@ -583,7 +583,7 @@ namespace Gears
   LevelProfileMap<KeyType, KeySerializerType>::get_profile(
     const KeyType& key,
     Gears::Time* last_access_time)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     ConstMapHolder_var map_holder = get_map_holder_();
 
@@ -638,7 +638,7 @@ namespace Gears
     Gears::ConstSmartMemBuf* mem_buf,
     const Gears::Time& now,
     OperationPriority op_priority)
-    throw(NotActive, Blocked, Exception)
+    /*throw(NotActive, Blocked, Exception)*/
   {
     static const char* FUN = "LevelProfileMap<>::save_profile()";
 
@@ -737,7 +737,7 @@ namespace Gears
   LevelProfileMap<KeyType, KeySerializerType>::remove_profile(
     const KeyType& key,
     OperationPriority op_priority)
-    throw(NotActive, Blocked, Exception)
+    /*throw(NotActive, Blocked, Exception)*/
   {
     bool signal_undumped_size_change = false;
 
@@ -800,7 +800,7 @@ namespace Gears
   void
   LevelProfileMap<KeyType, KeySerializerType>::copy_keys(
     typename ProfileMap<KeyType>::KeyList& keys)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     ConstMapHolder_var map_holder = get_map_holder_();
 
@@ -837,7 +837,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   unsigned long
   LevelProfileMap<KeyType, KeySerializerType>::size()
-    const throw()
+    const noexcept
   {
     ConstMapHolder_var map_holder = get_map_holder_();
 
@@ -861,7 +861,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   uint64_t
   LevelProfileMap<KeyType, KeySerializerType>::area_size()
-    const throw()
+    const noexcept
   {
     ConstMapHolder_var map_holder = get_map_holder_();
 
@@ -885,7 +885,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   void
   LevelProfileMap<KeyType, KeySerializerType>::dump()
-    throw()
+    noexcept
   {
     {
       OpSyncPolicy::WriteGuard rw_level_lock(rw_level_lock_);
@@ -924,7 +924,7 @@ namespace Gears
   LevelProfileMap<KeyType, KeySerializerType>::signal_by_undumped_size_(
     unsigned long prev_undumped_size,
     unsigned long new_undumped_size)
-    const throw()
+    const noexcept
   {
     return (prev_undumped_size >= max_undumped_size_ &&
         new_undumped_size < max_undumped_size_) ||
@@ -938,7 +938,7 @@ namespace Gears
   LevelProfileMap<KeyType, KeySerializerType>::signal_by_levels_change_(
     unsigned long prev_levels0,
     unsigned long new_levels0)
-    const throw()
+    const noexcept
   {
     return (new_levels0 < max_levels0_ && prev_levels0 >= max_levels0_) ||
       (new_levels0 < max_background_levels0_ &&
@@ -952,7 +952,7 @@ namespace Gears
     MapHolderType* map_holder,
     unsigned long index,
     unsigned long sub_index)
-    throw()
+    noexcept
   {
     for(IteratorType it = map_holder->levels.begin();
         it != map_holder->levels.end(); ++it)
@@ -974,7 +974,7 @@ namespace Gears
     LoadingProgressCallbackBase_var progress_checker,
     const char* /*directory*/,
     const char* index_file_name)
-    throw(Exception)
+    /*throw(Exception)*/
   {
     static const char* FUN = "LevelProfileMap<>::add_level_()";
 
@@ -1067,7 +1067,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   std::string
   LevelProfileMap<KeyType, KeySerializerType>::index_merge_file_name_()
-    const throw()
+    const noexcept
   {
     std::ostringstream ostr;
     ostr << this->file_directory_ << "/" << this->file_prefix_ << ".merge.index";
@@ -1077,7 +1077,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   std::string
   LevelProfileMap<KeyType, KeySerializerType>::body_merge_file_name_()
-    const throw()
+    const noexcept
   {
     std::ostringstream ostr;
     ostr << this->file_directory_ << "/" << this->file_prefix_ << ".merge.data";
@@ -1090,7 +1090,7 @@ namespace Gears
     unsigned long index,
     unsigned long sub_index,
     unsigned long uniq_index)
-    const throw()
+    const noexcept
   {
     std::ostringstream ostr;
     ostr << this->file_directory_ << "/" << this->file_prefix_ << "." <<
@@ -1113,7 +1113,7 @@ namespace Gears
     unsigned long index,
     unsigned long sub_index,
     unsigned long uniq_index)
-    const throw()
+    const noexcept
   {
     std::ostringstream ostr;
     ostr << this->file_directory_ << "/" << this->file_prefix_ << "." <<
@@ -1134,7 +1134,7 @@ namespace Gears
   bool
   LevelProfileMap<KeyType, KeySerializerType>::merge_check_(
     const MapHolder* map_holder)
-    throw()
+    noexcept
   {
     bool dumped_level0_found = false;
 
@@ -1161,7 +1161,7 @@ namespace Gears
   bool
   LevelProfileMap<KeyType, KeySerializerType>::rw_level_dump_check_by_size_i_(
     const MapHolder* map_holder)
-    const throw()
+    const noexcept
   {
     return map_holder->rw_level->area_size() >= rwlevel_max_size_;
   }
@@ -1170,7 +1170,7 @@ namespace Gears
   bool
   LevelProfileMap<KeyType, KeySerializerType>::rw_level_dump_check_by_time_i_(
     const Gears::Time& now)
-    const throw()
+    const noexcept
   {
     return last_rw_level_dump_time_ + max_dump_period_ <= now;
   }
@@ -1178,7 +1178,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   void
   LevelProfileMap<KeyType, KeySerializerType>::exchange_rw_level_i_()
-    throw(Exception)
+    /*throw(Exception)*/
   {
     //static const char* FUN = "LevelProfileMap<>::exchange_rw_level_i_()";
 
@@ -1255,7 +1255,7 @@ namespace Gears
   LevelProfileMap<KeyType, KeySerializerType>::dump_mem_level_(
     unsigned long index,
     unsigned long sub_index)
-    throw(Gears::Exception)
+    /*throw(Gears::Exception)*/
   {
     static const char* FUN = "LevelProfileMap<>::dump_mem_level_()";
 
@@ -1428,7 +1428,7 @@ namespace Gears
   template<typename KeyType, typename KeySerializerType>
   void
   LevelProfileMap<KeyType, KeySerializerType>::merge_levels_()
-    throw()
+    noexcept
   {
     static const char* FUN = "LevelProfileMap<>::merge_levels_()";
 
@@ -1703,7 +1703,7 @@ namespace Gears
   typename ReadBaseLevel<KeyType>::Iterator_var
   LevelProfileMap<KeyType, KeySerializerType>::create_filter_iterator_(
     typename ReadBaseLevel<KeyType>::Iterator* it)
-    throw()
+    noexcept
   {
     if(expire_time_ != Gears::Time::ZERO)
     {
@@ -1720,7 +1720,7 @@ namespace Gears
   void
   LevelProfileMap<KeyType, KeySerializerType>::print_levels_(
     std::ostream& ostr, const MapHolder* map_holder)
-    throw()
+    noexcept
   {
     for(typename LevelHolderArray::const_iterator
           level_it = map_holder->levels.begin();

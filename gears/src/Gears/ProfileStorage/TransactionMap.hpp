@@ -36,7 +36,7 @@ namespace Gears
     class TransactionHolderBase
     {
     public:
-      SyncPolicy::Mutex lock_;
+      typename SyncPolicy::Mutex lock_;
       AtomicCounter lock_count_;
 
     public:
@@ -44,13 +44,13 @@ namespace Gears
       {}
 
       virtual void
-      add_ref() const throw() = 0;
+      add_ref() const noexcept = 0;
 
       virtual void
-      remove_ref() const throw() = 0;
+      remove_ref() const noexcept = 0;
 
     protected:
-      virtual ~TransactionHolderBase() throw ();
+      virtual ~TransactionHolderBase() noexcept;
     };
 
     typedef IntrusivePtr<TransactionHolderBase>
@@ -59,11 +59,11 @@ namespace Gears
     /**
      * lock holder->lock_ for write
      */
-    TransactionBase(TransactionHolderBase* holder) throw ();
+    TransactionBase(TransactionHolderBase* holder) noexcept;
 
   protected:
     virtual
-    ~TransactionBase() throw ();
+    ~TransactionBase() noexcept;
 
   private:
     TransactionHolderBase_var holder_;
@@ -91,16 +91,16 @@ namespace Gears
     typedef typename TransactionImplType::ArgType TransactionArgType;
 
   public:
-    TransactionMap(unsigned long max_waiters = 0) throw();
+    TransactionMap(unsigned long max_waiters = 0) noexcept;
 
     Transaction_var
     get_transaction(
       const KeyType& key,
       bool check_max_waiters = true,
       const TransactionArgType& arg = TransactionArgType())
-      throw (MaxWaitersReached, Exception);
+      /*throw (MaxWaitersReached, Exception)*/;
 
-    virtual ~TransactionMap() throw ();
+    virtual ~TransactionMap() noexcept;
 
   protected:
     /**
@@ -113,17 +113,17 @@ namespace Gears
       TransactionHolder(
         TransactionMap& transaction_map,
         const KeyType& key)
-        throw ();
+        noexcept;
 
       void
-      add_ref() const throw();
+      add_ref() const noexcept;
 
       void
-      remove_ref() const throw();
+      remove_ref() const noexcept;
 
     protected:
       virtual
-      ~TransactionHolder() throw();
+      ~TransactionHolder() noexcept;
 
     private:
       mutable AtomicCounter ref_count_;
@@ -141,7 +141,7 @@ namespace Gears
       TransactionHolder* holder,
       const KeyType& key,
       const TransactionArgType& arg)
-      throw (Gears::Exception) = 0;
+      /*throw (Gears::Exception)*/ = 0;
 
   private:
     typedef Mutex SyncPolicy;
@@ -154,7 +154,7 @@ namespace Gears
      * remove Transaction from open_transaction_map_
      */
     void
-    close_i_(const KeyType& key) throw ();
+    close_i_(const KeyType& key) noexcept;
 
   private:
     const unsigned long max_waiters_;
@@ -171,18 +171,18 @@ namespace Gears
 namespace Gears
 {
   inline
-  TransactionBase::TransactionHolderBase::~TransactionHolderBase() throw ()
+  TransactionBase::TransactionHolderBase::~TransactionHolderBase() noexcept
   {}
 
   inline
   TransactionBase::TransactionBase(TransactionHolderBase* holder)
-    throw ()
+    noexcept
     : holder_(Gears::add_ref(holder)),
       locker_(holder->lock_)
   {}
 
   inline
-  TransactionBase::~TransactionBase() throw ()
+  TransactionBase::~TransactionBase() noexcept
   {
     holder_->lock_count_ += -1;
   }
@@ -190,7 +190,7 @@ namespace Gears
   template <typename KeyType, typename TransactionImplType>
   TransactionMap<KeyType, TransactionImplType>::TransactionHolder::
     TransactionHolder(TransactionMap& transactions_map, const KeyType& key)
-    throw ()
+    noexcept
     : ref_count_(1),
       key_(key),
       transactions_map_(transactions_map)
@@ -198,13 +198,13 @@ namespace Gears
 
   template <typename KeyType, typename TransactionImplType>
   TransactionMap<KeyType, TransactionImplType>::TransactionHolder::
-    ~TransactionHolder() throw ()
+    ~TransactionHolder() noexcept
   {}
 
   template <typename KeyType, typename TransactionImplType>
   void
   TransactionMap<KeyType, TransactionImplType>::TransactionHolder::
-    add_ref() const throw ()
+    add_ref() const noexcept
   {
     ref_count_.add(1);
   }
@@ -212,7 +212,7 @@ namespace Gears
   template <typename KeyType, typename TransactionImplType>
   void
   TransactionMap<KeyType, TransactionImplType>::TransactionHolder::
-    remove_ref() const throw ()
+    remove_ref() const noexcept
   {
     // We must first lock open_transaction_map_lock_ to avoid
     // using holder_ in get_transaction, it can be removed here.
@@ -231,7 +231,7 @@ namespace Gears
   template <typename KeyType, typename TransactionImplType>
   TransactionMap<KeyType, TransactionImplType>::
     TransactionMap(unsigned long max_waiters)
-    throw ()
+    noexcept
     : max_waiters_(max_waiters)
   {}
 
@@ -249,7 +249,7 @@ namespace Gears
     const KeyType& key,
     bool check_max_waiters,
     const TransactionArgType& arg)
-    throw (MaxWaitersReached, Exception)
+    /*throw (MaxWaitersReached, Exception)*/
   {
     static const char* FUN = "TransactionMap::get_transaction()";
 
@@ -322,13 +322,13 @@ namespace Gears
   }
 
   template <typename KeyType, typename TransactionImplType>
-  TransactionMap<KeyType, TransactionImplType>::~TransactionMap() throw ()
+  TransactionMap<KeyType, TransactionImplType>::~TransactionMap() noexcept
   {}
 
   template <typename KeyType, typename TransactionImplType>
   void
   TransactionMap<KeyType, TransactionImplType>::close_i_(const KeyType& key)
-    throw ()
+    noexcept
   {
     typename OpenedTransactionMap::iterator it =
       open_transaction_map_.find(key);

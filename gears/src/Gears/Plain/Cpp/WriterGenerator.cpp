@@ -307,7 +307,7 @@ namespace Cpp
     std::ostream& out_hpp,
     std::ostream& out_cpp,
     const char* offset)
-    throw()
+    noexcept
     : out_(out_hpp),
       out_cpp_(out_cpp),
       offset_(offset)
@@ -317,7 +317,7 @@ namespace Cpp
   void
   WriterGenerator::generate_default_buffers_decl(
     Declaration::StructDescriptor* struct_descriptor)
-    throw()
+    noexcept
   {
     Declaration::StructDescriptor::PosedFieldList_var fields =
       struct_descriptor->fields();
@@ -335,7 +335,7 @@ namespace Cpp
   void
   WriterGenerator::generate_default_buffers_impl(
     Declaration::StructDescriptor* struct_descriptor)
-    throw()
+    noexcept
   {
     Declaration::StructDescriptor::PosedFieldList_var fields =
       struct_descriptor->fields();
@@ -351,7 +351,7 @@ namespace Cpp
   /* protected writer generation */
   void WriterGenerator::generate_protected_decl(
     Declaration::StructDescriptor* struct_descriptor)
-    throw()
+    noexcept
   {
     Declaration::StructDescriptor::PosedFieldList_var fields =
       struct_descriptor->fields();
@@ -383,7 +383,7 @@ namespace Cpp
 
   void WriterGenerator::generate_protected_impl(
     Declaration::StructDescriptor* struct_descriptor)
-    throw()
+    noexcept
   {
     generate_common_funs_impl_((
       std::string(struct_descriptor->name()) +
@@ -398,7 +398,7 @@ namespace Cpp
 
   void WriterGenerator::generate_decl(
     Declaration::StructWriter* struct_writer)
-    throw()
+    noexcept
   {
     out_ << offset_ << "/* " << struct_writer->name() <<
       " writer declaration */" << std::endl;
@@ -448,7 +448,7 @@ namespace Cpp
 
   void WriterGenerator::generate_impl(
     Declaration::StructWriter* struct_writer)
-    throw()
+    noexcept
   {
     Declaration::StructWriter::FieldWriterList_var fields =
       struct_writer->fields();
@@ -474,7 +474,7 @@ namespace Cpp
 
   void
   WriterGenerator::generate_common_funs_decl_(const char* name)
-    throw()
+    noexcept
   {
     out_ << offset_ << name << "(bool init_defaults = false);" << std::endl <<
         std::endl <<
@@ -504,7 +504,7 @@ namespace Cpp
   void WriterGenerator::generate_common_funs_impl_(
     const char* class_name,
     const Declaration::StructDescriptor* struct_descriptor)
-    throw()
+    noexcept
   {
     Declaration::StructDescriptor::PosedFieldList_var fields =
       struct_descriptor->fields();
@@ -690,7 +690,7 @@ namespace Cpp
   void WriterGenerator::generate_swap_impl_(
     const char* class_name,
     Declaration::StructDescriptor* struct_descriptor)
-    throw()
+    noexcept
   {
     Declaration::StructDescriptor::PosedFieldList_var fields =
       struct_descriptor->as_struct()->fields();
@@ -735,7 +735,7 @@ namespace Cpp
   }
 
   void WriterGenerator::generate_field_types_decl_(
-    Declaration::StructWriter* struct_writer) throw()
+    Declaration::StructWriter* struct_writer) noexcept
   {
     Declaration::StructWriter::FieldWriterList_var fields =
       struct_writer->fields();
@@ -784,7 +784,7 @@ namespace Cpp
   }
 
   void WriterGenerator::generate_accessors_decl_(
-    Declaration::StructWriter* struct_writer) throw()
+    Declaration::StructWriter* struct_writer) noexcept
   {
     Declaration::StructWriter::FieldWriterList_var fields =
       struct_writer->fields();
@@ -839,7 +839,7 @@ namespace Cpp
   }
 
   void WriterGenerator::generate_accessors_impl_(
-    Declaration::StructWriter* struct_writer) throw()
+    Declaration::StructWriter* struct_writer) noexcept
   {
     Declaration::StructDescriptor::PosedFieldList_var fields =
       struct_writer->descriptor()->as_struct()->fields();
