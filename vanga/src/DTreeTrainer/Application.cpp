@@ -1329,6 +1329,8 @@ Application_::train_on_bags_(
     //std::cout << cur_dtree->to_string("", 0) << std::endl;
   }
 
+  (void)best_iter_i;
+
   if(print_trace)
   {
     std::cout << best_dtree->to_string("", 0) << std::endl;

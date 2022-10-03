@@ -123,6 +123,8 @@ namespace Vanga
           std::cout << "processed " << (all_tasks - tasks_in_progress) << "/" << tasks_in_progress << " features" << std::endl;
         }
       }
+
+      (void)prev_tasks_in_progress;
     }
 
     bool

@@ -356,7 +356,7 @@ grad_logloss_eval_test()
 void
 grad_logloss_min_test()
 {
-  typedef std::vector<TestValue>::iterator TestValueIterator;
+  //typedef std::vector<TestValue>::iterator TestValueIterator;
 
   {
     // =>0.25
@@ -536,7 +536,7 @@ grad_logloss_min_test()
 void
 grad_dispersion_min_test()
 {
-  typedef std::vector<TestValue>::iterator TestValueIterator;
+  //typedef std::vector<TestValue>::iterator TestValueIterator;
 
   {
     // =>0.25
@@ -716,7 +716,7 @@ grad_dispersion_min_test()
 void
 grad_sqr_min_test()
 {
-  typedef std::vector<TestValue>::iterator TestValueIterator;
+  //typedef std::vector<TestValue>::iterator TestValueIterator;
 
   {
     // =>0.25
@@ -742,7 +742,7 @@ grad_sqr_min_test()
 void
 grad_sqr_min_test2()
 {
-  typedef std::vector<TestValue>::iterator TestValueIterator;
+  //typedef std::vector<TestValue>::iterator TestValueIterator;
 
   {
     // =>0.25

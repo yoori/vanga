@@ -519,7 +519,7 @@ namespace Utils
           new_grads[var_index] = std::max(new_grads[var_index], new_vars[var_index] - pred_max);
           new_grads[var_index] = std::min(new_grads[var_index], new_vars[var_index] - pred_min);
 
-          assert(std::abs(new_grads[var_index]) < 10000000.0 && !isnan(new_grads[var_index]));
+          assert(std::abs(new_grads[var_index]) < 10000000.0 && !std::isnan(new_grads[var_index]));
 
           grad_quad_sum += new_grads[var_index] * new_grads[var_index];
 
@@ -533,7 +533,7 @@ namespace Utils
         new_grads[0] = std::max(new_grads[0], new_vars[0] - pred_max);
         new_grads[0] = std::min(new_grads[0], new_vars[0] - pred_min);
 
-        assert(std::abs(new_grads[0]) < 10000000.0 && !isnan(new_grads[0]));
+        assert(std::abs(new_grads[0]) < 10000000.0 && !std::isnan(new_grads[0]));
 
         grad_quad_sum += new_grads[0] * new_grads[0];
         new_grads[0] = coef * new_grads[0];

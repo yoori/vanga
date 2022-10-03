@@ -802,7 +802,7 @@ namespace Vanga
           );
       }
 
-      if(ls < 0)
+      if(!ls) // TO CHECK
       {
         // Revert to the previous point.
         vec_copy(x, prev_x, n);
