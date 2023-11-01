@@ -1127,7 +1127,7 @@ namespace Gears
     ostr << DUMP_SUFFIX;
     names.dump_temporary = ostr.str();
 
-    return std::move(names);
+    return names;
   }
 
   template<typename KeyType, typename KeySerializerType>

@@ -17,15 +17,16 @@ add_custom_command(
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/)
 
-add_executable(SegmentUtil
-  Application.cpp
-  SegmentProfile.cpp
+vanga_add_executable(SegmentUtil
+  SOURCES
+    Application.cpp
+    SegmentProfile.cpp
+  LINK_LIBRARIES
+    GearsProfileStorage
+    GearsThreading
+    GearsLogging
+    GearsString
+    GearsBasic
 )
-
-target_link_libraries(SegmentUtil
-  GearsProfileStorage
-  GearsLogging
-  GearsString
-  GearsBasic)
 
 install(TARGETS SegmentUtil DESTINATION bin)

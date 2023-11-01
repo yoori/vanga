@@ -391,7 +391,7 @@ Application_::make_profile_(
     }
   }
 
-  const Gears::Time base_time = Gears::Time::ZERO;
+  //const Gears::Time base_time = Gears::Time::ZERO;
 
   Gears::ActiveObject_var activator;
   auto user_map = open_storage(activator, filename, level0_size);
@@ -589,7 +589,7 @@ Application_::request_profile_(
     }
   }
 
-  const Gears::Time base_time = Gears::Time::ZERO;
+  //const Gears::Time base_time = Gears::Time::ZERO;
 
   Gears::ActiveObject_var activator;
 
@@ -603,7 +603,7 @@ Application_::request_profile_(
 
   std::vector<Gears::Time> TIMES(times_order.begin(), times_order.end());
 
-  const Gears::Time MAX_IN_TIMES = *std::max_element(TIMES.begin(), TIMES.end());
+  //const Gears::Time MAX_IN_TIMES = *std::max_element(TIMES.begin(), TIMES.end());
 
   std::vector<unsigned long> time_counters(TIMES.size(), 0);
   std::string line;

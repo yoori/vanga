@@ -17,13 +17,12 @@ set(
     Generator.cpp
 )
 
-add_library(${TARGET_NAME} SHARED ${GEARSPLAINCPP_SOURCE_FILES})
+vanga_add_library(${TARGET_NAME}
+  SOURCES ${GEARSPLAINCPP_SOURCE_FILES}
+  PRIVATE_LINK_LIBRARIES
+    GearsPlainDeclaration
+    GearsBasic)
 
 set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${_PUBLIC_HEADERS}")
-
-
-target_link_libraries(GearsPlainCpp
-  GearsPlainDeclaration
-  GearsBasic)
 
 INSTALL(TARGETS ${TARGET_NAME} DESTINATION lib PUBLIC_HEADER DESTINATION include/Gears/Plain/Cpp/)

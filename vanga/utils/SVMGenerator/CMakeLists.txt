@@ -10,12 +10,12 @@ set(_PUBLIC_HEADERS
   ${_HPP_HEADERS}
   ${_TPP_HEADERS})
 
-add_executable(SVMGenerator
-  Application.cpp
+vanga_add_executable(SVMGenerator
+  SOURCES
+    Application.cpp
+  LINK_LIBRARIES
+    GearsBasic
+    GearsString  
 )
-
-target_link_libraries(SVMGenerator
-  GearsBasic
-  GearsString)
 
 install(TARGETS SVMGenerator DESTINATION bin)

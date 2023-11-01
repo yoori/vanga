@@ -235,10 +235,11 @@ namespace Gears
       KeyType& key,
       ProfileOperation& operation,
       uint32_t& access_time)
-      const throw(
+      const
+      /*throw(
         Gears::Exception,
         FileReader::Exception,
-        typename ReadBaseLevel<KeyType>::Exception);
+        typename ReadBaseLevel<KeyType>::Exception)*/;
 
     ConstSmartMemBuf_var
     read_body_profile_(FileReader& reader)
@@ -253,20 +254,20 @@ namespace Gears
       FileReader& reader,
       MemBuf& key_buf,
       KeyType& key)
-      const throw(
+      const /*throw(
         Gears::Exception,
         FileReader::Exception,
-        typename ReadBaseLevel<KeyType>::Exception);
+        typename ReadBaseLevel<KeyType>::Exception)*/;
 
     unsigned long
     write_key_(
       FileWriter& writer,
       MemBuf& key_buf,
       const KeyType& key)
-      const throw(
+      const /*throw(
         Gears::Exception,
         FileWriter::Exception,
-        typename ReadBaseLevel<KeyType>::Exception);
+        typename ReadBaseLevel<KeyType>::Exception)*/;
 
     void
     write_null_key_(FileWriter& writer)

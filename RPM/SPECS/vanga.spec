@@ -36,7 +36,7 @@ Requires: %{name} = %{version}
 %build
 mkdir build
 pushd build
-cmake ..
+cmake -DBUILD_SHARED_LIBS=ON ..
 %{__make} %{_smp_mflags}
 popd
 

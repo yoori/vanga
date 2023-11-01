@@ -1,15 +1,15 @@
 project(Gears)
 
-add_executable(PlainCppCompiler
-  CppCompiler.cpp
+vanga_add_executable(PlainCppCompiler
+  SOURCES
+    CppCompiler.cpp
+  LINK_LIBRARIES
+    GearsPlainParser
+    GearsPlainDeclaration
+    GearsPlainCpp
+    GearsPlainCode
+    GearsBasic
+    GearsString
 )
-
-target_link_libraries(PlainCppCompiler
-  GearsPlainParser
-  GearsPlainDeclaration
-  GearsPlainCpp
-  GearsPlainCode
-  GearsBasic
-  GearsString)
 
 install(TARGETS PlainCppCompiler DESTINATION bin)

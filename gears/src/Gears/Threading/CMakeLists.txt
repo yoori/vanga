@@ -22,12 +22,13 @@ set(
     Scheduler.cpp
 )
 
-add_library(${TARGET_NAME} SHARED ${GEARSTHREADING_SOURCE_FILES})
+vanga_add_library(${TARGET_NAME}
+  SOURCES
+    ${GEARSTHREADING_SOURCE_FILES}
+  PRIVATE_LINK_LIBRARIES
+    pthread
+  )
 
 set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${_PUBLIC_HEADERS}")
-
-
-target_link_libraries(GearsThreading
-  pthread)
 
 INSTALL(TARGETS ${TARGET_NAME} DESTINATION lib PUBLIC_HEADER DESTINATION include/Gears/Threading/)

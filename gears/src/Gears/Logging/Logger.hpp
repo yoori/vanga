@@ -94,7 +94,7 @@ namespace Gears
       unsigned long severity = INFO,
       const Gears::SubString& aspect = Gears::SubString(),
       const Gears::SubString& code = Gears::SubString())
-      noexcept = 0;
+      = 0;
 
   protected:
     BasicLogger() noexcept = default;

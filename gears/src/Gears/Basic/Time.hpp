@@ -105,7 +105,7 @@ OPEN_NAMESPACE(Gears)
     /**
      * Default constructor
      */
-    Time() noexcept;
+    constexpr Time() noexcept;
 
     /**
      * Constructor
@@ -119,7 +119,7 @@ OPEN_NAMESPACE(Gears)
      * @param time_sec provided time (seconds)
      * @param usec provided time (microseconds)
      */
-    explicit
+    constexpr explicit
     Time(time_t time_sec, suseconds_t usec = 0) noexcept;
 
     /**
@@ -291,7 +291,7 @@ OPEN_NAMESPACE(Gears)
 
     static const unsigned long TIME_LEN;
 
-    static const suseconds_t USEC_MAX;
+    static const suseconds_t USEC_MAX = 1000000;
 
     static const Time ZERO;
     static const Time ONE_SECOND;
@@ -622,11 +622,9 @@ OPEN_NAMESPACE(Gears)
   }
 
   inline
-  Time::Time() noexcept
-  {
-    tv_sec = 0;
-    tv_usec = 0;
-  }
+  constexpr Time::Time() noexcept
+    : timeval{0, 0}
+  {}
 
   inline
   Time::Time(const timeval& time) noexcept
@@ -634,11 +632,10 @@ OPEN_NAMESPACE(Gears)
   {}
 
   inline
+  constexpr
   Time::Time(time_t time_sec, suseconds_t usec) noexcept
-  {
-    tv_sec = time_sec;
-    tv_usec = usec;
-  }
+    : timeval{time_sec, usec}
+  {}
 
   inline void
   Time::set(time_t time_sec, suseconds_t usec) noexcept
@@ -954,6 +951,9 @@ OPEN_NAMESPACE(Gears)
   {
     return static_cast<double>(fractional_part()) / USEC_MAX + integer_part();
   }
+
+  inline
+  constexpr const Time Time::ZERO = Time(0);
 
 CLOSE_NAMESPACE
 

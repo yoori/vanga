@@ -51,7 +51,6 @@ namespace Gears
     unsigned long severity,
     const Gears::SubString& aspect,
     const Gears::SubString& code)
-    noexcept
   {
     static const char* FUN = "OStreamLogHandler::publish()";
 

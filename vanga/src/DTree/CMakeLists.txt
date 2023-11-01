@@ -18,15 +18,23 @@ set(
     Utils.cpp
 )
 
-add_library(${TARGET_NAME} SHARED ${VANGADTREE_SOURCE_FILES})
+vanga_add_library(${TARGET_NAME}
+  SOURCES
+    ${VANGADTREE_SOURCE_FILES}
+  PUBLIC_LINK_LIBRARIES
+    GearsBasic
+    GearsString
+    GearsThreading
+  )
 
-set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${_PUBLIC_HEADERS}")
+#vanga_add_library(${TARGET_NAME} SHARED ${VANGADTREE_SOURCE_FILES})
 
+#set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${_PUBLIC_HEADERS}")
 
-target_link_libraries(VangaDTree
-  GearsBasic
-  GearsString
-  GearsThreading)
+#target_link_libraries(${TARGET_NAME}
+#  GearsBasic
+#  GearsString
+#  GearsThreading)
 
 INSTALL(TARGETS ${TARGET_NAME} DESTINATION lib PUBLIC_HEADER DESTINATION include/DTree/)
 

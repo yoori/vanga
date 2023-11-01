@@ -10,11 +10,11 @@ set(_PUBLIC_HEADERS
   ${_HPP_HEADERS}
   ${_TPP_HEADERS})
 
-add_executable(DTreeUtilsTest
-  DTreeUtilsTest.cpp
+vanga_add_executable(DTreeUtilsTest
+  SOURCES
+    DTreeUtilsTest.cpp
+  LINK_LIBRARIES
+    VangaDTree
 )
-
-target_link_libraries(DTreeUtilsTest
-  VangaDTree)
 
 install(TARGETS DTreeUtilsTest DESTINATION bin)

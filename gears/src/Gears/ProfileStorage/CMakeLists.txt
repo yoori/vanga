@@ -19,12 +19,14 @@ set(
     LoadingProgressCallback.cpp
 )
 
-add_library(${TARGET_NAME} SHARED ${GEARSPROFILESTORAGE_SOURCE_FILES})
+vanga_add_library(${TARGET_NAME}
+  SOURCES ${GEARSPROFILESTORAGE_SOURCE_FILES}
+  PRIVATE_LINK_LIBRARIES
+    GearsThreading)
 
 set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${_PUBLIC_HEADERS}")
 
-
-target_link_libraries(GearsProfileStorage
-  GearsThreading)
+#target_link_libraries(GearsProfileStorage
+#  GearsThreading)
 
 INSTALL(TARGETS ${TARGET_NAME} DESTINATION lib PUBLIC_HEADER DESTINATION include/Gears/ProfileStorage/)

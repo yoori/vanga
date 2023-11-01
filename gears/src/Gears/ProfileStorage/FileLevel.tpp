@@ -794,10 +794,10 @@ namespace Gears
     FileWriter& writer,
     Gears::MemBuf& key_buf,
     const KeyType& key)
-    const throw(
+    const /*throw(
       Gears::Exception,
       FileWriter::Exception,
-      typename ReadBaseLevel<KeyType>::Exception)
+      typename ReadBaseLevel<KeyType>::Exception)*/
   {
     static const char* FUN = "ReadFileLevel<>::write_key_()";
 
@@ -839,10 +839,11 @@ namespace Gears
     FileReader& reader,
     Gears::MemBuf& key_buf,
     KeyType& key)
-    const throw(
+    const
+    /*throw(
       Gears::Exception,
       FileReader::Exception,
-      typename ReadBaseLevel<KeyType>::Exception)
+      typename ReadBaseLevel<KeyType>::Exception)*/
   {
     static const char* FUN = "ReadFileLevel<>::read_key_()";
 
@@ -918,10 +919,11 @@ namespace Gears
     KeyType& key,
     ProfileOperation& operation,
     uint32_t& access_time)
-    const throw(
+    const
+    /*throw(
       Gears::Exception,
       FileReader::Exception,
-      typename ReadBaseLevel<KeyType>::Exception)
+      typename ReadBaseLevel<KeyType>::Exception)*/
   {
     //std::cout << "read_body_key_: key pos = " << reader.pos() << std::endl;
 

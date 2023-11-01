@@ -60,8 +60,8 @@ namespace Gears
     typedef typename Traits::pos_type Position;
     typedef typename Traits::off_type Offset;
 
-    typedef typename Allocator::pointer Pointer;
-    typedef typename Allocator::const_pointer ConstPointer;
+    typedef typename Allocator::value_type* Pointer;
+    typedef const typename Allocator::value_type* ConstPointer;
     typedef typename Allocator::size_type Size;
 
     /**

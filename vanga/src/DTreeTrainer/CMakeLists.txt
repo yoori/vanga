@@ -10,12 +10,12 @@ set(_PUBLIC_HEADERS
   ${_HPP_HEADERS}
   ${_TPP_HEADERS})
 
-add_executable(DTreeTrainer
-  Application.cpp
+vanga_add_executable(DTreeTrainer
+  SOURCES
+    Application.cpp
+  LINK_LIBRARIES
+    VangaDTree
+    GearsBasic
 )
-
-target_link_libraries(DTreeTrainer
-  VangaDTree
-  GearsBasic)
 
 install(TARGETS DTreeTrainer DESTINATION bin)

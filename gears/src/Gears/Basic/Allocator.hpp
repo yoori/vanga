@@ -52,7 +52,7 @@ namespace Gears
      * @param size should be equal to SIZE
      * @return pointer to size_ternal buffer
      */
-    typename Allocator::pointer
+    typename Allocator::value_type*
     allocate(typename Allocator::size_type size, const void* = 0)
       noexcept;
 
@@ -63,7 +63,7 @@ namespace Gears
      * @param size should be equal to SIZE
      */
     void
-    deallocate(typename Allocator::pointer ptr,
+    deallocate(typename Allocator::value_type* ptr,
       typename Allocator::size_type size) noexcept;
 
   private:

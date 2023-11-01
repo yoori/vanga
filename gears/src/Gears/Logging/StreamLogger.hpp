@@ -51,8 +51,7 @@ namespace Gears
     log(const Gears::SubString& text,
       unsigned long severity = INFO,
       const Gears::SubString& aspect = Gears::SubString(),
-      const Gears::SubString& code = Gears::SubString())
-      noexcept;
+      const Gears::SubString& code = Gears::SubString());
 
   protected:
     virtual

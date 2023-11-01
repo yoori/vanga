@@ -140,6 +140,7 @@ namespace Gears
     }
   }
 
+  inline
   void
   Csv::write_escaped(
     std::ostream& out,

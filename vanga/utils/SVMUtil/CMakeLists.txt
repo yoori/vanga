@@ -10,12 +10,12 @@ set(_PUBLIC_HEADERS
   ${_HPP_HEADERS}
   ${_TPP_HEADERS})
 
-add_executable(SVMUtil
-  Application.cpp
+vanga_add_executable(SVMUtil
+  SOURCES
+    Application.cpp
+  LINK_LIBRARIES
+    VangaDTree
+    GearsBasic
 )
-
-target_link_libraries(SVMUtil
-  VangaDTree
-  GearsBasic)
 
 install(TARGETS SVMUtil DESTINATION bin)

@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
+#set(CMAKE_CXX_COMPILER /opt/rh/gcc-toolset-10/root/usr/bin/g++)
+#set(CMAKE_C_COMPILER /opt/rh/gcc-toolset-10/root/usr/bin/gcc)
+
 project(Vanga)
 
 SET(GCC_ROOT ""
@@ -11,10 +14,13 @@ SET(GCC_VER ""
   STRING "Version of custom GCC. Must be specified if GCC_ROOT is defined!"
   )
 
-SET(CXX11 TRUE
+option(BUILD_SHARED_LIBS "build shared libraries" OFF)
+
+SET(CMAKE_CXX_STANDARD 20
   CACHE
-  BOOL "Use C++11 standard"
+  BOOL "Use C++20 standard"
   )
+
 #SET(CXX20 TRUE
 #  CACHE
 #  BOOL "Use C++20 standard"
@@ -50,10 +56,7 @@ SET(CMAKE_C_FLAGS_MINSIZEREL ${CMAKE_CXX_FLAGS_MINSIZEREL} CACHE INTERNAL "Compi
 SET(CMAKE_C_FLAGS_RELWITHDEBINFO ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} CACHE INTERNAL "Compiler RELWITHDEBINFO flags. Generated.")
 
 SET(CMAKE_CXX_FLAGS "-Wall ${GCC_EXTRA_OPTIONS}")
-
-IF (CXX11)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wno-deprecated -DBOOST_SYSTEM_NO_DEPRECATED")
-ENDIF()
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -DBOOST_SYSTEM_NO_DEPRECATED")
 
 #IF (CXX20)
 #    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -Wno-deprecated -DBOOST_SYSTEM_NO_DEPRECATED")
@@ -83,6 +86,8 @@ set(
 )
 
 # commonly used packages
+include(cmake/VangaAddLibrary.cmake)
+include(cmake/VangaAddExecutable.cmake)
 find_package(BISON)
 find_package(FLEX)
 
@@ -99,7 +104,7 @@ ENDIF()
 
 SET(CMAKE_INSTALL_PREFIX /)
 
-set (CMAKE_CXX_STANDARD 11)
+#set (CMAKE_CXX_STANDARD 17)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gears/src)
 

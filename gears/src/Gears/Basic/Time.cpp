@@ -142,9 +142,6 @@ namespace Gears
 
   const unsigned long Time::TIME_LEN = 21;
 
-  const suseconds_t Time::USEC_MAX = 1000000;
-
-  const Time Time::ZERO;
   const Time Time::ONE_SECOND(1l);
   const Time Time::ONE_MINUTE(60l);
   const Time Time::ONE_HOUR(60l * 60l);
