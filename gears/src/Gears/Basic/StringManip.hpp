@@ -273,6 +273,7 @@ namespace Gears
           return false;
         }
         negative = true;
+        [[fallthrough]];
       case '+':
         if (++src == END)
         {
