@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -46,7 +46,7 @@ namespace Gears
    * parameter synch_termination.
    * CompositeActiveObject is reference countable object.
    */
-  class CompositeActiveObject: public virtual ActiveObject
+  class CompositeActiveObject : public virtual ActiveObject
   {
   public:
     DECLARE_GEARS_EXCEPTION(ChildException, ActiveObject::Exception);
@@ -59,9 +59,7 @@ namespace Gears
      * child Active Object deactivation.
      * @param clear_on_exit whether to call clear() in destructor or not
      */
-    CompositeActiveObject(
-      bool synch_termination = false,
-      bool clear_on_exit = true) noexcept;
+    CompositeActiveObject(bool synch_termination = false, bool clear_on_exit = true) noexcept;
 
     // ActiveObject interface
     /**
@@ -70,8 +68,7 @@ namespace Gears
      * if you try to activate twice. All object activated successfully
      * or stay deactivate, if we were not able to activate any in the set.
      */
-    virtual void
-    activate_object()
+    virtual void activate_object()
       /*throw(CompositeAlreadyActive, ChildException, Gears::Exception)*/;
 
     /**
@@ -80,36 +77,31 @@ namespace Gears
      * Perform deactivation as LIFO, last added Active Object
      * will start deactivation first.
      */
-    virtual void
-    deactivate_object() /*throw(Exception, Gears::Exception)*/;
+    virtual void deactivate_object() /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Waits for deactivation all owned completion.
      * Perform waits as LIFO, last added Active Object will wait first.
      * That logic correspond deactivate_object method.
      */
-    virtual void
-    wait_object() /*throw(Exception, Gears::Exception)*/;
+    virtual void wait_object() /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Calls clear() for all owned objects
      */
-    virtual void
-    clear() /*throw(Gears::Exception)*/;
+    virtual void clear() /*throw(Gears::Exception)*/;
 
     /**
      * Thread-safe check status of this Active Object.
      * @return true if active.
      */
-    virtual bool
-    active() /*throw(Gears::Exception)*/;
+    virtual bool active() /*throw(Gears::Exception)*/;
 
     /**
      * Deactivate and wait for stop for all owned Active Objects.
      * Clears list of the objects.
      */
-    void
-    clear_children() /*throw(Exception, Gears::Exception)*/;
+    void clear_children() /*throw(Exception, Gears::Exception)*/;
 
     /**
      * This method fills CompositeActiveObject with other Active
@@ -120,35 +112,31 @@ namespace Gears
      * through it.
      * @param child object that should go under the management of container.
      */
-    void
-    add_child_object(ActiveObject* child) /*throw(Exception, Gears::Exception)*/;
+    void add_child_object(ActiveObject* child) /*throw(Exception, Gears::Exception)*/;
 
   protected:
-    typedef std::list<ActiveObject_var> ActiveObjectList;
+    using ActiveObjectList = std::list<ActiveObject_var>;
 
-    typedef Mutex Lock;
+    using Lock = Mutex;
 
   protected:
     /**
      * Perform deactivating all owned objects, and waits for
      * its completion.
      */
-    virtual
-    ~CompositeActiveObject() noexcept;
+    virtual ~CompositeActiveObject() noexcept;
 
     /**
      * Simply calls wait_object for the given interval of objects
      */
-    void
-    wait_for_some_objects(ActiveObjectList::reverse_iterator rbegin,
-      ActiveObjectList::reverse_iterator rend)
+    void wait_for_some_objects(ActiveObjectList::reverse_iterator rbegin, ActiveObjectList::
+                                                                            reverse_iterator rend)
       /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Thread-unsafe deactivation logic
      */
-    void
-    deactivate_object_i(ActiveObjectList::reverse_iterator rit)
+    void deactivate_object_i(ActiveObjectList::reverse_iterator rit)
       /*throw(Exception, Gears::Exception)*/;
 
   private:
@@ -162,14 +150,12 @@ namespace Gears
     ActiveObjectList child_objects_;
   };
 
-  typedef IntrusivePtr<CompositeActiveObject>
-    CompositeActiveObject_var;
+  using CompositeActiveObject_var = IntrusivePtr<CompositeActiveObject>;
 }
 
 namespace Gears
 {
-  inline bool
-  CompositeActiveObject::active() /*throw(Gears::Exception)*/
+  inline bool CompositeActiveObject::active() /*throw(Gears::Exception)*/
   {
     return active_state_ == AS_ACTIVE;
   }

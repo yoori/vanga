@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -25,15 +25,11 @@
 
 namespace Gears
 {
-  template<
-    typename Elem,
-    const size_t SIZE,
-    typename Buffer,
-    typename BufferInitializer = Buffer>
+  template <typename Elem, const size_t SIZE, typename Buffer, typename BufferInitializer = Buffer>
   class BasicFixedBufferAllocator : public std::allocator<Elem>
   {
   public:
-    typedef std::allocator<Elem> Allocator;
+    using Allocator = std::allocator<Elem>;
 
     /**
      * Constructor without parameters
@@ -53,8 +49,7 @@ namespace Gears
      * @return pointer to size_ternal buffer
      */
     typename Allocator::value_type*
-    allocate(typename Allocator::size_type size, const void* = 0)
-      noexcept;
+    allocate(typename Allocator::size_type size, const void* = 0) noexcept;
 
     /**
      * Deallocation function
@@ -63,8 +58,7 @@ namespace Gears
      * @param size should be equal to SIZE
      */
     void
-    deallocate(typename Allocator::value_type* ptr,
-      typename Allocator::size_type size) noexcept;
+    deallocate(typename Allocator::value_type* ptr, typename Allocator::size_type size) noexcept;
 
   private:
     Buffer buffer_;
@@ -76,8 +70,7 @@ namespace Gears
    * Allows a single allocation on preallocated buffer
    */
   template <typename Elem, const size_t SIZE>
-  class FixedBufferAllocator :
-    public BasicFixedBufferAllocator<Elem, SIZE, Elem*>
+  class FixedBufferAllocator : public BasicFixedBufferAllocator<Elem, SIZE, Elem*>
   {
   public:
     /**
@@ -87,8 +80,7 @@ namespace Gears
     FixedBufferAllocator(Elem* buffer) noexcept;
   };
 
-  template <typename Elem, const size_t SIZE, typename Initializer>
-  class ArrayBuffer
+  template <typename Elem, const size_t SIZE, typename Initializer> class ArrayBuffer
   {
   public:
     ArrayBuffer(Initializer initializer = Initializer()) noexcept;
@@ -104,9 +96,8 @@ namespace Gears
    * Required for disuse of heap for OutputStream
    */
   template <typename Elem, const size_t SIZE>
-  class StackAllocator :
-    public BasicFixedBufferAllocator<
-      Elem, SIZE, ArrayBuffer<Elem, SIZE, size_t>, size_t>
+  class StackAllocator
+    : public BasicFixedBufferAllocator<Elem, SIZE, ArrayBuffer<Elem, SIZE, size_t>, size_t>
   {
   public:
     /**

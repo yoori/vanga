@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -29,28 +29,25 @@ namespace Gears
   // TaskRunner::TaskRunnerJob class
   //
 
-  TaskRunner::TaskRunnerJob::TaskRunnerJob(
-    ActiveObjectCallback* callback,
-    unsigned long number_of_threads,
-    unsigned long max_pending_tasks)
+  TaskRunner::TaskRunnerJob::TaskRunnerJob(ActiveObjectCallback* callback,
+    unsigned long number_of_threads, unsigned long max_pending_tasks)
     /*throw(Gears::Exception)*/
-    : SingleJob(callback),
-      NUMBER_OF_THREADS_(number_of_threads),
-      new_task_(0),
+    : SingleJob(callback), NUMBER_OF_THREADS_(number_of_threads), new_task_(0),
       not_full_(static_cast<int>(std::min<unsigned long>(max_pending_tasks, SEM_VALUE_MAX))),
       LIMITED_(max_pending_tasks)
-  {}
+  {
+  }
 
   TaskRunner::TaskRunnerJob::~TaskRunnerJob() noexcept
-  {}
+  {
+  }
 
-  void
-  TaskRunner::TaskRunnerJob::clear() /*throw(Gears::Exception)*/
+  void TaskRunner::TaskRunnerJob::clear() /*throw(Gears::Exception)*/
   {
     LockType::WriteGuard guard(mutex());
-    if(LIMITED_)
+    if (LIMITED_)
     {
-      for(size_t i = tasks_.size(); i; i--)
+      for (size_t i = tasks_.size(); i; i--)
       {
         not_full_.release();
       }
@@ -58,15 +55,12 @@ namespace Gears
     tasks_.clear();
   }
 
-  void
-  TaskRunner::TaskRunnerJob::enqueue_task(
-    Task* task,
-    const Time* /*timeout*/)
-    /*throw(InvalidArgument, Overflow, NotActive, Gears::Exception)*/
+  void TaskRunner::TaskRunnerJob::enqueue_task(Task* task, const Time* /*timeout*/)
+  /*throw(InvalidArgument, Overflow, NotActive, Gears::Exception)*/
   {
     static const char* FUN = "TaskRunner::TaskRunnerJob::enqueue_task()";
 
-    if(!task)
+    if (!task)
     {
       ErrorStream ostr;
       ostr << FUN << ": task is NULL";
@@ -74,11 +68,11 @@ namespace Gears
     }
 
     // Producer
-    if(LIMITED_)
+    if (LIMITED_)
     {
-//    if(!(timeout ? not_full_.timed_acquire(timeout) :
-//      not_full_.try_acquire()))
-      if(not_full_.try_acquire())
+      //    if(!(timeout ? not_full_.timed_acquire(timeout) :
+      //      not_full_.try_acquire()))
+      if (not_full_.try_acquire())
       {
         ErrorStream ostr;
         ostr << FUN << ": TaskRunner overflow";
@@ -94,7 +88,7 @@ namespace Gears
       }
       catch (...)
       {
-        if(LIMITED_)
+        if (LIMITED_)
         {
           not_full_.release();
         }
@@ -105,14 +99,13 @@ namespace Gears
     new_task_.release();
   }
 
-  void
-  TaskRunner::TaskRunnerJob::wait_for_queue_exhausting() /*throw(Gears::Exception)*/
+  void TaskRunner::TaskRunnerJob::wait_for_queue_exhausting() /*throw(Gears::Exception)*/
   {
-    for(;;)
+    for (;;)
     {
       {
         LockType::ReadGuard guard(mutex());
-        if(tasks_.empty())
+        if (tasks_.empty())
         {
           return;
         }
@@ -122,20 +115,19 @@ namespace Gears
     }
   }
 
-  void
-  TaskRunner::TaskRunnerJob::work() noexcept
+  void TaskRunner::TaskRunnerJob::work() noexcept
   {
     static const char* FUN = "TaskRunner::TaskRunnerJob::work()";
 
     try
     {
-      for(;;)
+      for (;;)
       {
         Task_var task;
         {
           new_task_.acquire();
           LockType::WriteGuard guard(mutex());
-          if(is_terminating())
+          if (is_terminating())
           {
             break;
           }
@@ -145,7 +137,7 @@ namespace Gears
         }
 
         // Tell any blocked thread that the queue is ready for a "new item"
-        if(LIMITED_)
+        if (LIMITED_)
         {
           not_full_.release();
         }
@@ -156,9 +148,7 @@ namespace Gears
         }
         catch (const Gears::Exception& ex)
         {
-          callback()->report_error(
-            ActiveObjectCallback::ERROR,
-            SubString(ex.what()));
+          callback()->report_error(ActiveObjectCallback::ERROR, SubString(ex.what()));
         }
       }
     }
@@ -166,16 +156,13 @@ namespace Gears
     {
       ErrorStream ostr;
       ostr << FUN << ": Gears::Exception: " << e.what();
-      callback()->report_error(
-        ActiveObjectCallback::CRITICAL_ERROR,
-        ostr.str());
+      callback()->report_error(ActiveObjectCallback::CRITICAL_ERROR, ostr.str());
     }
   }
 
-  void
-  TaskRunner::TaskRunnerJob::terminate() noexcept
+  void TaskRunner::TaskRunnerJob::terminate() noexcept
   {
-    for(unsigned long i = NUMBER_OF_THREADS_; i; i--)
+    for (unsigned long i = NUMBER_OF_THREADS_; i; i--)
     {
       new_task_.release();
     }
@@ -185,21 +172,17 @@ namespace Gears
   // TaskRunner class
   //
 
-  TaskRunner::TaskRunner(
-    ActiveObjectCallback* callback,
-    unsigned int threads_number,
-    size_t stack_size,
-    unsigned long max_pending_tasks)
+  TaskRunner::TaskRunner(ActiveObjectCallback* callback, unsigned int threads_number,
+    size_t stack_size, unsigned long max_pending_tasks)
     /*throw(InvalidArgument, Exception, Gears::Exception)*/
-    : ActiveObjectCommonImpl(
-        TaskRunnerJob_var(new TaskRunnerJob(
-          callback,
-          threads_number,
-          max_pending_tasks)),
+    : ActiveObjectCommonImpl(TaskRunnerJob_var(new TaskRunnerJob(callback, threads_number,
+                               max_pending_tasks)),
         threads_number, stack_size),
       job_(static_cast<TaskRunnerJob&>(*SINGLE_JOB_))
-  {}
+  {
+  }
 
   TaskRunner::~TaskRunner() noexcept
-  {}
+  {
+  }
 }

@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -36,15 +36,14 @@
 #include <Gears/Plain/Code/TypeDefElement.hpp>
 #include <Gears/Plain/Code/Declarator.hpp>
 
-typedef std::string Identifier;
-typedef std::list<Identifier> IdentifierList;
+using Identifier = std::string;
+using IdentifierList = std::list<Identifier>;
 
 struct TypeSpecifier
 {
   TypeSpecifier(const char* name_val) noexcept;
 
-  TypeSpecifier(const char* name_val, const std::list<TypeSpecifier>& args_val)
-    noexcept;
+  TypeSpecifier(const char* name_val, const std::list<TypeSpecifier>& args_val) noexcept;
 
   std::string full_name() const noexcept;
 
@@ -52,11 +51,11 @@ struct TypeSpecifier
   const std::list<TypeSpecifier> args;
 };
 
-typedef std::list<TypeSpecifier> TypeSpecifierList;
+using TypeSpecifierList = std::list<TypeSpecifier>;
 
 namespace Parsing
 {
-  class Processor: public Gears::AtomicRefCountable
+  class Processor : public Gears::AtomicRefCountable
   {
   public:
     DECLARE_GEARS_EXCEPTION(Exception, Gears::DescriptiveException);
@@ -66,16 +65,11 @@ namespace Parsing
   public:
     Processor(Code::ElementList* elements_val) noexcept;
 
-    void error(
-      unsigned long line,
-      unsigned long column,
-      const char* message) noexcept;
+    void error(unsigned long line, unsigned long column, const char* message) noexcept;
 
-    Declaration::Namespace_var
-    root_namespace() const noexcept;
+    Declaration::Namespace_var root_namespace() const noexcept;
 
-    Declaration::BaseType_var
-    find_type(const TypeSpecifier& type_name) const noexcept;
+    Declaration::BaseType_var find_type(const TypeSpecifier& type_name) const noexcept;
 
     // namespace declaration
     void open_namespace(const char* name);
@@ -86,8 +80,7 @@ namespace Parsing
     void open_descriptor(const char* name)
       /*throw(AlreadyDeclared)*/;
 
-    void add_descriptor_field(
-      const TypeSpecifier& field_type, const char* name)
+    void add_descriptor_field(const TypeSpecifier& field_type, const char* name)
       /*throw(IncorrectType)*/;
 
     void close_descriptor() noexcept;
@@ -96,8 +89,7 @@ namespace Parsing
     void open_reader(const char* name, const char* base_type_name)
       /*throw(IncorrectType)*/;
 
-    void add_reader_field(
-      const TypeSpecifier& field_type, const char* name)
+    void add_reader_field(const TypeSpecifier& field_type, const char* name)
       /*throw(IncorrectType)*/;
 
     void close_reader() noexcept;
@@ -109,9 +101,7 @@ namespace Parsing
     void open_writer(const char* name, const char* base_type_name)
       /*throw (IncorrectType)*/;
 
-    void add_writer_field(
-      const TypeSpecifier& field_type,
-      const char* name,
+    void add_writer_field(const TypeSpecifier& field_type, const char* name,
       const IdentifierList& mapping_specifiers = IdentifierList())
       /*throw (IncorrectType)*/;
 
@@ -120,8 +110,7 @@ namespace Parsing
     void create_auto_writer(const char* name, const char* base_type_name)
       /*throw(IncorrectType)*/;
 
-    void clone_type(const char* new_name, const TypeSpecifier& base_type)
-      noexcept;
+    void clone_type(const char* new_name, const TypeSpecifier& base_type) noexcept;
 
   protected:
     enum DescriptorResolve
@@ -132,75 +121,56 @@ namespace Parsing
     };
 
   protected:
-    virtual ~Processor() noexcept {}
+    virtual ~Processor() noexcept;
 
     // basic help functions
-    Declaration::BaseDescriptor_var
-    resolve_descriptor_(const TypeSpecifier& type_specifier)
+    Declaration::BaseDescriptor_var resolve_descriptor_(const TypeSpecifier& type_specifier)
       /*throw(IncorrectType)*/;
 
-    Declaration::BaseReader_var
-    resolve_reader_(
-      const TypeSpecifier& type_specifier,
+    Declaration::BaseReader_var resolve_reader_(const TypeSpecifier& type_specifier,
       Declaration::BaseDescriptor* descriptor = 0)
       /*throw(IncorrectType)*/;
 
-    Declaration::BaseWriter_var
-    resolve_writer_(
-      const TypeSpecifier& type_specifier,
+    Declaration::BaseWriter_var resolve_writer_(const TypeSpecifier& type_specifier,
       Declaration::BaseDescriptor* descriptor = 0)
       /*throw(IncorrectType)*/;
 
-    Declaration::BaseTemplate_var
-    resolve_template_(const char* name)
+    Declaration::BaseTemplate_var resolve_template_(const char* name)
       /*throw(IncorrectType)*/;
 
     // auto types manipulations
     Declaration::StructReader_var
-    resolve_struct_auto_reader_(
-      Declaration::StructDescriptor* struct_descriptor)
+    resolve_struct_auto_reader_(Declaration::StructDescriptor* struct_descriptor)
       /*throw (Exception)*/;
 
     Declaration::StructWriter_var
-    resolve_struct_auto_writer_(
-      Declaration::StructDescriptor* struct_descriptor)
+    resolve_struct_auto_writer_(Declaration::StructDescriptor* struct_descriptor)
       /*throw (IncorrectType)*/;
 
-    Declaration::BaseReader_var
-    resolve_auto_reader_(const char* name) /*throw(IncorrectType)*/;
+    Declaration::BaseReader_var resolve_auto_reader_(const char* name) /*throw(IncorrectType)*/;
 
-    Declaration::BaseWriter_var
-    resolve_auto_writer_(const char* name) /*throw(IncorrectType)*/;
+    Declaration::BaseWriter_var resolve_auto_writer_(const char* name) /*throw(IncorrectType)*/;
 
     Declaration::StructReader_var
-    generate_auto_reader_(
-      const char* name,
-      Declaration::StructDescriptor* struct_descriptor)
+    generate_auto_reader_(const char* name, Declaration::StructDescriptor* struct_descriptor)
       /*throw(Exception)*/;
 
     Declaration::StructWriter_var
-    generate_auto_writer_(
-      const char* name,
-      Declaration::StructDescriptor* struct_descriptor)
+    generate_auto_writer_(const char* name, Declaration::StructDescriptor* struct_descriptor)
       /*throw (IncorrectType)*/;
 
     // template manipulations
     Declaration::CompleteTemplateDescriptor_var
-    init_template_descriptor_(
-      const TypeSpecifier& type_specifier,
+    init_template_descriptor_(const TypeSpecifier& type_specifier,
       DescriptorResolve descriptor_resolving = DR_DIRECT)
       /*throw(IncorrectType)*/;
 
-    Declaration::BaseReader_var
-    init_template_reader_(
-      const TypeSpecifier& type_specifier,
+    Declaration::BaseReader_var init_template_reader_(const TypeSpecifier& type_specifier,
       Declaration::BaseDescriptor* descriptor = 0 // complete template descriptor
       )
       /*throw(IncorrectType)*/;
 
-    Declaration::BaseWriter_var
-    init_template_writer_(
-      const TypeSpecifier& type_specifier,
+    Declaration::BaseWriter_var init_template_writer_(const TypeSpecifier& type_specifier,
       Declaration::BaseDescriptor* descriptor = 0 // complete template descriptor
       )
       /*throw(IncorrectType)*/;
@@ -209,8 +179,8 @@ namespace Parsing
     /* parsing context */
     Declaration::Namespace_var global_namespace_;
     Code::NamespaceElement_var current_namespace_;
-//  Code::ElementList_var elements_;
-//  Code::Declarator_var declarator_;
+    //  Code::ElementList_var elements_;
+    //  Code::Declarator_var declarator_;
 
     // descriptor declaration
     std::string descriptor_name_;
@@ -227,35 +197,34 @@ namespace Parsing
     Declaration::StructWriter::FieldWriterList_var writer_fields_;
   };
 
-  typedef Gears::IntrusivePtr<Processor> Processor_var;
+  inline Processor::~Processor() noexcept
+  {
+  }
+
+  using Processor_var = Gears::IntrusivePtr<Processor>;
 }
 
 // Inlines
 // TypeSpecifier impl
-inline
-TypeSpecifier::TypeSpecifier(const char* name_val) noexcept
-  : name(name_val)
-{}
-
-inline
-TypeSpecifier::TypeSpecifier(
-  const char* name_val, const std::list<TypeSpecifier>& args_val)
-  noexcept
-  : name(name_val), args(args_val)
-{}
-
-inline
-std::string
-TypeSpecifier::full_name() const noexcept
+inline TypeSpecifier::TypeSpecifier(const char* name_val) noexcept : name(name_val)
 {
-  if(!args.empty())
+}
+
+inline TypeSpecifier::
+  TypeSpecifier(const char* name_val, const std::list<TypeSpecifier>& args_val) noexcept
+  : name(name_val), args(args_val)
+{
+}
+
+inline std::string TypeSpecifier::full_name() const noexcept
+{
+  if (!args.empty())
   {
     std::ostringstream name_ostr;
     name_ostr << name << "<";
-    for(std::list<TypeSpecifier>::const_iterator ait = args.begin();
-        ait != args.end(); ++ait)
+    for (std::list<TypeSpecifier>::const_iterator ait = args.begin(); ait != args.end(); ++ait)
     {
-      if(ait != args.begin())
+      if (ait != args.begin())
       {
         name_ostr << ",";
       }
@@ -270,9 +239,7 @@ TypeSpecifier::full_name() const noexcept
 
 namespace Parsing
 {
-  inline
-  Declaration::Namespace_var
-  Processor::root_namespace() const noexcept
+  inline Declaration::Namespace_var Processor::root_namespace() const noexcept
   {
     return global_namespace_;
   }

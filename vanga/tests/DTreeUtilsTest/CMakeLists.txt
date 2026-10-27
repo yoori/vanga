@@ -18,3 +18,26 @@ vanga_add_executable(DTreeUtilsTest
 )
 
 install(TARGETS DTreeUtilsTest DESTINATION bin)
+
+vanga_add_executable(DTreeRegressionTest
+  SOURCES RegressionTest.cpp
+  LINK_LIBRARIES VangaDTree GearsLogging
+)
+target_compile_definitions(DTreeRegressionTest PRIVATE _GLIBCXX_ASSERTIONS)
+
+add_test(NAME DTreeUtilsTest COMMAND DTreeUtilsTest)
+add_test(NAME DTreeRegressionTest COMMAND DTreeRegressionTest)
+
+vanga_add_executable(CatBoostImportTest
+  SOURCES CatBoostTest.cpp
+  LINK_LIBRARIES VangaDTree
+)
+target_compile_definitions(CatBoostImportTest PRIVATE _GLIBCXX_ASSERTIONS)
+add_test(NAME CatBoostImportTest COMMAND CatBoostImportTest)
+
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND)
+  add_test(NAME VangaCliRegression
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/cli_regression.py
+      $<TARGET_FILE_DIR:DTreeTrainer>)
+endif()

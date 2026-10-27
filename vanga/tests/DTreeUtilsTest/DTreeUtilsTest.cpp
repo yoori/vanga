@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -50,36 +50,42 @@ using namespace Vanga;
 
 struct TestLabel
 {
-  TestLabel()
-    : value(false), pred(0.0)
-  {}
+  TestLabel();
 
-  TestLabel(bool value_val, double pred_val)
-    : value(value_val),
-      pred(pred_val)
-  {}
+  TestLabel(bool value_val, double pred_val);
 
   bool value;
   double pred;
 };
 
+TestLabel::TestLabel() : value(false), pred(0.0)
+{
+}
+
+TestLabel::TestLabel(bool value_val, double pred_val) : value(value_val), pred(pred_val)
+{
+}
+
 struct TestValue
 {
-  TestValue()
-    : count(0)
-  {}
+  TestValue();
 
-  TestValue(bool value_val, double pred_val, unsigned long count_val)
-    : label(value_val, pred_val),
-      count(count_val)
-  {}
+  TestValue(bool value_val, double pred_val, unsigned long count_val);
 
   TestLabel label;
   unsigned long count;
 };
 
-void
-grad_logloss_min_synt_test()
+TestValue::TestValue() : count(0)
+{
+}
+
+TestValue::TestValue(bool value_val, double pred_val, unsigned long count_val)
+  : label(value_val, pred_val), count(count_val)
+{
+}
+
+void grad_logloss_min_synt_test()
 {
   // SYNT
 
@@ -195,29 +201,34 @@ grad_logloss_min_synt_test()
 
       LogLossMetricEvaluator metric_eval;
       metric_eval.start_metric_eval();
-      metric_eval.add_metric_eval(
-        PredictedLogLossGain::add_delta(PredictedBoolLabel(false, -18.6102705), yes_res[0] + yes_res[1] + no_res[2]), 2400);
-      metric_eval.add_metric_eval(
-        PredictedLogLossGain::add_delta(PredictedBoolLabel(false, -2.7712915), no_res[0] + no_res[1] + yes_res[2]), 3200);
-      metric_eval.add_metric_eval(
-        PredictedLogLossGain::add_delta(PredictedBoolLabel(true, -2.7712915), no_res[0] + no_res[1] + yes_res[2]), 200);
-      metric_eval.add_metric_eval(
-        PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 7.7062343), no_res[0] + no_res[1] + no_res[2]), 2200);
+      metric_eval.add_metric_eval(PredictedLogLossGain::
+                                    add_delta(PredictedBoolLabel(false, -18.6102705),
+                                      yes_res[0] + yes_res[1] + no_res[2]),
+        2400);
+      metric_eval.add_metric_eval(PredictedLogLossGain::
+                                    add_delta(PredictedBoolLabel(false, -2.7712915),
+                                      no_res[0] + no_res[1] + yes_res[2]),
+        3200);
+      metric_eval.add_metric_eval(PredictedLogLossGain::
+                                    add_delta(PredictedBoolLabel(true, -2.7712915),
+                                      no_res[0] + no_res[1] + yes_res[2]),
+        200);
+      metric_eval.add_metric_eval(PredictedLogLossGain::
+                                    add_delta(PredictedBoolLabel(true, 7.7062343),
+                                      no_res[0] + no_res[1] + no_res[2]),
+        2200);
       ll = metric_eval.metric_result();
     }
 
-    std::cout << "synt(f3): " << std::endl <<
-      "  no[0] = " << no_res[0] << ", yes[0] = " << yes_res[0] << std::endl <<
-      "  no[1] = " << no_res[1] << ", yes[1] = " << yes_res[1] << std::endl <<
-      "  no[2] = " << no_res[2] << ", yes[2] = " << yes_res[2] << std::endl <<
-      "  old_ll = " << old_ll <<
-      ", ll = " << ll <<
-      std::endl;
+    std::cout << "synt(f3): " << std::endl
+              << "  no[0] = " << no_res[0] << ", yes[0] = " << yes_res[0] << std::endl
+              << "  no[1] = " << no_res[1] << ", yes[1] = " << yes_res[1] << std::endl
+              << "  no[2] = " << no_res[2] << ", yes[2] = " << yes_res[2] << std::endl
+              << "  old_ll = " << old_ll << ", ll = " << ll << std::endl;
   }
 }
 
-void
-grad_logloss_min_synt2_test()
+void grad_logloss_min_synt2_test()
 {
   {
     //const double PRED = -0.2876821;
@@ -255,27 +266,28 @@ grad_logloss_min_synt2_test()
 
       LogLossMetricEvaluator metric_eval;
       metric_eval.start_metric_eval();
-      metric_eval.add_metric_eval(
-        PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 4.0466179), no_res[0]), 281);
-      metric_eval.add_metric_eval(
-        PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 4.0466179), yes_res[0]), 10);
-      metric_eval.add_metric_eval(
-        PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 4.0466179), no_res[0]), 15978);
-      metric_eval.add_metric_eval(
-        PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 4.0466179), yes_res[0]), 2237);
+      metric_eval.add_metric_eval(PredictedLogLossGain::
+                                    add_delta(PredictedBoolLabel(false, 4.0466179), no_res[0]),
+        281);
+      metric_eval.add_metric_eval(PredictedLogLossGain::
+                                    add_delta(PredictedBoolLabel(false, 4.0466179), yes_res[0]),
+        10);
+      metric_eval.add_metric_eval(PredictedLogLossGain::
+                                    add_delta(PredictedBoolLabel(true, 4.0466179), no_res[0]),
+        15978);
+      metric_eval.add_metric_eval(PredictedLogLossGain::
+                                    add_delta(PredictedBoolLabel(true, 4.0466179), yes_res[0]),
+        2237);
       ll = metric_eval.metric_result();
     }
 
-    std::cout << "synt: " << std::endl <<
-      "  no[0] = " << no_res[0] << ", yes[0] = " << yes_res[0] << std::endl <<
-      "  old_ll = " << old_ll <<
-      ", ll = " << ll <<
-      std::endl;
+    std::cout << "synt: " << std::endl
+              << "  no[0] = " << no_res[0] << ", yes[0] = " << yes_res[0] << std::endl
+              << "  old_ll = " << old_ll << ", ll = " << ll << std::endl;
   }
 }
 
-void
-grad_logloss_eval_test()
+void grad_logloss_eval_test()
 {
   {
     //const double PRED = -0.2876821;
@@ -353,8 +365,7 @@ grad_logloss_eval_test()
   }
 }
 
-void
-grad_logloss_min_test()
+void grad_logloss_min_test()
 {
   //typedef std::vector<TestValue>::iterator TestValueIterator;
 
@@ -374,8 +385,8 @@ grad_logloss_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(yes=>0.1, no=>0.25): "
-      "yes_delta = " << yes_res[0] <<
-      ", no_delta = " << no_res[0] << std::endl;
+                 "yes_delta = "
+              << yes_res[0] << ", no_delta = " << no_res[0] << std::endl;
   }
 
   ///*
@@ -395,10 +406,9 @@ grad_logloss_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(AND): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << std::endl;
   }
 
   {
@@ -417,10 +427,9 @@ grad_logloss_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(OR): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << std::endl;
   }
 
   {
@@ -439,24 +448,23 @@ grad_logloss_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(XOR): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << std::endl;
   }
 
   {
     // AND (1&2),3,4
     PredCollector pred_collector;
     pred_collector.start_delta_eval(4, 0.0);
-    pred_collector.add_delta_eval(2, PredictedBoolLabel(false, 0), 1); // 2
-    pred_collector.add_delta_eval(5, PredictedBoolLabel(false, 0), 1); // 1 & 3
-    pred_collector.add_delta_eval(6, PredictedBoolLabel(false, 0), 1); // 2 & 4
-    pred_collector.add_delta_eval(9, PredictedBoolLabel(false, 0), 1); // 1 & 4
+    pred_collector.add_delta_eval(2, PredictedBoolLabel(false, 0), 1);  // 2
+    pred_collector.add_delta_eval(5, PredictedBoolLabel(false, 0), 1);  // 1 & 3
+    pred_collector.add_delta_eval(6, PredictedBoolLabel(false, 0), 1);  // 2 & 4
+    pred_collector.add_delta_eval(9, PredictedBoolLabel(false, 0), 1);  // 1 & 4
     pred_collector.add_delta_eval(10, PredictedBoolLabel(false, 0), 1); // 2 & 4
     pred_collector.add_delta_eval(13, PredictedBoolLabel(false, 0), 1); // 1 & 3 & 4
     pred_collector.add_delta_eval(14, PredictedBoolLabel(false, 0), 1); // 2 & 3 & 4
-    pred_collector.add_delta_eval(15, PredictedBoolLabel(true, 0), 2); // 1 & 2 & 3 & 4
+    pred_collector.add_delta_eval(15, PredictedBoolLabel(true, 0), 2);  // 1 & 2 & 3 & 4
     pred_collector.fin_delta_eval();
 
     std::vector<double> yes_res(4, 0.0);
@@ -466,47 +474,59 @@ grad_logloss_min_test()
 
     LogLossMetricEvaluator metric_eval;
     metric_eval.start_metric_eval();
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), no_res[0] + yes_res[1] + no_res[2] + no_res[3]), 1); // 2: 2
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), yes_res[0] + no_res[1] + yes_res[2] + no_res[3]), 1); // 5: 1 & 3
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), no_res[0] + yes_res[1] + yes_res[2] + no_res[3]), 1); // 6: 2 & 3
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), yes_res[0] + no_res[1] + no_res[2] + yes_res[3]), 1); // 9: 1 & 4
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), no_res[0] + yes_res[1] + no_res[2] + yes_res[3]), 1); // 10: 2 & 4
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), yes_res[0] + no_res[1] + yes_res[2] + yes_res[3]), 1); // 13: 1 & 3 & 4
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), no_res[0] + yes_res[1] + yes_res[2] + yes_res[3]), 1); // 14: 2 & 3 & 4
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 0), yes_res[0] + yes_res[1] + yes_res[2] + yes_res[3]), 2); // 15: 1 & 2 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  no_res[0] + yes_res[1] + no_res[2] + no_res[3]),
+      1); // 2: 2
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  yes_res[0] + no_res[1] + yes_res[2] + no_res[3]),
+      1); // 5: 1 & 3
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  no_res[0] + yes_res[1] + yes_res[2] + no_res[3]),
+      1); // 6: 2 & 3
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  yes_res[0] + no_res[1] + no_res[2] + yes_res[3]),
+      1); // 9: 1 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  no_res[0] + yes_res[1] + no_res[2] + yes_res[3]),
+      1); // 10: 2 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  yes_res[0] + no_res[1] + yes_res[2] + yes_res[3]),
+      1); // 13: 1 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  no_res[0] + yes_res[1] + yes_res[2] + yes_res[3]),
+      1); // 14: 2 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 0),
+                                  yes_res[0] + yes_res[1] + yes_res[2] + yes_res[3]),
+      2); // 15: 1 & 2 & 3 & 4
     double ll = metric_eval.metric_result();
 
     metric_eval.start_metric_eval();
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 2: 2
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 5: 1 & 3
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 6: 2 & 3
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 9: 1 & 4
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 10: 2 & 4
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 13: 1 & 3 & 4
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 14: 2 & 3 & 4
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 0), 100), 2); // 15: 1 & 2 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 2: 2
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 5: 1 & 3
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 6: 2 & 3
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 9: 1 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 10: 2 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 13: 1 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 14: 2 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 0), 100),
+      2); // 15: 1 & 2 & 3 & 4
     double ll_ideal = metric_eval.metric_result();
 
     std::cout << "grad result(1&2,3,4): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] <<
-      ", no[2] = " << no_res[2] <<
-      ", yes[2] = " << yes_res[2] <<
-      ", no[3] = " << no_res[3] <<
-      ", yes[3] = " << yes_res[3] <<
-      ", ll = " << ll <<
-      ", ll_ideal = " << ll_ideal <<
-      std::endl << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << ", no[2] = " << no_res[2]
+              << ", yes[2] = " << yes_res[2] << ", no[3] = " << no_res[3]
+              << ", yes[3] = " << yes_res[3] << ", ll = " << ll << ", ll_ideal = " << ll_ideal
+              << std::endl
+              << std::endl;
   }
 
   {
@@ -525,16 +545,15 @@ grad_logloss_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(1; 2 no affect): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] << std::endl << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << std::endl
+              << std::endl;
   }
   //*/
 }
 
-void
-grad_dispersion_min_test()
+void grad_dispersion_min_test()
 {
   //typedef std::vector<TestValue>::iterator TestValueIterator;
 
@@ -554,8 +573,8 @@ grad_dispersion_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(yes=>0.1, no=>0.25): "
-      "yes_delta = " << yes_res[0] <<
-      ", no_delta = " << no_res[0] << std::endl;
+                 "yes_delta = "
+              << yes_res[0] << ", no_delta = " << no_res[0] << std::endl;
   }
 
   ///*
@@ -575,10 +594,9 @@ grad_dispersion_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(AND): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << std::endl;
   }
 
   {
@@ -597,10 +615,9 @@ grad_dispersion_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(OR): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << std::endl;
   }
 
   {
@@ -619,24 +636,23 @@ grad_dispersion_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(XOR): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << std::endl;
   }
 
   {
     // AND (1&2),3,4
     PredCollector pred_collector;
     pred_collector.start_delta_eval(4, 0.0);
-    pred_collector.add_delta_eval(2, PredictedBoolLabel(false, 0), 1); // 2
-    pred_collector.add_delta_eval(5, PredictedBoolLabel(false, 0), 1); // 1 & 3
-    pred_collector.add_delta_eval(6, PredictedBoolLabel(false, 0), 1); // 2 & 4
-    pred_collector.add_delta_eval(9, PredictedBoolLabel(false, 0), 1); // 1 & 4
+    pred_collector.add_delta_eval(2, PredictedBoolLabel(false, 0), 1);  // 2
+    pred_collector.add_delta_eval(5, PredictedBoolLabel(false, 0), 1);  // 1 & 3
+    pred_collector.add_delta_eval(6, PredictedBoolLabel(false, 0), 1);  // 2 & 4
+    pred_collector.add_delta_eval(9, PredictedBoolLabel(false, 0), 1);  // 1 & 4
     pred_collector.add_delta_eval(10, PredictedBoolLabel(false, 0), 1); // 2 & 4
     pred_collector.add_delta_eval(13, PredictedBoolLabel(false, 0), 1); // 1 & 3 & 4
     pred_collector.add_delta_eval(14, PredictedBoolLabel(false, 0), 1); // 2 & 3 & 4
-    pred_collector.add_delta_eval(15, PredictedBoolLabel(true, 0), 2); // 1 & 2 & 3 & 4
+    pred_collector.add_delta_eval(15, PredictedBoolLabel(true, 0), 2);  // 1 & 2 & 3 & 4
     pred_collector.fin_delta_eval();
 
     std::vector<double> yes_res(4, 0.0);
@@ -646,47 +662,59 @@ grad_dispersion_min_test()
 
     LogLossMetricEvaluator metric_eval;
     metric_eval.start_metric_eval();
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), no_res[0] + yes_res[1] + no_res[2] + no_res[3]), 1); // 2: 2
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), yes_res[0] + no_res[1] + yes_res[2] + no_res[3]), 1); // 5: 1 & 3
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), no_res[0] + yes_res[1] + yes_res[2] + no_res[3]), 1); // 6: 2 & 3
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), yes_res[0] + no_res[1] + no_res[2] + yes_res[3]), 1); // 9: 1 & 4
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), no_res[0] + yes_res[1] + no_res[2] + yes_res[3]), 1); // 10: 2 & 4
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), yes_res[0] + no_res[1] + yes_res[2] + yes_res[3]), 1); // 13: 1 & 3 & 4
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), no_res[0] + yes_res[1] + yes_res[2] + yes_res[3]), 1); // 14: 2 & 3 & 4
-    metric_eval.add_metric_eval(
-      PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 0), yes_res[0] + yes_res[1] + yes_res[2] + yes_res[3]), 2); // 15: 1 & 2 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  no_res[0] + yes_res[1] + no_res[2] + no_res[3]),
+      1); // 2: 2
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  yes_res[0] + no_res[1] + yes_res[2] + no_res[3]),
+      1); // 5: 1 & 3
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  no_res[0] + yes_res[1] + yes_res[2] + no_res[3]),
+      1); // 6: 2 & 3
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  yes_res[0] + no_res[1] + no_res[2] + yes_res[3]),
+      1); // 9: 1 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  no_res[0] + yes_res[1] + no_res[2] + yes_res[3]),
+      1); // 10: 2 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  yes_res[0] + no_res[1] + yes_res[2] + yes_res[3]),
+      1); // 13: 1 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0),
+                                  no_res[0] + yes_res[1] + yes_res[2] + yes_res[3]),
+      1); // 14: 2 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 0),
+                                  yes_res[0] + yes_res[1] + yes_res[2] + yes_res[3]),
+      2); // 15: 1 & 2 & 3 & 4
     double ll = metric_eval.metric_result();
 
     metric_eval.start_metric_eval();
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 2: 2
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 5: 1 & 3
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 6: 2 & 3
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 9: 1 & 4
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 10: 2 & 4
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 13: 1 & 3 & 4
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100), 1); // 14: 2 & 3 & 4
-    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 0), 100), 2); // 15: 1 & 2 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 2: 2
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 5: 1 & 3
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 6: 2 & 3
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 9: 1 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 10: 2 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 13: 1 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(false, 0), -100),
+      1); // 14: 2 & 3 & 4
+    metric_eval.add_metric_eval(PredictedLogLossGain::add_delta(PredictedBoolLabel(true, 0), 100),
+      2); // 15: 1 & 2 & 3 & 4
     double ll_ideal = metric_eval.metric_result();
 
     std::cout << "grad result(1&2,3,4): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] <<
-      ", no[2] = " << no_res[2] <<
-      ", yes[2] = " << yes_res[2] <<
-      ", no[3] = " << no_res[3] <<
-      ", yes[3] = " << yes_res[3] <<
-      ", ll = " << ll <<
-      ", ll_ideal = " << ll_ideal <<
-      std::endl << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << ", no[2] = " << no_res[2]
+              << ", yes[2] = " << yes_res[2] << ", no[3] = " << no_res[3]
+              << ", yes[3] = " << yes_res[3] << ", ll = " << ll << ", ll_ideal = " << ll_ideal
+              << std::endl
+              << std::endl;
   }
 
   {
@@ -705,16 +733,15 @@ grad_dispersion_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(1; 2 no affect): "
-      "no[0] = " << no_res[0] <<
-      ", yes[0] = " << yes_res[0] <<
-      ", no[1] = " << no_res[1] <<
-      ", yes[1] = " << yes_res[1] << std::endl << std::endl;
+                 "no[0] = "
+              << no_res[0] << ", yes[0] = " << yes_res[0] << ", no[1] = " << no_res[1]
+              << ", yes[1] = " << yes_res[1] << std::endl
+              << std::endl;
   }
   //*/
 }
 
-void
-grad_sqr_min_test()
+void grad_sqr_min_test()
 {
   //typedef std::vector<TestValue>::iterator TestValueIterator;
 
@@ -734,13 +761,12 @@ grad_sqr_min_test()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(yes=>0.1, no=>0.25): "
-      "yes_delta = " << yes_res[0] <<
-      ", no_delta = " << no_res[0] << std::endl;
+                 "yes_delta = "
+              << yes_res[0] << ", no_delta = " << no_res[0] << std::endl;
   }
 }
 
-void
-grad_sqr_min_test2()
+void grad_sqr_min_test2()
 {
   //typedef std::vector<TestValue>::iterator TestValueIterator;
 
@@ -760,14 +786,13 @@ grad_sqr_min_test2()
     eval.delta_result(yes_res, no_res, pred_collector);
 
     std::cout << "grad result(yes=>0.1, no=>0.25): "
-      "yes_delta = " << yes_res[0] <<
-      ", no_delta = " << no_res[0] << std::endl;
+                 "yes_delta = "
+              << yes_res[0] << ", no_delta = " << no_res[0] << std::endl;
   }
 }
 
 // main
-int
-main(int, char**)
+int main(int, char**)
 {
   std::cout << "start testing logloss" << std::endl;
 
@@ -784,5 +809,3 @@ main(int, char**)
 
   return 0;
 }
-
-

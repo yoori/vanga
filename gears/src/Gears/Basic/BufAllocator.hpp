@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -31,7 +31,7 @@
 
 namespace Gears
 {
-  struct BasicBufAllocator: public AtomicRefCountable
+  struct BasicBufAllocator : public AtomicRefCountable
   {
     /**
      * Exception means free memory exhausted.
@@ -41,8 +41,8 @@ namespace Gears
     //class OutOfMemory_tag_ {};
     //typedef Gears::CompositeException<OutOfMemory_tag_, DescriptiveException> OutOfMemory;
 
-    typedef void* Pointer;
-    typedef const void* ConstPointer;
+    using Pointer = void*;
+    using ConstPointer = const void*;
 
     /**
      * @param size mean request for size bytes for code needs,
@@ -52,9 +52,7 @@ namespace Gears
      * @return pointer to begin allocated memory, size available
      * for using returns in size.
      */
-    virtual
-    Pointer
-    allocate(size_t& size) /*throw (Exception, OutOfMemory)*/ = 0;
+    virtual Pointer allocate(size_t& size) /*throw (Exception, OutOfMemory)*/ = 0;
 
     /**
      * All size T objects in the area pointed
@@ -66,48 +64,42 @@ namespace Gears
      * obtain this memory. Does not
      * throw exceptions. [Note: p shall not be null.]
      */
-    virtual void
-    deallocate(Pointer ptr, size_t size) noexcept = 0;
+    virtual void deallocate(Pointer ptr, size_t size) noexcept = 0;
 
     /**
      * Approximated cached memory size.
      * @return cached memory size.
      */
-    virtual size_t
-    cached() const
+    virtual size_t cached() const
       /*throw (Gears::Exception)*/;
 
     /**
      * Print detailed approximate cached memory information.
      */
-    virtual void
-    print_cached(std::ostream& ostr) const
+    virtual void print_cached(std::ostream& ostr) const
       /*throw (Gears::Exception)*/;
 
     /**
      * @return application level default allocator. Usually
      * simple new/delete behavior.
      */
-    static BasicBufAllocator*
-    get_default_allocator() /*throw (Gears::Exception)*/;
+    static BasicBufAllocator* get_default_allocator() /*throw (Gears::Exception)*/;
 
   protected:
     /**
      * protected destructor because reference counting.
      */
-    virtual
-    ~BasicBufAllocator() noexcept = default;
-      
+    virtual ~BasicBufAllocator() noexcept;
+
     /**
      * Align number to 2^mask number
      * @param number is number to align
      * @param mask power of 2 to be aligned.
-     */ 
-    static void
-    align_(size_t& number, size_t mask) noexcept;
+     */
+    static void align_(size_t& number, size_t mask) noexcept;
 
   private:
-    typedef StaticInitializedMutex Lock;
+    using Lock = StaticInitializedMutex;
 
   private:
     /// Application level default allocator object.
@@ -116,18 +108,16 @@ namespace Gears
     static BasicBufAllocator* volatile default_allocator_;
   };
 
-  typedef IntrusivePtr<BasicBufAllocator>
-    BasicBufAllocator_var;
+  inline BasicBufAllocator::~BasicBufAllocator() noexcept = default;
+  using BasicBufAllocator_var = IntrusivePtr<BasicBufAllocator>;
 
-  class DefaultBufAllocator:
-    public BasicBufAllocator
+  class DefaultBufAllocator : public BasicBufAllocator
   {
-   public:
+  public:
     /// default power of 2 for alignment value.
     static const size_t DEF_ALIGN = 10;
 
-    explicit
-    DefaultBufAllocator(size_t align_code = DEF_ALIGN) noexcept;
+    explicit DefaultBufAllocator(size_t align_code = DEF_ALIGN) noexcept;
 
     /**
      * Align request size bytes according to MASK_
@@ -135,43 +125,38 @@ namespace Gears
      * @param size at minimum memory to be allocated.
      * @return pointer to allocated memory block
      */
-    virtual Pointer
-    allocate(size_t& size) /*throw (Gears::Exception, OutOfMemory)*/;
+    virtual Pointer allocate(size_t& size) /*throw (Gears::Exception, OutOfMemory)*/;
 
     /**
-     * Deallocate 
+     * Deallocate
      * @param ptr pointer to releasing memory block.
      * @param size not used in this allocator.
      */
-    virtual void
-    deallocate(Pointer ptr, size_t size) noexcept;
+    virtual void deallocate(Pointer ptr, size_t size) noexcept;
 
   protected:
     /**
      * Destructor
      */
-    virtual
-    ~DefaultBufAllocator() noexcept = default;
+    virtual ~DefaultBufAllocator() noexcept;
 
   private:
     const size_t MASK_;
   };
 
+  inline DefaultBufAllocator::~DefaultBufAllocator() noexcept = default;
   /**
    * Returns aligned pointer
    */
-  class AlignBufAllocator: public BasicBufAllocator
+  class AlignBufAllocator : public BasicBufAllocator
   {
-   public:
+  public:
     /// default power of 2 for alignment value.
     static const size_t DEF_PTR_ALIGN = 9;
     static const size_t DEF_ALIGN = 10;
 
-    explicit
-    AlignBufAllocator(
-      size_t ptr_align_code = DEF_PTR_ALIGN,
-      size_t align_code = DEF_ALIGN)
-      noexcept;
+    explicit AlignBufAllocator(size_t ptr_align_code = DEF_PTR_ALIGN,
+      size_t align_code = DEF_ALIGN) noexcept;
 
     /**
      * Align request size bytes according to MASK_
@@ -179,30 +164,27 @@ namespace Gears
      * @param size at minimum memory to be allocated.
      * @return pointer to allocated memory block
      */
-    virtual
-    Pointer
-    allocate(size_t& size) /*throw (Gears::Exception, OutOfMemory)*/;
+    virtual Pointer allocate(size_t& size) /*throw (Gears::Exception, OutOfMemory)*/;
 
     /**
-     * Deallocate 
+     * Deallocate
      * @param ptr pointer to releasing memory block.
      * @param size not used in this allocator.
      */
-    virtual
-    void
-    deallocate(Pointer ptr, size_t size) noexcept;
+    virtual void deallocate(Pointer ptr, size_t size) noexcept;
 
   protected:
     /**
      * Destructor
      */
-    virtual
-    ~AlignBufAllocator() noexcept = default;
+    virtual ~AlignBufAllocator() noexcept;
 
   private:
     const size_t ALIGN_;
     const size_t MASK_;
   };
+
+  inline AlignBufAllocator::~AlignBufAllocator() noexcept = default;
 }
 
 #endif /*GEARS_BUFALLOCATOR_HPP_*/

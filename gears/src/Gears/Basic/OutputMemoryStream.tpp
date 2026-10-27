@@ -1,33 +1,31 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace Gears
 {
   /* OutputMemoryStreamBuffer impl */
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer>
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer>
   OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
     OutputMemoryStreamBuffer(Size initial_size,
-    const AllocatorInitializer& allocator_initializer) /*throw(Gears::Exception)*/
-    : allocator_(allocator_initializer),
-      max_offset_(0)
+      const AllocatorInitializer& allocator_initializer) /*throw(Gears::Exception)*/
+    : allocator_(allocator_initializer), max_offset_(0)
   {
     Pointer ptr = 0;
     if (initial_size > 0)
@@ -37,8 +35,7 @@ namespace Gears
     this->setp(ptr, ptr + initial_size);
   }
 
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer>
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer>
   OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
     ~OutputMemoryStreamBuffer() noexcept
   {
@@ -47,33 +44,24 @@ namespace Gears
     this->setg(0, 0, 0);
   }
 
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer>
-  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator,
-    AllocatorInitializer>::ConstPointer
-  OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
-    data() const noexcept
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer>
+  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::ConstPointer
+  OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::data() const noexcept
   {
     return this->pbase();
   }
 
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer>
-  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator,
-    AllocatorInitializer>::Size
-  OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
-    size() const noexcept
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer>
+  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::Size
+  OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::size() const noexcept
   {
     return this->pptr() - this->pbase();
   }
 
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer>
-  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator,
-    AllocatorInitializer>::Position
-  OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
-    seekoff(Offset off, std::ios_base::seekdir way,
-    std::ios_base::openmode which) /*throw(Gears::Exception)*/
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer>
+  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::Position
+  OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::seekoff(Offset off,
+    std::ios_base::seekdir way, std::ios_base::openmode which) /*throw(Gears::Exception)*/
   {
     if (which != std::ios_base::out)
     {
@@ -108,13 +96,11 @@ namespace Gears
     return seekpos(pos, which);
   }
 
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer>
-  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator,
-    AllocatorInitializer>::Position
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer>
+  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::Position
   OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
     seekpos(Position pos, std::ios_base::openmode which)
-    /*throw(Gears::Exception)*/
+  /*throw(Gears::Exception)*/
   {
     if (which != std::ios_base::out)
     {
@@ -138,10 +124,8 @@ namespace Gears
     return pos;
   }
 
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer>
-  bool
-  OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer>
+  bool OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
     extend() /*throw(Gears::Exception)*/
   {
     Size old_size = this->epptr() - this->pbase();
@@ -174,10 +158,8 @@ namespace Gears
     return true;
   }
 
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer>
-  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator,
-    AllocatorInitializer>::Int
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer>
+  typename OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::Int
   OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>::
     overflow(Int c) /*throw(Gears::Exception)*/
   {
@@ -197,78 +179,75 @@ namespace Gears
 
   /* MemoryBufferHolder impl */
 
-  template<typename Buffer>
+  template <typename Buffer>
   MemoryBufferHolder<Buffer>::MemoryBufferHolder() /*throw(Gears::Exception)*/
-  {}
+  {
+  }
 
-  template<typename Buffer>
-  template<typename T>
+  template <typename Buffer>
+  template <typename T>
   MemoryBufferHolder<Buffer>::MemoryBufferHolder(T arg)
     /*throw(Gears::Exception)*/
     : buffer_(arg)
-  {}
+  {
+  }
 
-  template<typename Buffer>
-  template<typename T1, typename T2>
+  template <typename Buffer>
+  template <typename T1, typename T2>
   MemoryBufferHolder<Buffer>::MemoryBufferHolder(T1 arg1, T2 arg2)
     /*throw(Gears::Exception)*/
     : buffer_(arg1, arg2)
-  {}
+  {
+  }
 
-  template<typename Buffer>
-  typename MemoryBufferHolder<Buffer>::SubString
+  template <typename Buffer>
+  typename MemoryBufferHolder<Buffer>::SubString MemoryBufferHolder<Buffer>::
+    str() const /*throw(Gears::Exception)*/
+  {
+    return SubString(this->buffer()->data(), this->buffer()->size());
+  }
+
+  template <typename Buffer>
+  template <typename Traits, typename Checker>
+  BasicSubString<const typename MemoryBufferHolder<Buffer>::Elem, Traits, Checker>
   MemoryBufferHolder<Buffer>::str() const /*throw(Gears::Exception)*/
   {
-    return SubString(this->buffer()->data(),
+    return BasicSubString<const Elem, Traits, Checker>(this->buffer()->data(),
       this->buffer()->size());
   }
 
-  template<typename Buffer>
-  template<typename Traits, typename Checker>
-  BasicSubString<const typename MemoryBufferHolder<Buffer>::Elem,
-    Traits, Checker>
-  MemoryBufferHolder<Buffer>::str() const /*throw(Gears::Exception)*/
-  {
-    return BasicSubString<const Elem, Traits, Checker>(
-      this->buffer()->data(),
-      this->buffer()->size());
-  }
-
-  template<typename Buffer>
-  Buffer*
-  MemoryBufferHolder<Buffer>::buffer() noexcept
+  template <typename Buffer> Buffer* MemoryBufferHolder<Buffer>::buffer() noexcept
   {
     return &buffer_;
   }
 
-  template<typename Buffer>
-  const Buffer*
-  MemoryBufferHolder<Buffer>::buffer() const noexcept
+  template <typename Buffer> const Buffer* MemoryBufferHolder<Buffer>::buffer() const noexcept
   {
     return &buffer_;
   }
 
   /* OutputMemoryStream impl */
 
-  template<typename Elem, typename Traits, typename Allocator,
-    typename AllocatorInitializer, const size_t SIZE>
+  template <typename Elem, typename Traits, typename Allocator, typename AllocatorInitializer,
+    const size_t SIZE>
   OutputMemoryStream<Elem, Traits, Allocator, AllocatorInitializer, SIZE>::
     OutputMemoryStream(typename Allocator::size_type initial_size,
       const AllocatorInitializer& allocator_initializer)
     /*throw(Gears::Exception)*/
     : Holder(initial_size, allocator_initializer), Stream(this->buffer())
-  {}
+  {
+  }
 
   /* Buffer class */
 
-  template<const size_t SIZE>
+  template <const size_t SIZE>
   OutputBufferStream<SIZE>::OutputBufferStream(char* buffer) noexcept
-    : OutputMemoryStream<char, std::char_traits<char>,
-        Allocator, Allocator, SIZE - 1>(SIZE - 1, Allocator(buffer))
-  {}
+    : OutputMemoryStream<char, std::char_traits<char>, Allocator, Allocator, SIZE - 1>(SIZE - 1,
+        Allocator(buffer))
+  {
+  }
 
-  template<const size_t SIZE>
-  OutputBufferStream<SIZE>::~OutputBufferStream() noexcept
+  template <const size_t SIZE> OutputBufferStream<SIZE>::~OutputBufferStream() noexcept
   {
     *this << '\0';
   }

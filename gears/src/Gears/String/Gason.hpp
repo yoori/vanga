@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -28,9 +28,7 @@
 
 namespace Gears
 {
-  const char*
-  find_end_of_number(const char* str)
-    noexcept;
+  const char* find_end_of_number(const char* str) noexcept;
 
   const size_t JSON_ZONE_SIZE = 4096;
   const size_t JSON_STACK_SIZE = 32;
@@ -39,21 +37,20 @@ namespace Gears
   {
     struct Zone
     {
-      Zone *next;
-      char *end;
+      Zone* next;
+      char* end;
     };
 
-    Zone *head;
+    Zone* head;
 
-    JsonAllocator()
-      : head()
-    {};
+    JsonAllocator();
 
     ~JsonAllocator();
 
-    void*
-    allocate(size_t n, size_t align = 8);
+    void* allocate(size_t n, size_t align = 8);
   };
+
+  inline JsonAllocator::JsonAllocator() : head() {};
 
   const uint64_t JSON_VALUE_PAYLOAD_MASK = 0x00007FFFFFFFFFFFULL;
   const uint64_t JSON_VALUE_NAN_MASK = 0x7FF8000000000000ULL;
@@ -71,8 +68,7 @@ namespace Gears
     JSON_TAG_NULL = 0xF
   };
 
-  double
-  str2float(const char *str);
+  double str2float(const char* str);
 
   struct JsonNode;
 
@@ -86,32 +82,24 @@ namespace Gears
 
     JsonValue();
 
-    JsonValue(JsonTag tag, const void *p);
+    JsonValue(JsonTag tag, const void* p);
 
-    explicit
-    JsonValue(double x);
+    explicit JsonValue(double x);
 
-    bool
-    is_double() const;
+    bool is_double() const;
 
-    JsonTag
-    get_tag() const;
+    JsonTag get_tag() const;
 
-    uint64_t
-    get_payload() const;
+    uint64_t get_payload() const;
 
-    double
-    to_number() const;
+    double to_number() const;
 
-    bool
-    to_bool() const;
+    bool to_bool() const;
 
-    JsonNode*
-    to_node() const;
+    JsonNode* to_node() const;
 
     // FIXME: ensure to_string safety
-    SubString
-    to_string() const;
+    SubString to_string() const;
   };
 
   struct JsonNode
@@ -123,39 +111,44 @@ namespace Gears
 
   struct JsonIterator
   {
-    JsonIterator(JsonNode* node)
-      : p(node)
-    {}
+    JsonIterator(JsonNode* node);
 
-    JsonNode *p;
+    JsonNode* p;
 
-    void
-    operator++()
-    {
-      p = p->next;
-    }
+    void operator++();
 
-    bool
-    operator!=(const JsonIterator &x) const
-    {
-      return p != x.p;
-    }
+    bool operator!=(const JsonIterator& x) const;
 
-    JsonNode*
-    operator*() const
-    {
-      return p;
-    }
+    JsonNode* operator*() const;
 
-    JsonNode*
-    operator->() const
-    {
-      return p;
-    }
+    JsonNode* operator->() const;
   };
 
-  inline JsonIterator
-  begin(JsonValue o)
+  inline JsonIterator::JsonIterator(JsonNode* node) : p(node)
+  {
+  }
+
+  inline void JsonIterator::operator++()
+  {
+    p = p->next;
+  }
+
+  inline bool JsonIterator::operator!=(const JsonIterator& x) const
+  {
+    return p != x.p;
+  }
+
+  inline JsonNode* JsonIterator::operator*() const
+  {
+    return p;
+  }
+
+  inline JsonNode* JsonIterator::operator->() const
+  {
+    return p;
+  }
+
+  inline JsonIterator begin(JsonValue o)
   {
     return JsonIterator(o.to_node());
   }
@@ -179,23 +172,19 @@ namespace Gears
     JSON_PARSE_BREAKING_BAD
   };
 
-  JsonParseStatus
-  json_parse(char *str, char **endptr, JsonValue *value, JsonAllocator &allocator);
+  JsonParseStatus json_parse(char* str, char** endptr, JsonValue* value, JsonAllocator& allocator);
 
-  std::string
-  json_parse_error(JsonParseStatus status);
+  std::string json_parse_error(JsonParseStatus status);
 }
 
 namespace Gears
 {
-  inline
-  JsonValue::JsonValue()
+  inline JsonValue::JsonValue()
   {
     data.i = JSON_VALUE_NULL;
   }
 
-  inline
-  JsonValue::JsonValue(JsonTag tag, const void *p)
+  inline JsonValue::JsonValue(JsonTag tag, const void* p)
   {
     uint64_t x = reinterpret_cast<uint64_t>(p);
     assert(static_cast<uint64_t>(tag) <= JSON_VALUE_TAG_MASK);
@@ -203,63 +192,55 @@ namespace Gears
     data.i = JSON_VALUE_NAN_MASK | ((uint64_t)tag << JSON_VALUE_TAG_SHIFT) | x;
   }
 
-  inline
-  JsonValue::JsonValue(double x)
+  inline JsonValue::JsonValue(double x)
   {
     data.f = x;
   }
 
-  inline bool
-  JsonValue::is_double() const
+  inline bool JsonValue::is_double() const
   {
     return (int64_t)data.i <= (int64_t)JSON_VALUE_NAN_MASK;
   }
 
-  inline JsonTag
-  JsonValue::get_tag() const
+  inline JsonTag JsonValue::get_tag() const
   {
-    return is_double() ? JSON_TAG_NUMBER : JsonTag((data.i >> JSON_VALUE_TAG_SHIFT) & JSON_VALUE_TAG_MASK);
+    return is_double() ? JSON_TAG_NUMBER
+                       : JsonTag((data.i >> JSON_VALUE_TAG_SHIFT) & JSON_VALUE_TAG_MASK);
   }
 
-  inline uint64_t
-  JsonValue::get_payload() const
+  inline uint64_t JsonValue::get_payload() const
   {
     assert(!is_double());
     return data.i & JSON_VALUE_PAYLOAD_MASK;
   }
 
-  inline double
-  JsonValue::to_number() const
+  inline double JsonValue::to_number() const
   {
     assert(get_tag() == JSON_TAG_NUMBER);
-    return str2float(
-      reinterpret_cast<const char*>(get_payload()));
+    return str2float(reinterpret_cast<const char*>(get_payload()));
   }
 
-  inline bool
-  JsonValue::to_bool() const
+  inline bool JsonValue::to_bool() const
   {
     assert(get_tag() == JSON_TAG_BOOL);
     return (bool)get_payload();
   }
 
-  inline JsonNode*
-  JsonValue::to_node() const
+  inline JsonNode* JsonValue::to_node() const
   {
     assert(get_tag() == JSON_TAG_ARRAY || get_tag() == JSON_TAG_OBJECT);
-    return (JsonNode *)get_payload();
+    return (JsonNode*)get_payload();
   }
 
-  inline SubString
-  JsonValue::to_string() const
+  inline SubString JsonValue::to_string() const
   {
     assert(get_tag() == JSON_TAG_STRING || get_tag() == JSON_TAG_NUMBER);
 
-    if(get_tag() == JSON_TAG_STRING)
+    if (get_tag() == JSON_TAG_STRING)
     {
       return SubString(reinterpret_cast<const char*>(get_payload()));
     }
-    else if(get_tag() == JSON_TAG_NUMBER)
+    else if (get_tag() == JSON_TAG_NUMBER)
     {
       const char* payload = reinterpret_cast<const char*>(get_payload());
       return SubString(payload, find_end_of_number(payload));
@@ -269,11 +250,9 @@ namespace Gears
     return SubString();
   }
 
-  inline const char*
-  find_end_of_number(const char* str)
-    noexcept
+  inline const char* find_end_of_number(const char* str) noexcept
   {
-    if(*str == '-' || *str == '+')
+    if (*str == '-' || *str == '+')
     {
       ++str;
     }
@@ -297,7 +276,7 @@ namespace Gears
     {
       ++str;
 
-      if(*str == '-' || *str == '+')
+      if (*str == '-' || *str == '+')
       {
         ++str;
       }

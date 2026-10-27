@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -55,43 +55,37 @@ namespace Gears
      * Constructor
      * @param value initial seed number
      */
-    explicit
-    ISAAC(const uint32_t value) noexcept;
+    explicit ISAAC(const uint32_t value) noexcept;
 
     /**
      * Constructor
      * @param value pointer to data for initial seed (256 elements)
      */
-    explicit
-    ISAAC(const uint32_t* value) noexcept;
+    explicit ISAAC(const uint32_t* value) noexcept;
 
     /**
      * Initializes object
      * Uses /dev/urandom for initialization
      */
-    void
-    seed() noexcept;
+    void seed() noexcept;
 
     /**
      * Initializes object
      * @param value initial seed number
      */
-    void
-    seed(uint32_t value) noexcept;
+    void seed(uint32_t value) noexcept;
 
     /**
      * Initializes object
      * @param value pointer to data for initial seed (256 elements)
      */
-    void
-    seed(const uint32_t* value) noexcept;
+    void seed(const uint32_t* value) noexcept;
 
     /**
      * Creates next random number in the sequence
      * @return random number in [0..2^32-1] range
      */
-    uint32_t
-    rand() noexcept;
+    uint32_t rand() noexcept;
 
   protected:
     /**
@@ -99,17 +93,28 @@ namespace Gears
      * @param value initial seed number
      * @param use_rand use random_ data or not
      */
-    void
-    initialize_(uint32_t value, bool use_rand) noexcept;
+    void initialize_(uint32_t value, bool use_rand) noexcept;
 
-    void
-    reinit_() noexcept;
+    void reinit_() noexcept;
 
   private:
-    static
-    void
-    rng_step_(uint32_t*& m, uint32_t*& m2, uint32_t*& r, uint32_t* mm,
-      uint32_t& a, uint32_t& b, uint32_t mix) noexcept;
+    class Mixer
+    {
+    public:
+      Mixer(uint32_t value) noexcept;
+
+      void mix() noexcept;
+
+      void add(const uint32_t* source) noexcept;
+
+      void copy_to(uint32_t* target) const noexcept;
+
+    private:
+      uint32_t data_[8];
+    };
+
+    static void rng_step_(uint32_t*& m, uint32_t*& m2, uint32_t*& r, uint32_t* mm, uint32_t& a,
+      uint32_t& b, uint32_t mix) noexcept;
 
     static const size_t SIZE = 256;
 
@@ -121,31 +126,73 @@ namespace Gears
     int left_;
     const uint32_t* next_;
   };
+
+  inline ISAAC::Mixer::Mixer(uint32_t value) noexcept
+  {
+    std::fill(data_, data_ + 8, value);
+  }
+
+  inline void ISAAC::Mixer::mix() noexcept
+  {
+    data_[0] ^= data_[1] << 11;
+    data_[3] += data_[0];
+    data_[1] += data_[2];
+    data_[1] ^= data_[2] >> 2;
+    data_[4] += data_[1];
+    data_[2] += data_[3];
+    data_[2] ^= data_[3] << 8;
+    data_[5] += data_[2];
+    data_[3] += data_[4];
+    data_[3] ^= data_[4] >> 16;
+    data_[6] += data_[3];
+    data_[4] += data_[5];
+    data_[4] ^= data_[5] << 10;
+    data_[7] += data_[4];
+    data_[5] += data_[6];
+    data_[5] ^= data_[6] >> 4;
+    data_[0] += data_[5];
+    data_[6] += data_[7];
+    data_[6] ^= data_[7] << 8;
+    data_[1] += data_[6];
+    data_[7] += data_[0];
+    data_[7] ^= data_[0] >> 9;
+    data_[2] += data_[7];
+    data_[0] += data_[1];
+  }
+
+  inline void ISAAC::Mixer::add(const uint32_t* source) noexcept
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      data_[i] += source[i];
+    }
+  }
+
+  inline void ISAAC::Mixer::copy_to(uint32_t* target) const noexcept
+  {
+    std::copy(data_, data_ + 8, target);
+  }
+
 }
 
 namespace Gears
 {
-  inline
-  ISAAC::ISAAC() noexcept
+  inline ISAAC::ISAAC() noexcept
   {
     seed();
   }
 
-  inline
-  ISAAC::ISAAC(const uint32_t value) noexcept
+  inline ISAAC::ISAAC(const uint32_t value) noexcept
   {
     seed(value);
   }
 
-  inline
-  ISAAC::ISAAC(const uint32_t* value) noexcept
+  inline ISAAC::ISAAC(const uint32_t* value) noexcept
   {
     seed(value);
   }
 
-  inline
-  uint32_t
-  ISAAC::rand() noexcept
+  inline uint32_t ISAAC::rand() noexcept
   {
     if (!left_)
     {
@@ -156,10 +203,8 @@ namespace Gears
     return *next_++;
   }
 
-  inline
-  void
-  ISAAC::rng_step_(uint32_t*& m, uint32_t*& m2, uint32_t*& r, uint32_t* mm,
-    uint32_t& a, uint32_t& b, uint32_t mix) noexcept
+  inline void ISAAC::rng_step_(uint32_t*& m, uint32_t*& m2, uint32_t*& r, uint32_t* mm, uint32_t& a,
+    uint32_t& b, uint32_t mix) noexcept
   {
     uint32_t x, y;
 
@@ -169,9 +214,7 @@ namespace Gears
     *r++ = b = mm[(y >> 10) & 0xFF] + x;
   }
 
-  inline
-  void
-  ISAAC::reinit_() noexcept
+  inline void ISAAC::reinit_() noexcept
   {
     uint32_t a = aa_;
     uint32_t b = bb_ + ++cc_;
@@ -204,9 +247,7 @@ namespace Gears
     next_ = random_;
   }
 
-  inline
-  void
-  ISAAC::seed() noexcept
+  inline void ISAAC::seed() noexcept
   {
     int urandom = open("/dev/urandom", O_RDONLY);
     if (urandom >= 0)
@@ -233,17 +274,13 @@ namespace Gears
     seed(static_cast<const uint32_t*>(0));
   }
 
-  inline
-  void
-  ISAAC::seed(uint32_t value) noexcept
+  inline void ISAAC::seed(uint32_t value) noexcept
   {
     initialize_(value, false);
     reinit_();
   }
 
-  inline
-  void
-  ISAAC::seed(const uint32_t* value) noexcept
+  inline void ISAAC::seed(const uint32_t* value) noexcept
   {
     if (value)
     {
@@ -252,66 +289,8 @@ namespace Gears
     initialize_(0x9E3779B9u, true);
   }
 
-  inline
-  void
-  ISAAC::initialize_(uint32_t value, bool use_rand) noexcept
+  inline void ISAAC::initialize_(uint32_t value, bool use_rand) noexcept
   {
-    class Mixer
-    {
-    public:
-      Mixer(uint32_t value) noexcept
-      {
-        std::fill(data_, data_ + 8, value);
-      }
-
-      void
-      mix() noexcept
-      {
-        data_[0] ^= data_[1] << 11;
-        data_[3] += data_[0];
-        data_[1] += data_[2];
-        data_[1] ^= data_[2] >> 2;
-        data_[4] += data_[1];
-        data_[2] += data_[3];
-        data_[2] ^= data_[3] << 8;
-        data_[5] += data_[2];
-        data_[3] += data_[4];
-        data_[3] ^= data_[4] >> 16;
-        data_[6] += data_[3];
-        data_[4] += data_[5];
-        data_[4] ^= data_[5] << 10;
-        data_[7] += data_[4];
-        data_[5] += data_[6];
-        data_[5] ^= data_[6] >> 4;
-        data_[0] += data_[5];
-        data_[6] += data_[7];
-        data_[6] ^= data_[7] << 8;
-        data_[1] += data_[6];
-        data_[7] += data_[0];
-        data_[7] ^= data_[0] >> 9;
-        data_[2] += data_[7];
-        data_[0] += data_[1];
-      }
-
-      void
-      add(const uint32_t* source) noexcept
-      {
-        for (int i = 0; i < 8; i++)
-        {
-          data_[i] += source[i];
-        }
-      }
-
-      void
-      copy_to(uint32_t* target) const noexcept
-      {
-        std::copy(data_, data_ + 8, target);
-      }
-
-    private:
-      uint32_t data_[8];
-    };
-
     Mixer m(value);
     aa_ = bb_ = cc_ = 0;
 

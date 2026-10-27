@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -42,9 +42,8 @@
 
 namespace
 {
-  const char USAGE[] =
-    "\nUsage: \n"
-    "SVMUtil [correlate]\n";
+  const char USAGE[] = "\nUsage: \n"
+                       "SVMUtil [correlate]\n";
 }
 
 /*
@@ -151,25 +150,25 @@ protected:
 
 struct Counter
 {
-  Counter()
-    : count(0)
-  {}
+  Counter();
 
   unsigned long count;
 };
 
+Counter::Counter() : count(0)
+{
+}
+
 // Application
-Application_::Application_()
-  throw()
-{}
+Application_::Application_() throw()
+{
+}
 
 Application_::~Application_() throw()
-{}
+{
+}
 
-void
-Application_::load_feature_counters_(
-  CountFeatureSet& feature_counters,
-  const char* file_path)
+void Application_::load_feature_counters_(CountFeatureSet& feature_counters, const char* file_path)
 {
   std::ifstream in(file_path);
 
@@ -177,20 +176,19 @@ Application_::load_feature_counters_(
   FeatureArray features;
   features.reserve(10240);
 
-  while(!in.eof())
+  while (!in.eof())
   {
     BoolLabel label;
     Row_var new_row = SVMImpl::load_line_(in, label, features);
 
-    for(auto feature_it = new_row->features.begin();
-      feature_it != new_row->features.end(); ++feature_it)
+    for (auto feature_it = new_row->features.begin(); feature_it != new_row->features.end();
+      ++feature_it)
     {
       ++feature_to_counter[feature_it->first].count;
     }
   }
 
-  for(auto f_it = feature_to_counter.begin();
-    f_it != feature_to_counter.end(); ++f_it)
+  for (auto f_it = feature_to_counter.begin(); f_it != feature_to_counter.end(); ++f_it)
   {
     feature_counters.insert(CountFeatureKey(f_it->second.count, f_it->first));
   }
@@ -259,16 +257,9 @@ Application_::correlate_2_(
 }
 */
 
-void
-Application_::correlate_(
-  FeatureIdSet& checked_features,
-  FeatureIdSet& skip_features,
-  bool& some_feature_unloaded,
-  const char* file_path,
-  const FeatureIdSet& untouch_features,
-  const FeatureIdSet& ignore_features,
-  unsigned long max_features,
-  double max_corr_coef,
+void Application_::correlate_(FeatureIdSet& checked_features, FeatureIdSet& skip_features,
+  bool& some_feature_unloaded, const char* file_path, const FeatureIdSet& untouch_features,
+  const FeatureIdSet& ignore_features, unsigned long max_features, double max_corr_coef,
   unsigned long min_occur_coef)
 {
   some_feature_unloaded = false;
@@ -279,6 +270,12 @@ Application_::correlate_(
   // load manually with applied opt_max_features,
   // fill checked_features
   std::ifstream in(file_path);
+  if (!in.is_open())
+  {
+    Gears::ErrorStream ostr;
+    ostr << "can't open source file '" << file_path << "'";
+    throw Exception(ostr.str());
+  }
 
   unsigned long line_i = 0;
   FeatureArray features;
@@ -294,24 +291,24 @@ Application_::correlate_(
   std::cerr << std::endl;
   */
 
-  while(!in.eof())
+  while (!in.eof())
   {
     BoolLabel label;
     Row_var new_row = SVMImpl::load_line_(in, label, features);
 
-    if(new_row)
+    if (new_row)
     {
       FeatureArray filtered_features;
 
-      for(auto feature_it = new_row->features.begin();
-        feature_it != new_row->features.end(); ++feature_it)
+      for (auto feature_it = new_row->features.begin(); feature_it != new_row->features.end();
+        ++feature_it)
       {
-        if(ignore_features.find(feature_it->first) == ignore_features.end() &&
-          skip_features.find(feature_it->first) == skip_features.end())
+        if (ignore_features.find(feature_it->first) == ignore_features.end() &&
+            skip_features.find(feature_it->first) == skip_features.end())
         {
-          if(checked_features.find(feature_it->first) == checked_features.end())
+          if (checked_features.find(feature_it->first) == checked_features.end())
           {
-            if(max_features == 0 || checked_features.size() < max_features)
+            if (max_features == 0 || checked_features.size() < max_features)
             {
               checked_features.insert(feature_it->first);
               filtered_features.push_back(*feature_it);
@@ -336,7 +333,7 @@ Application_::correlate_(
 
     ++line_i;
 
-    if(line_i % 100000 == 0)
+    if (line_i % 100000 == 0)
     {
       std::cerr << "loaded " << line_i << " lines" << std::endl;
     }
@@ -352,70 +349,63 @@ Application_::correlate_(
   TreeLearner<BoolLabel>::FeatureIdArray all_features;
   TreeLearner<BoolLabel>::FeatureRowsMap feature_rows;
 
-  TreeLearner<BoolLabel>::fill_feature_rows(
-    all_features,
-    feature_rows,
-    *svm);
+  TreeLearner<BoolLabel>::fill_feature_rows(all_features, feature_rows, *svm);
 
   // correlate
   std::cerr << "to correlate" << std::endl;
 
   unsigned long feature_i = 0;
 
-  for(auto feature_rows_it = feature_rows.begin();
-    feature_rows_it != feature_rows.end();
+  for (auto feature_rows_it = feature_rows.begin(); feature_rows_it != feature_rows.end();
     ++feature_rows_it, ++feature_i)
   {
-    if(skip_features.find(feature_rows_it->first) == skip_features.end())
+    if (skip_features.find(feature_rows_it->first) == skip_features.end())
     {
-      if(feature_rows_it->second->size() < min_occur_coef)
+      if (feature_rows_it->second->size() < min_occur_coef)
       {
         skip_features.insert(feature_rows_it->first);
       }
       else
       {
-        const bool cur_feature_untouchable = (
-          untouch_features.find(feature_rows_it->first) != untouch_features.end());
+        const bool cur_feature_untouchable =
+          (untouch_features.find(feature_rows_it->first) != untouch_features.end());
 
         auto sub_feature_rows_it = feature_rows_it;
         ++sub_feature_rows_it;
-        for(; sub_feature_rows_it != feature_rows.end(); ++sub_feature_rows_it)
+        for (; sub_feature_rows_it != feature_rows.end(); ++sub_feature_rows_it)
         {
-          const bool cur_sub_feature_untouchable = (
-            untouch_features.find(sub_feature_rows_it->first) != untouch_features.end());
+          const bool cur_sub_feature_untouchable =
+            (untouch_features.find(sub_feature_rows_it->first) != untouch_features.end());
 
-          if(!cur_feature_untouchable || !cur_sub_feature_untouchable)
+          if (!cur_feature_untouchable || !cur_sub_feature_untouchable)
           {
-            if(skip_features.find(sub_feature_rows_it->first) == skip_features.end())
+            if (skip_features.find(sub_feature_rows_it->first) == skip_features.end())
             {
               // correlate features
               unsigned long left_size = feature_rows_it->second->size();
               unsigned long right_size = sub_feature_rows_it->second->size();
-              unsigned long optima_cross = std::min(
-                feature_rows_it->second->size(),
-                sub_feature_rows_it->second->size());
+              unsigned long optima_cross = std::
+                min(feature_rows_it->second->size(), sub_feature_rows_it->second->size());
 
-              if(static_cast<double>(optima_cross) / (left_size + right_size - optima_cross) + 0.000001 >=
-                   max_corr_coef)
+              if (static_cast<double>(optima_cross) / (left_size + right_size - optima_cross) +
+                    0.000001 >=
+                  max_corr_coef)
               {
                 unsigned long cross_count;
                 unsigned long left_diff_count;
                 unsigned long right_diff_count;
 
-                SVM<BoolLabel>::cross_count(
-                  cross_count,
-                  left_diff_count,
-                  right_diff_count,
-                  feature_rows_it->second,
-                  sub_feature_rows_it->second);
+                SVM<BoolLabel>::cross_count(cross_count, left_diff_count, right_diff_count,
+                  feature_rows_it->second, sub_feature_rows_it->second);
 
-                if(cross_count + left_diff_count + right_diff_count > 0)
+                if (cross_count + left_diff_count + right_diff_count > 0)
                 {
-                  if(static_cast<double>(cross_count) / (
-                       cross_count + left_diff_count + right_diff_count) + 0.000001 >=
-                     max_corr_coef)
+                  if (static_cast<double>(cross_count) /
+                          (cross_count + left_diff_count + right_diff_count) +
+                        0.000001 >=
+                      max_corr_coef)
                   {
-                    if(!cur_sub_feature_untouchable)
+                    if (!cur_sub_feature_untouchable)
                     {
                       skip_features.insert(sub_feature_rows_it->first);
                     }
@@ -433,22 +423,19 @@ Application_::correlate_(
       }
     }
 
-    if(feature_i % 100 == 0)
+    if (feature_i % 100 == 0)
     {
-      std::cerr << "processed " << feature_i << "/" <<
-        feature_rows.size() << ", skipped " << skip_features.size() <<
-        std::endl;
+      std::cerr << "processed " << feature_i << "/" << feature_rows.size() << ", skipped "
+                << skip_features.size() << std::endl;
     }
   }
 
-  std::cerr << "processed " << feature_i << "/" <<
-    feature_rows.size() << ", skipped " << skip_features.size() <<
-    std::endl;
+  std::cerr << "processed " << feature_i << "/" << feature_rows.size() << ", skipped "
+            << skip_features.size() << std::endl;
 }
 
-void
-Application_::main(int& argc, char** argv)
-  /*throw(Gears::Exception)*/
+void Application_::main(int& argc, char** argv)
+/*throw(Gears::Exception)*/
 {
   Gears::AppUtils::CheckOption opt_help;
   Gears::AppUtils::Option<double> opt_max_corr_coef(0.99);
@@ -458,29 +445,17 @@ Application_::main(int& argc, char** argv)
 
   Gears::AppUtils::Args args(-1);
 
-  args.add(
-    Gears::AppUtils::equal_name("help") ||
-    Gears::AppUtils::short_name("h"),
-    opt_help);
-  args.add(
-    Gears::AppUtils::equal_name("max-corr"),
-    opt_max_corr_coef);
-  args.add(
-    Gears::AppUtils::equal_name("min-occur"),
-    opt_min_occur_coef);
-  args.add(
-    Gears::AppUtils::equal_name("max-features"),
-    opt_max_features);
-  args.add(
-    Gears::AppUtils::equal_name("untouch-features"),
-    opt_untouch_features);
+  args.add(Gears::AppUtils::equal_name("help") || Gears::AppUtils::short_name("h"), opt_help);
+  args.add(Gears::AppUtils::equal_name("max-corr"), opt_max_corr_coef);
+  args.add(Gears::AppUtils::equal_name("min-occur"), opt_min_occur_coef);
+  args.add(Gears::AppUtils::equal_name("max-features"), opt_max_features);
+  args.add(Gears::AppUtils::equal_name("untouch-features"), opt_untouch_features);
 
   args.parse(argc - 1, argv + 1);
 
   const Gears::AppUtils::Args::CommandList& commands = args.commands();
 
-  if(commands.empty() || opt_help.enabled() ||
-     *commands.begin() == "help")
+  if (commands.empty() || opt_help.enabled() || *commands.begin() == "help")
   {
     std::cout << USAGE << std::endl;
     return;
@@ -489,15 +464,14 @@ Application_::main(int& argc, char** argv)
   FeatureIdSet untouch_features;
 
   {
-    Gears::CategoryRepeatableTokenizer<
-      Gears::Ascii::SepSpace> tokenizer(*opt_untouch_features);
+    Gears::CategoryRepeatableTokenizer<Gears::Ascii::SepSpace> tokenizer(*opt_untouch_features);
     Gears::SubString token;
-    while(tokenizer.get_token(token))
+    while (tokenizer.get_token(token))
     {
-      if(!token.empty())
+      if (!token.empty())
       {
         uint32_t feature_id;
-        if(!Gears::StringManip::str_to_int(token, feature_id))
+        if (!Gears::StringManip::str_to_int(token, feature_id))
         {
           Gears::ErrorStream ostr;
           ostr << "can't parse feature_id value '" << token << "'";
@@ -508,14 +482,14 @@ Application_::main(int& argc, char** argv)
       }
     }
   }
-  
+
   auto command_it = commands.begin();
   std::string command = *command_it;
   ++command_it;
-  
-  if(command == "correlate")
+
+  if (command == "correlate")
   {
-    if(command_it == commands.end())
+    if (command_it == commands.end())
     {
       std::cerr << "source file not defined" << std::endl;
       return;
@@ -540,64 +514,56 @@ Application_::main(int& argc, char** argv)
 
       do
       {
-        correlate_(
-          checked_features,
-          skip_features,
-          some_feature_unloaded,
-          in_file_path.c_str(),
-          untouch_features,
-          loaded_features,
-          *opt_max_features,
-          *opt_max_corr_coef,
+        correlate_(checked_features, skip_features, some_feature_unloaded, in_file_path.c_str(),
+          untouch_features, loaded_features, *opt_max_features, *opt_max_corr_coef,
           *opt_min_occur_coef);
 
-        std::copy(
-          checked_features.begin(),
-          checked_features.end(),
+        std::copy(checked_features.begin(), checked_features.end(),
           std::inserter(loaded_features, loaded_features.begin()));
 
-        std::cerr << "correlate #" << correlate_i << "." <<
-          sub_correlate_i << ": " <<
-          skip_features.size() << " skipped, " <<
-          checked_features.size() << " checked, " <<
-          loaded_features.size() << " loaded, " <<
-          "some_feature_unloaded = " << some_feature_unloaded <<
-          std::endl;
+        std::cerr << "correlate #" << correlate_i << "." << sub_correlate_i << ": "
+                  << skip_features.size() << " skipped, " << checked_features.size() << " checked, "
+                  << loaded_features.size() << " loaded, "
+                  << "some_feature_unloaded = " << some_feature_unloaded << std::endl;
 
         ++sub_correlate_i;
-      }
-      while(some_feature_unloaded);
+      } while (some_feature_unloaded);
 
-      if(sub_correlate_i == 1)
+      if (sub_correlate_i == 1)
       {
         // fully loaded at first iteration
         fully_loaded = true;
       }
 
       ++correlate_i;
-    }
-    while(prev_skip_features.size() != skip_features.size() && !fully_loaded);
+    } while (prev_skip_features.size() != skip_features.size() && !fully_loaded);
 
     {
       // final load & save with applied skip features
       std::ifstream in(in_file_path.c_str());
+      if (!in.is_open())
+      {
+        Gears::ErrorStream ostr;
+        ostr << "can't open source file '" << in_file_path << "'";
+        throw Exception(ostr.str());
+      }
 
       FeatureArray features;
       features.reserve(10240);
 
-      while(!in.eof())
+      while (!in.eof())
       {
         BoolLabel label;
         Row_var new_row = SVMImpl::load_line_(in, label, features);
 
-        if(new_row)
+        if (new_row)
         {
           FeatureArray filtered_features;
 
-          for(auto feature_it = new_row->features.begin();
-            feature_it != new_row->features.end(); ++feature_it)
+          for (auto feature_it = new_row->features.begin(); feature_it != new_row->features.end();
+            ++feature_it)
           {
-            if(skip_features.find(feature_it->first) == skip_features.end())
+            if (skip_features.find(feature_it->first) == skip_features.end())
             {
               filtered_features.push_back(*feature_it);
             }
@@ -624,15 +590,16 @@ Application_::main(int& argc, char** argv)
   else
   {
     Gears::ErrorStream ostr;
-    ostr << "unknown command '" << command << "', "
-      "see help for more info" << std::endl;
+    ostr << "unknown command '" << command
+         << "', "
+            "see help for more info"
+         << std::endl;
     throw Exception(ostr.str());
   }
 }
 
 // main
-int
-main(int argc, char** argv)
+int main(int argc, char** argv)
 {
   Application_* app = 0;
 
@@ -643,7 +610,7 @@ main(int argc, char** argv)
   catch (...)
   {
     std::cerr << "main(): Critical: Got exception while "
-      "creating application object.\n";
+                 "creating application object.\n";
     return -1;
   }
 
@@ -653,7 +620,7 @@ main(int argc, char** argv)
   {
     app->main(argc, argv);
   }
-  catch(const Gears::Exception& ex)
+  catch (const Gears::Exception& ex)
   {
     std::cerr << "Caught Gears::Exception: " << ex.what() << std::endl;
     return -1;
@@ -661,5 +628,3 @@ main(int argc, char** argv)
 
   return 0;
 }
-
-

@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -34,52 +34,42 @@ namespace Vanga
 
     BoolLabel();
 
-    void
-    load(const Gears::SubString& str);
+    void load(const Gears::SubString& str);
 
-    void
-    save(std::ostream& ostr) const;
+    void save(std::ostream& ostr) const;
 
-    bool
-    orig() const;
+    bool orig() const;
 
-    double
-    to_float() const;
+    double to_float() const;
 
-    bool
-    operator<(const BoolLabel& right) const;
+    bool operator<(const BoolLabel& right) const;
 
-    BoolLabel
-    operator+(const BoolLabel& right) const throw();
+    BoolLabel operator+(const BoolLabel& right) const throw();
 
-    void
-    print(std::ostream& ostr) const throw();
+    void print(std::ostream& ostr) const throw();
   };
 
-  struct PredictedBoolLabel: public BoolLabel
+  struct PredictedBoolLabel : public BoolLabel
   {
     double pred;
 
     PredictedBoolLabel();
 
-    PredictedBoolLabel(bool v, double pred_val)
-      : pred(pred_val)
-    {
-      value = v;
-    }
+    PredictedBoolLabel(bool v, double pred_val);
 
-    void
-    load(const Gears::SubString& str);
+    void load(const Gears::SubString& str);
 
-    PredictedBoolLabel
-    operator+(const PredictedBoolLabel& right) const throw();
+    PredictedBoolLabel operator+(const PredictedBoolLabel& right) const throw();
 
-    bool
-    operator<(const PredictedBoolLabel& right) const;
+    bool operator<(const PredictedBoolLabel& right) const;
 
-    void
-    print(std::ostream& ostr) const throw();
+    void print(std::ostream& ostr) const throw();
   };
+
+  inline PredictedBoolLabel::PredictedBoolLabel(bool v, double pred_val) : pred(pred_val)
+  {
+    value = v;
+  }
 
   // PredictedFloatLabel
   struct PredictedFloatLabel
@@ -89,93 +79,102 @@ namespace Vanga
 
     PredictedFloatLabel();
 
-    PredictedFloatLabel(double v, double pred_val)
-      : value(v),
-        pred(pred_val)
-    {}
+    PredictedFloatLabel(double v, double pred_val);
 
-    double
-    orig() const;
+    double orig() const;
 
-    void
-    load(const Gears::SubString& str);
+    void load(const Gears::SubString& str);
 
-    PredictedFloatLabel
-    operator+(const PredictedFloatLabel& right) const throw();
+    PredictedFloatLabel operator+(const PredictedFloatLabel& right) const throw();
 
-    bool
-    operator<(const PredictedFloatLabel& right) const;
+    bool operator<(const PredictedFloatLabel& right) const;
 
-    void
-    print(std::ostream& ostr) const throw();
+    void print(std::ostream& ostr) const throw();
   };
 
+  inline PredictedFloatLabel::PredictedFloatLabel(double v, double pred_val)
+    : value(v), pred(pred_val)
+  {
+  }
+
   // PredictedBoolLabelDTreeAddConverter
-  template<typename PredictorType>
-  struct PredictedBoolLabelAddConverter
+  template <typename PredictorType> struct PredictedBoolLabelAddConverter
   {
   public:
-    typedef PredictedBoolLabel ResultType;
+    using ResultType = PredictedBoolLabel;
 
   public:
-    PredictedBoolLabelAddConverter(PredictorType* predictor)
-      : predictor_(Gears::add_ref(predictor))
-    {}
+    PredictedBoolLabelAddConverter(PredictorType* predictor);
 
-    PredictedBoolLabel
-    operator()(const Row* row, const PredictedBoolLabel& label) const
-    {
-      PredictedBoolLabel converted_label = label;
-
-      if(predictor_)
-      {
-        converted_label.pred = label.pred + predictor_->fpredict(row->features);
-      }
-      else
-      {
-        converted_label.pred = label.pred;
-      }
-
-      return converted_label;
-    }
+    PredictedBoolLabel operator()(const Row* row, const PredictedBoolLabel& label) const;
 
   protected:
     Gears::IntrusivePtr<PredictorType> predictor_;
   };
 
+  template <typename PredictorType>
+  PredictedBoolLabelAddConverter<PredictorType>::
+    PredictedBoolLabelAddConverter(PredictorType* predictor)
+    : predictor_(Gears::add_ref(predictor))
+  {
+  }
+
+  template <typename PredictorType>
+  PredictedBoolLabel PredictedBoolLabelAddConverter<PredictorType>::
+  operator()(const Row* row, const PredictedBoolLabel& label) const
+  {
+    PredictedBoolLabel converted_label = label;
+
+    if (predictor_)
+    {
+      converted_label.pred = label.pred + predictor_->fpredict(row->features);
+    }
+    else
+    {
+      converted_label.pred = label.pred;
+    }
+
+    return converted_label;
+  }
+
   struct PredictedBoolLabelAnnealer
   {
   public:
-    typedef PredictedBoolLabel ResultType;
+    using ResultType = PredictedBoolLabel;
 
   public:
-    PredictedBoolLabelAnnealer()
-    {}
+    PredictedBoolLabelAnnealer();
 
-    PredictedBoolLabel
-    operator()(const Row*, const PredictedBoolLabel& label) const
-    {
-      PredictedBoolLabel converted_label = label;
-      unsigned long val = Gears::safe_rand(10);
-      double res_val = 0;
-
-      if(val > 4)
-      {
-        res_val = (val - 4) * 0.2;
-      }
-
-      if(converted_label.orig())
-      {
-        converted_label.pred -= res_val;
-      }
-      else
-      {
-        converted_label.pred += res_val;
-      }
-
-      return converted_label;
-    }
+    PredictedBoolLabel operator()(const Row*, const PredictedBoolLabel& label) const;
   };
+
+  inline PredictedBoolLabelAnnealer::PredictedBoolLabelAnnealer()
+  {
+  }
+
+  inline PredictedBoolLabel PredictedBoolLabelAnnealer::
+  operator()(const Row*, const PredictedBoolLabel& label) const
+  {
+    PredictedBoolLabel converted_label = label;
+    unsigned long val = Gears::safe_rand(10);
+    double res_val = 0;
+
+    if (val > 4)
+    {
+      res_val = (val - 4) * 0.2;
+    }
+
+    if (converted_label.orig())
+    {
+      converted_label.pred -= res_val;
+    }
+    else
+    {
+      converted_label.pred += res_val;
+    }
+
+    return converted_label;
+  }
 
   /*
   struct LabelType: public Generics::SimpleDecimal<uint64_t, 18, 8>
@@ -223,27 +222,25 @@ namespace Vanga
 namespace Vanga
 {
   // BoolLabel impl
-  inline
-  BoolLabel::BoolLabel()
-    : value(false)
-  {}
+  inline BoolLabel::BoolLabel() : value(false)
+  {
+  }
 
-  inline void
-  BoolLabel::load(const Gears::SubString& str)
+  inline void BoolLabel::load(const Gears::SubString& str)
   {
     static const char* FUN = "BoolLabel::load()";
 
-    if(str.length() != 1)
+    if (str.length() != 1)
     {
       Gears::ErrorStream ostr;
       ostr << FUN << ": can't parse label '" << str << "'";
       throw LabelException(ostr.str());
     }
-    else if(str[0] == '1')
+    else if (str[0] == '1')
     {
       value = true;
     }
-    else if(str[0] == '0')
+    else if (str[0] == '0')
     {
       value = false;
     }
@@ -255,57 +252,49 @@ namespace Vanga
     }
   }
 
-  inline void
-  BoolLabel::save(std::ostream& ostr) const
+  inline void BoolLabel::save(std::ostream& ostr) const
   {
     ostr << (value ? "1" : "0");
   }
 
-  inline bool
-  BoolLabel::orig() const
+  inline bool BoolLabel::orig() const
   {
     return value;
   }
 
-  inline double
-  BoolLabel::to_float() const
+  inline double BoolLabel::to_float() const
   {
     return value ? 1.0 : 0.0;
   }
 
-  inline bool
-  BoolLabel::operator<(const BoolLabel& right) const
+  inline bool BoolLabel::operator<(const BoolLabel& right) const
   {
     return !this->value && right.value;
   }
 
-  inline BoolLabel
-  BoolLabel::operator+(const BoolLabel& right) const throw()
+  inline BoolLabel BoolLabel::operator+(const BoolLabel& right) const throw()
   {
     BoolLabel res;
     res.value = value || right.value;
     return res;
   }
 
-  inline void
-  BoolLabel::print(std::ostream& ostr) const throw()
+  inline void BoolLabel::print(std::ostream& ostr) const throw()
   {
     ostr << orig();
   }
 
   // PredictedBoolLabel impl
-  inline
-  PredictedBoolLabel::PredictedBoolLabel()
-    : pred(0.0)
-  {}
+  inline PredictedBoolLabel::PredictedBoolLabel() : pred(0.0)
+  {
+  }
 
-  inline void
-  PredictedBoolLabel::load(const Gears::SubString& str)
+  inline void PredictedBoolLabel::load(const Gears::SubString& str)
   {
     static const char* FUN = "PredictedBoolLabel::load()";
 
     Gears::SubString::SizeType pred_pos = str.find(',');
-    if(pred_pos == Gears::SubString::NPOS)
+    if (pred_pos == Gears::SubString::NPOS)
     {
       BoolLabel::load(str);
       pred = 0.0;
@@ -316,7 +305,7 @@ namespace Vanga
       Gears::SubString pred_part_str = str.substr(pred_pos + 1);
       std::istringstream istr(pred_part_str.str());
       istr >> pred;
-      if(!istr.eof() || istr.fail())
+      if (!istr.eof() || istr.fail())
       {
         Gears::ErrorStream ostr;
         ostr << FUN << ": can't parse label prediced part '" << pred_part_str << "'";
@@ -325,8 +314,8 @@ namespace Vanga
     }
   }
 
-  inline PredictedBoolLabel
-  PredictedBoolLabel::operator+(const PredictedBoolLabel& right) const throw()
+  inline PredictedBoolLabel PredictedBoolLabel::
+  operator+(const PredictedBoolLabel& right) const throw()
   {
     PredictedBoolLabel res;
     res.value = value || right.value;
@@ -334,10 +323,9 @@ namespace Vanga
     return res;
   }
 
-  inline bool
-  PredictedBoolLabel::operator<(const PredictedBoolLabel& right) const
+  inline bool PredictedBoolLabel::operator<(const PredictedBoolLabel& right) const
   {
-    if(!value)
+    if (!value)
     {
       return right.value || pred < right.pred;
     }
@@ -345,35 +333,29 @@ namespace Vanga
     return right.value && pred < right.pred;
   }
 
-  inline void
-  PredictedBoolLabel::print(std::ostream& ostr) const throw()
+  inline void PredictedBoolLabel::print(std::ostream& ostr) const throw()
   {
-    ostr << "label = " << orig() <<
-      ", pred = " << pred;
+    ostr << "label = " << orig() << ", pred = " << pred;
   }
 
   // PredictedFloatLabel impl
-  inline
-  PredictedFloatLabel::PredictedFloatLabel()
-    : value(0.0),
-      pred(0.0)
-  {}
+  inline PredictedFloatLabel::PredictedFloatLabel() : value(0.0), pred(0.0)
+  {
+  }
 
-  inline double
-  PredictedFloatLabel::orig() const
+  inline double PredictedFloatLabel::orig() const
   {
     return value;
   }
 
-  inline void
-  PredictedFloatLabel::load(const Gears::SubString& str)
+  inline void PredictedFloatLabel::load(const Gears::SubString& str)
   {
     value = ::atof(str.str().c_str());
     pred = 0.0;
   }
 
-  inline PredictedFloatLabel
-  PredictedFloatLabel::operator+(const PredictedFloatLabel& right) const throw()
+  inline PredictedFloatLabel PredictedFloatLabel::
+  operator+(const PredictedFloatLabel& right) const throw()
   {
     PredictedFloatLabel res(*this);
     res.value += right.value;
@@ -381,18 +363,14 @@ namespace Vanga
     return res;
   }
 
-  inline bool
-  PredictedFloatLabel::operator<(const PredictedFloatLabel& right) const
+  inline bool PredictedFloatLabel::operator<(const PredictedFloatLabel& right) const
   {
-    return value < right.value || (
-      value == right.value && pred < right.pred);
+    return value < right.value || (value == right.value && pred < right.pred);
   }
 
-  inline void
-  PredictedFloatLabel::print(std::ostream& ostr) const throw()
+  inline void PredictedFloatLabel::print(std::ostream& ostr) const throw()
   {
-    ostr << "label = " << orig() <<
-      ", pred = " << pred;
+    ostr << "label = " << orig() << ", pred = " << pred;
   }
 }
 

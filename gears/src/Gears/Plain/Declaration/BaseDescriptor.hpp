@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -27,24 +27,20 @@
 namespace Declaration
 {
   class SimpleDescriptor;
-  typedef Gears::IntrusivePtr<SimpleDescriptor>
-    SimpleDescriptor_var;
+  using SimpleDescriptor_var = Gears::IntrusivePtr<SimpleDescriptor>;
 
   class StructDescriptor;
-  typedef Gears::IntrusivePtr<StructDescriptor>
-    StructDescriptor_var;
+  using StructDescriptor_var = Gears::IntrusivePtr<StructDescriptor>;
 
   class TemplateDescriptor;
-  typedef Gears::IntrusivePtr<TemplateDescriptor>
-    TemplateDescriptor_var;
+  using TemplateDescriptor_var = Gears::IntrusivePtr<TemplateDescriptor>;
 
   class CompleteTemplateDescriptor;
-  typedef Gears::IntrusivePtr<CompleteTemplateDescriptor>
-    CompleteTemplateDescriptor_var;
+  using CompleteTemplateDescriptor_var = Gears::IntrusivePtr<CompleteTemplateDescriptor>;
 
-  typedef unsigned long SizeType;
+  using SizeType = unsigned long;
 
-  class BaseDescriptor: public virtual BaseType
+  class BaseDescriptor : public virtual BaseType
   {
   public:
     BaseDescriptor(const char* name_val);
@@ -62,13 +58,16 @@ namespace Declaration
     virtual BaseDescriptor_var as_descriptor() noexcept;
 
   protected:
-    virtual ~BaseDescriptor() noexcept {}
+    virtual ~BaseDescriptor() noexcept;
   };
 
-  typedef Gears::IntrusivePtr<BaseDescriptor>
-    BaseDescriptor_var;
+  inline BaseDescriptor::~BaseDescriptor() noexcept
+  {
+  }
 
-  typedef std::list<BaseDescriptor_var> BaseDescriptorList;
+  using BaseDescriptor_var = Gears::IntrusivePtr<BaseDescriptor>;
+
+  using BaseDescriptorList = std::list<BaseDescriptor_var>;
 }
 
 #endif /*PLAIN_DECLARATION_BASEDESCRIPTOR_HPP*/

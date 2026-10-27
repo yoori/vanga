@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -29,18 +29,21 @@
 
 #include "Macro.hpp"
 
-#define DECLARE_GEARS_EXCEPTION(NAME, BASE) \
-  class NAME##_tag_ {}; \
-  typedef Gears::CompositeException<NAME##_tag_, BASE> NAME; \
-  class NAME##_tag_clang_workaround_: NAME {}
+#define DECLARE_GEARS_EXCEPTION(NAME, BASE)                                                        \
+  class NAME##_tag_                                                                                \
+  {                                                                                                \
+  };                                                                                               \
+  using NAME = Gears::CompositeException<NAME##_tag_, BASE>;                                       \
+  class NAME##_tag_clang_workaround_ : NAME                                                        \
+  {                                                                                                \
+  }
 
 namespace Gears
 {
-  template<typename CharType, typename Traits, typename Checker>
-  class BasicSubString;
+  template <typename CharType, typename Traits, typename Checker> class BasicSubString;
 
   /** The standard library exception. */
-  typedef std::exception Exception;
+  using Exception = std::exception;
 
   /**
    * A descriptive exception.
@@ -50,27 +53,18 @@ namespace Gears
   class DescriptiveException : public virtual Exception
   {
   protected:
-    explicit
-    DescriptiveException(const char* description)
-      noexcept;
+    explicit DescriptiveException(const char* description) noexcept;
 
-    DescriptiveException(const char* description, size_t length)
-      noexcept;
+    DescriptiveException(const char* description, size_t length) noexcept;
 
-    explicit
-    DescriptiveException(const std::string& description)
-      noexcept;
+    explicit DescriptiveException(const std::string& description) noexcept;
 
-    DescriptiveException(const DescriptiveException& exception)
-      noexcept;
+    DescriptiveException(const DescriptiveException& exception) noexcept;
 
-    template<typename CharType, typename Traits, typename Checker>
-    DescriptiveException(
-      const BasicSubString<CharType, Traits, Checker>& description)
-      noexcept;
+    template <typename CharType, typename Traits, typename Checker>
+    DescriptiveException(const BasicSubString<CharType, Traits, Checker>& description) noexcept;
 
-    DescriptiveException&
-    operator=(const DescriptiveException& exception) noexcept;
+    DescriptiveException& operator=(const DescriptiveException& exception) noexcept;
 
   public:
     virtual ~DescriptiveException() noexcept;
@@ -81,38 +75,31 @@ namespace Gears
   protected:
     DescriptiveException() noexcept;
 
-    void
-    copy_string_(const char* src, char* dst, size_t size) noexcept;
+    void copy_string_(const char* src, char* dst, size_t size) noexcept;
 
-    void
-    init_(const char* description) noexcept;
+    void init_(const char* description) noexcept;
 
-    void
-    init_(const char* description, size_t length)
-      noexcept;
+    void init_(const char* description, size_t length) noexcept;
 
   protected:
-    enum { DESC_EXCEPTION_BUFFER_SIZE = 10 * 1024 };
+    enum
+    {
+      DESC_EXCEPTION_BUFFER_SIZE = 10 * 1024
+    };
     char description_[DESC_EXCEPTION_BUFFER_SIZE];
   };
 
-  template <typename Tag, typename Base>
-  class CompositeException: public virtual Base
+  template <typename Tag, typename Base> class CompositeException : public virtual Base
   {
   public:
-    explicit
-    CompositeException(const char* description) noexcept;
+    explicit CompositeException(const char* description) noexcept;
 
     CompositeException(const char* description, size_t length) noexcept;
 
-    explicit
-    CompositeException(const std::string& description)
-      noexcept;
+    explicit CompositeException(const std::string& description) noexcept;
 
-    template<typename CharType, typename Traits, typename Checker>
-    CompositeException(
-      const BasicSubString<CharType, Traits, Checker>& description)
-      noexcept;
+    template <typename CharType, typename Traits, typename Checker>
+    CompositeException(const BasicSubString<CharType, Traits, Checker>& description) noexcept;
 
   protected:
     CompositeException() noexcept;
@@ -122,79 +109,59 @@ namespace Gears
 namespace Gears
 {
   /* DescriptiveException */
-  inline
-  DescriptiveException::DescriptiveException()
-    noexcept
+  inline DescriptiveException::DescriptiveException() noexcept
   {
     init_(0, 0);
   }
 
-  inline
-  DescriptiveException::DescriptiveException(
-    const char* description,
-    size_t length)
-    noexcept
+  inline DescriptiveException::DescriptiveException(const char* description, size_t length) noexcept
   {
     init_(description, length);
   }
 
-  inline
-  DescriptiveException::DescriptiveException(
-    const std::string& description)
-    noexcept
+  inline DescriptiveException::DescriptiveException(const std::string& description) noexcept
   {
     init_(description.data(), description.size());
   }
 
-  inline
-  DescriptiveException::~DescriptiveException()
-    noexcept
+  inline DescriptiveException::~DescriptiveException() noexcept
   {
     memset(description_, 0, sizeof(description_));
   }
 
-  inline
-  DescriptiveException::DescriptiveException(
-    const DescriptiveException& exception) noexcept
+  inline DescriptiveException::DescriptiveException(const DescriptiveException& exception) noexcept
     : Exception()
   {
     init_(exception.description_);
   }
 
-  template<typename CharType, typename Traits, typename Checker>
-  DescriptiveException::DescriptiveException(
-    const BasicSubString<CharType, Traits, Checker>& description)
-    noexcept
+  template <typename CharType, typename Traits, typename Checker>
+  DescriptiveException::
+    DescriptiveException(const BasicSubString<CharType, Traits, Checker>& description) noexcept
   {
     init_(description.data(), description.size());
   }
 
-  inline
-  DescriptiveException&
-  DescriptiveException::operator=(
-    const DescriptiveException& exception)
-    noexcept
+  inline DescriptiveException& DescriptiveException::
+  operator=(const DescriptiveException& exception) noexcept
   {
     init_(exception.description_);
     return *this;
   }
 
-  inline
-  const char*
-  DescriptiveException::what() const noexcept
+  inline const char* DescriptiveException::what() const noexcept
   {
     return description_;
   }
 
-  inline
-  void
-  DescriptiveException::copy_string_(const char* src, char* dst, size_t size)
-    noexcept
+  inline void DescriptiveException::copy_string_(const char* src, char* dst, size_t size) noexcept
   {
-    if(src)
+    if (src)
     {
       char* end = dst + size - 1;
-      while ((*dst++ = *src++) && dst < end) {}
+      while ((*dst++ = *src++) && dst < end)
+      {
+      }
       *end = '\0';
     }
     else
@@ -203,22 +170,16 @@ namespace Gears
     }
   }
 
-  inline
-  void
-  DescriptiveException::init_(const char* description)
-    noexcept
+  inline void DescriptiveException::init_(const char* description) noexcept
   {
     copy_string_(description, description_, DESC_EXCEPTION_BUFFER_SIZE);
   }
 
-  inline
-  void
-  DescriptiveException::init_(const char* description, size_t size)
-    noexcept
+  inline void DescriptiveException::init_(const char* description, size_t size) noexcept
   {
-    if(size)
+    if (size)
     {
-      if(size > DESC_EXCEPTION_BUFFER_SIZE - 1)
+      if (size > DESC_EXCEPTION_BUFFER_SIZE - 1)
       {
         size = DESC_EXCEPTION_BUFFER_SIZE - 1;
       }
@@ -230,43 +191,36 @@ namespace Gears
 
   /* Composite */
 
-  template<typename TagType, typename BaseType>
+  template <typename TagType, typename BaseType>
   CompositeException<TagType, BaseType>::CompositeException() noexcept
-  {}
+  {
+  }
 
-  template<typename TagType, typename BaseType>
-  CompositeException<TagType, BaseType>::CompositeException(
-    const char* description)
-    noexcept
+  template <typename TagType, typename BaseType>
+  CompositeException<TagType, BaseType>::CompositeException(const char* description) noexcept
   {
     BaseType::init_(description);
   }
 
-  template<typename TagType, typename BaseType>
-  CompositeException<TagType, BaseType>::CompositeException(
-    const char* description, size_t size)
-    noexcept
+  template <typename TagType, typename BaseType>
+  CompositeException<TagType, BaseType>::
+    CompositeException(const char* description, size_t size) noexcept
   {
     BaseType::init_(description, size);
   }
 
-  template<typename TagType, typename BaseType>
-  CompositeException<TagType, BaseType>::CompositeException(
-    const std::string& description)
-    noexcept
+  template <typename TagType, typename BaseType>
+  CompositeException<TagType, BaseType>::CompositeException(const std::string& description) noexcept
   {
     BaseType::init_(description.data(), description.size());
   }
 
-  template<typename TagType, typename BaseType>
-  template<typename CharType, typename Traits, typename Checker>
-  CompositeException<TagType, BaseType>::CompositeException(
-    const BasicSubString<CharType, Traits, Checker>& description)
-    noexcept
+  template <typename TagType, typename BaseType>
+  template <typename CharType, typename Traits, typename Checker>
+  CompositeException<TagType, BaseType>::
+    CompositeException(const BasicSubString<CharType, Traits, Checker>& description) noexcept
   {
     BaseType::init_(description.data(), description.size());
   }
-
-CLOSE_NAMESPACE
-
+}
 #endif /*BASIC_EXCEPTION_HPP*/

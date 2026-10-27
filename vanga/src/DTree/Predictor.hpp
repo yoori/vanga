@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -38,24 +38,29 @@ namespace Vanga
   {
     PT_NONE = 1,
     PT_DTREE,
-    PT_SET
+    PT_SET,
+    PT_NUMERIC_DTREE
   };
 
-  typedef std::map<std::string, std::string> FeatureNameDictionary;
+  using FeatureNameDictionary = std::map<std::string, std::string>;
 
-  typedef std::map<unsigned long, std::string> FeatureDictionary;
+  using FeatureDictionary = std::map<unsigned long, std::string>;
 
-  struct PredArrayHolder: public Gears::AtomicRefCountable
+  struct PredArrayHolder : public Gears::AtomicRefCountable
   {
-    typedef std::deque<double> PredArray;
+    using PredArray = std::deque<double>;
 
     PredArray values;
 
   protected:
-    virtual ~PredArrayHolder() throw() {}
+    virtual ~PredArrayHolder() throw();
   };
 
-  typedef Gears::IntrusivePtr<PredArrayHolder> PredArrayHolder_var;
+  inline PredArrayHolder::~PredArrayHolder() throw()
+  {
+  }
+
+  using PredArrayHolder_var = Gears::IntrusivePtr<PredArrayHolder>;
 
   namespace Predictor
   {

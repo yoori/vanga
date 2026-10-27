@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -41,16 +41,13 @@
 
 namespace Code
 {
-  class Declarator: public Gears::AtomicRefCountable
+  class Declarator : public Gears::AtomicRefCountable
   {
   public:
     DECLARE_GEARS_EXCEPTION(AlreadyDefined, Gears::DescriptiveException);
 
   public:
-    Declarator(
-      Declaration::Namespace* root_namespace,
-      Code::ElementList* elements)
-      noexcept;
+    Declarator(Declaration::Namespace* root_namespace, Code::ElementList* elements) noexcept;
 
     void open_namespace(const char* name) noexcept;
 
@@ -65,28 +62,18 @@ namespace Code
     */
 
     Declaration::StructDescriptor_var
-    declare_struct(
-      const char* name,
-      Declaration::StructDescriptor::FieldList* fields)
-      noexcept;
+    declare_struct(const char* name, Declaration::StructDescriptor::FieldList* fields) noexcept;
 
     Declaration::StructReader_var
-    declare_struct_reader(
-      const char* name,
-      Declaration::StructDescriptor* struct_descriptor,
-      Declaration::StructReader::FieldReaderList* decl_list)
-      noexcept;
+    declare_struct_reader(const char* name, Declaration::StructDescriptor* struct_descriptor,
+      Declaration::StructReader::FieldReaderList* decl_list) noexcept;
 
     Declaration::StructWriter_var
-    declare_struct_writer(
-      const char* name,
-      Declaration::StructDescriptor* struct_descriptor,
-      Declaration::StructWriter::FieldWriterList* decl_list)
-      noexcept;
+    declare_struct_writer(const char* name, Declaration::StructDescriptor* struct_descriptor,
+      Declaration::StructWriter::FieldWriterList* decl_list) noexcept;
 
   protected:
-    virtual
-    ~Declarator() noexcept = default;
+    virtual ~Declarator() noexcept;
 
   private:
     Declaration::Namespace_var root_namespace_;
@@ -95,8 +82,8 @@ namespace Code
     Declaration::Namespace_var current_namespace_;
   };
 
-  typedef Gears::IntrusivePtr<Declarator>
-    Declarator_var;
+  inline Declarator::~Declarator() noexcept = default;
+  using Declarator_var = Gears::IntrusivePtr<Declarator>;
 }
 
 #endif

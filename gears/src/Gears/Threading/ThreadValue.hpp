@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -26,8 +26,7 @@
 
 namespace Gears
 {
-  template<typename Type>
-  class ThreadValue
+  template <typename Type> class ThreadValue
   {
   public:
     DECLARE_GEARS_EXCEPTION(Exception, DescriptiveException);
@@ -36,22 +35,16 @@ namespace Gears
 
     ~ThreadValue() noexcept;
 
-    void
-    reset(Type* value) /*throw(Exception)*/;
+    void reset(Type* value) /*throw(Exception)*/;
 
-    Type*
-    get() const noexcept;
+    Type* get() const noexcept;
 
-    Type*
-    release() /*throw(Exception)*/;
+    Type* release() /*throw(Exception)*/;
 
   private:
-    void
-    reset_() noexcept;
+    void reset_() noexcept;
 
-    static
-    void
-    destroy_function_(void* obj);
+    static void destroy_function_(void* obj);
 
   private:
     pthread_key_t key_;

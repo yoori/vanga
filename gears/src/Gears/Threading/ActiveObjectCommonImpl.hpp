@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -34,48 +34,38 @@ namespace Gears
    * May be supplement with special logic in concrete Active Object
    * through virtual methods override.
    */
-  class ActiveObjectCommonImpl:
-    public virtual ActiveObject,
-    public virtual AtomicRefCountable
+  class ActiveObjectCommonImpl : public virtual ActiveObject, public virtual AtomicRefCountable
   {
   public:
-    typedef ActiveObject::Exception Exception;
-    typedef ActiveObject::NotSupported NotSupported;
-    typedef ActiveObject::AlreadyActive AlreadyActive;
-    typedef ActiveObject::InvalidArgument InvalidArgument;
+    using Exception = ActiveObject::Exception;
+    using NotSupported = ActiveObject::NotSupported;
+    using AlreadyActive = ActiveObject::AlreadyActive;
+    using InvalidArgument = ActiveObject::InvalidArgument;
 
     /**
      * Start threads that will perform SingleJob
      */
-    virtual
-    void
-    activate_object()
+    virtual void activate_object()
       /*throw(AlreadyActive, Exception, Gears::Exception)*/;
 
     /**
      * Initiate stopping of Active object
      * Acquires mutex and informs SingleJob
      */
-    virtual
-    void
-    deactivate_object()
+    virtual void deactivate_object()
       /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Waits for deactivation completion
      * Acquires mutex and waits for threads completion
      */
-    virtual
-    void
-    wait_object() /*throw(Exception, Gears::Exception)*/;
+    virtual void wait_object() /*throw(Exception, Gears::Exception)*/;
 
     /**
      * Current status
      * @return Returns true if active and not going to deactivate
      */
-    virtual
-    bool
-    active() /*throw(Gears::Exception)*/;
+    virtual bool active() /*throw(Gears::Exception)*/;
 
   protected:
     /**
@@ -83,13 +73,13 @@ namespace Gears
      * all ThreadRunner's threads. This object must be a descendant of
      * this class.
      */
-    class SingleJob: public ThreadJob
+    class SingleJob : public ThreadJob
     {
     public:
-      typedef ActiveObject::Exception Exception;
-      typedef ActiveObject::NotSupported NotSupported;
-      typedef ActiveObject::AlreadyActive AlreadyActive;
-      typedef ActiveObject::InvalidArgument InvalidArgument;
+      using Exception = ActiveObject::Exception;
+      using NotSupported = ActiveObject::NotSupported;
+      using AlreadyActive = ActiveObject::AlreadyActive;
+      using InvalidArgument = ActiveObject::InvalidArgument;
 
       /**
        * Constructor
@@ -102,41 +92,33 @@ namespace Gears
        * Stored callback
        * @return stored callback
        */
-      const ActiveObjectCallback_var&
-      callback() noexcept;
+      const ActiveObjectCallback_var& callback() noexcept;
 
       /**
        * Mutex for operations synchronizations
        * @return stored mutex
        */
-      Mutex&
-      mutex() noexcept;
+      Mutex& mutex() noexcept;
 
-      void
-      make_terminate() noexcept;
+      void make_terminate() noexcept;
 
-      void
-      terminated() noexcept;
+      void terminated() noexcept;
 
-      bool
-      is_terminating() noexcept;
+      bool is_terminating() noexcept;
 
       /**
        * Function must inform the object to stop jobs to work.
        */
-      virtual
-      void
-      terminate() noexcept = 0;
+      virtual void terminate() noexcept = 0;
 
     protected:
-      typedef Mutex LockType;
+      using LockType = Mutex;
 
     protected:
       /**
        * Destructor
        */
-      virtual
-      ~SingleJob() noexcept;
+      virtual ~SingleJob() noexcept;
 
     private:
       mutable LockType mutex_;
@@ -144,10 +126,9 @@ namespace Gears
       volatile SigAtomicType terminating_;
     };
 
-    typedef IntrusivePtr<SingleJob>
-      SingleJob_var;
+    using SingleJob_var = IntrusivePtr<SingleJob>;
 
-    typedef Mutex LockType;
+    using LockType = Mutex;
 
   protected:
     /**
@@ -158,31 +139,26 @@ namespace Gears
      * @param threads_number number of threads to execute the job in
      * @param stack_size stack size for threads
      */
-    ActiveObjectCommonImpl(
-      SingleJob* job,
-      unsigned int threads_number = 1,
+    ActiveObjectCommonImpl(SingleJob* job, unsigned int threads_number = 1,
       std::size_t stack_size = 0)
       /*throw(InvalidArgument)*/;
 
     /**
      * Destructor
      */
-    virtual
-    ~ActiveObjectCommonImpl() noexcept;
+    virtual ~ActiveObjectCommonImpl() noexcept;
 
     /**
      * Provides number of work threads created
      * @return number of created threads
      */
-    size_t
-    threads_number_() noexcept;
+    size_t threads_number_() noexcept;
 
     /**
      * @return mutex that used in clients code for
      * data protection.
      */
-    Mutex&
-    mutex_() noexcept;
+    Mutex& mutex_() noexcept;
 
     const SingleJob_var SINGLE_JOB_;
 
@@ -205,16 +181,12 @@ namespace Gears
   // ActiveObjectCommonImpl inlines
   //
 
-  inline
-  size_t
-  ActiveObjectCommonImpl::threads_number_() noexcept
+  inline size_t ActiveObjectCommonImpl::threads_number_() noexcept
   {
     return thread_runner_.number_of_jobs();
   }
 
-  inline
-  Mutex&
-  ActiveObjectCommonImpl::mutex_() noexcept
+  inline Mutex& ActiveObjectCommonImpl::mutex_() noexcept
   {
     return work_mutex_;
   }
@@ -223,16 +195,13 @@ namespace Gears
   // ActiveObjectCommonImpl::SingleJob class
   //
 
-  inline
-  ActiveObjectCommonImpl::SingleJob::SingleJob(
-    ActiveObjectCallback* callback)
+  inline ActiveObjectCommonImpl::SingleJob::SingleJob(ActiveObjectCallback* callback)
     /*throw(InvalidArgument, Gears::Exception)*/
-    : callback_(Gears::add_ref(callback)),
-      terminating_(false)
+    : callback_(Gears::add_ref(callback)), terminating_(false)
   {
     static const char* FUN = "ActiveObjectCommonImpl::SingleJob::SingleJob()";
 
-    if(!callback)
+    if (!callback)
     {
       ErrorStream ostr;
       ostr << FUN << ": callback == 0";
@@ -240,42 +209,32 @@ namespace Gears
     }
   }
 
-  inline
-  ActiveObjectCommonImpl::SingleJob::~SingleJob() noexcept
-  {}
+  inline ActiveObjectCommonImpl::SingleJob::~SingleJob() noexcept
+  {
+  }
 
-  inline
-  const ActiveObjectCallback_var&
-  ActiveObjectCommonImpl::SingleJob::callback() noexcept
+  inline const ActiveObjectCallback_var& ActiveObjectCommonImpl::SingleJob::callback() noexcept
   {
     return callback_;
   }
 
-  inline
-  Mutex&
-  ActiveObjectCommonImpl::SingleJob::mutex() noexcept
+  inline Mutex& ActiveObjectCommonImpl::SingleJob::mutex() noexcept
   {
     return mutex_;
   }
 
-  inline
-  void
-  ActiveObjectCommonImpl::SingleJob::make_terminate() noexcept
+  inline void ActiveObjectCommonImpl::SingleJob::make_terminate() noexcept
   {
     terminating_ = true;
     terminate();
   }
 
-  inline
-  void
-  ActiveObjectCommonImpl::SingleJob::terminated() noexcept
+  inline void ActiveObjectCommonImpl::SingleJob::terminated() noexcept
   {
     terminating_ = false;
   }
 
-  inline
-  bool
-  ActiveObjectCommonImpl::SingleJob::is_terminating() noexcept
+  inline bool ActiveObjectCommonImpl::SingleJob::is_terminating() noexcept
   {
     return terminating_;
   }

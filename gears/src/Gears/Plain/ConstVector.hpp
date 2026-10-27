@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -23,67 +23,81 @@
 
 namespace PlainTypes
 {
-  template<typename ObjectType>
-  ObjectType ctor_read_cast(const void* buf)
+  template <typename ObjectType> ObjectType ctor_read_cast(const void* buf)
   {
     return ObjectType(buf, 0);
   }
 
-  template<typename ObjectType>
-  ObjectType ctor_with_bounds_read_cast(
-    const void* buf, const void* end_buf)
+  template <typename ObjectType>
+  ObjectType ctor_with_bounds_read_cast(const void* buf, const void* end_buf)
   {
-    return ObjectType(
-      buf,
-      static_cast<const char*>(end_buf) - static_cast<const char*>(buf));
+    return ObjectType(buf, static_cast<const char*>(end_buf) - static_cast<const char*>(buf));
   }
 
   namespace ReadPolicy
   {
-    template<
-      typename ReturnType,
-      ReturnType ReadCastFun(const void*)>
-    struct NoCheck: public std::unary_function<const void*, ReturnType>
+    template <typename ReturnType, ReturnType ReadCastFun(const void*)>
+    struct NoCheck : public std::unary_function<const void*, ReturnType>
     {
-      NoCheck() {}
+      NoCheck();
 
-      NoCheck(const void* /*buf_end*/) {}
+      NoCheck(const void* /*buf_end*/);
 
-      ReturnType operator()(const void* ptr) const
-      {
-        return ReadCastFun(ptr);
-      }
+      ReturnType operator()(const void* ptr) const;
     };
 
-    template<
-      typename ReturnType,
-      ReturnType ReadCastFun(const void*, const void*)>
-    struct CheckBounds: public std::unary_function<const void*, ReturnType>
+    template <typename ReturnType, ReturnType (*ReadCastFun)(const void*)>
+    NoCheck<ReturnType, ReadCastFun>::NoCheck()
     {
-      CheckBounds(): buf_end_(0) {}
+    }
 
-      CheckBounds(const void* buf_end)
-        : buf_end_(buf_end)
-      {}
+    template <typename ReturnType, ReturnType (*ReadCastFun)(const void*)>
+    NoCheck<ReturnType, ReadCastFun>::NoCheck(const void* /*buf_end*/)
+    {
+    }
 
-      ReturnType operator()(const void* ptr) const
-      {
-        return ReadCastFun(ptr, buf_end_);
-      }
+    template <typename ReturnType, ReturnType (*ReadCastFun)(const void*)>
+    ReturnType NoCheck<ReturnType, ReadCastFun>::operator()(const void* ptr) const
+    {
+      return ReadCastFun(ptr);
+    }
+
+    template <typename ReturnType, ReturnType ReadCastFun(const void*, const void*)>
+    struct CheckBounds : public std::unary_function<const void*, ReturnType>
+    {
+      CheckBounds();
+
+      CheckBounds(const void* buf_end);
+
+      ReturnType operator()(const void* ptr) const;
 
     private:
       const void* buf_end_;
     };
+
+    template <typename ReturnType, ReturnType (*ReadCastFun)(const void*, const void*)>
+    CheckBounds<ReturnType, ReadCastFun>::CheckBounds() : buf_end_(0)
+    {
+    }
+
+    template <typename ReturnType, ReturnType (*ReadCastFun)(const void*, const void*)>
+    CheckBounds<ReturnType, ReadCastFun>::CheckBounds(const void* buf_end) : buf_end_(buf_end)
+    {
+    }
+
+    template <typename ReturnType, ReturnType (*ReadCastFun)(const void*, const void*)>
+    ReturnType CheckBounds<ReturnType, ReadCastFun>::operator()(const void* ptr) const
+    {
+      return ReadCastFun(ptr, buf_end_);
+    }
+
   }
 
-  template<
-    typename ReadPolicyType,
-    const unsigned long STEP>
-  class ConstVector
+  template <typename ReadPolicyType, const unsigned long STEP> class ConstVector
   {
   public:
-    typedef ReadPolicyType ReadPolicy;
-    typedef typename ReadPolicyType::result_type reference;
+    using ReadPolicy = ReadPolicyType;
+    using reference = typename ReadPolicyType::result_type;
 
     class const_iterator
     {
@@ -93,11 +107,13 @@ namespace PlainTypes
       const_iterator(const void* ptr, const ReadPolicy& read_policy);
 
     public:
-      typedef typename ReadPolicyType::result_type value_type;
-      typedef value_type reference;
-      typedef std::random_access_iterator_tag iterator_category;
-      typedef int difference_type;
-      struct pointer {};
+      using value_type = typename ReadPolicyType::result_type;
+      using reference = value_type;
+      using iterator_category = std::random_access_iterator_tag;
+      using difference_type = int;
+      struct pointer
+      {
+      };
 
     public:
       const_iterator();
@@ -138,11 +154,13 @@ namespace PlainTypes
       const_reverse_iterator(const void* ptr, const ReadPolicy& read_policy);
 
     public:
-      typedef typename ReadPolicyType::result_type value_type;
-      typedef value_type reference;
-      typedef std::random_access_iterator_tag iterator_category;
-      typedef int difference_type;
-      struct pointer {};
+      using value_type = typename ReadPolicyType::result_type;
+      using reference = value_type;
+      using iterator_category = std::random_access_iterator_tag;
+      using difference_type = int;
+      struct pointer
+      {
+      };
 
     public:
       const_reverse_iterator();
@@ -178,10 +196,7 @@ namespace PlainTypes
 
     ConstVector();
 
-    ConstVector(
-      const void* first,
-      const void* last,
-      const ReadPolicyType& read_policy);
+    ConstVector(const void* first, const void* last, const ReadPolicyType& read_policy);
 
     const_iterator begin() const;
     const_iterator end() const;
@@ -200,10 +215,8 @@ namespace PlainTypes
     ReadPolicyType read_policy_;
   };
 
-  template<typename ConstVectorType>
-  ConstVectorType init_const_vector(
-    const void* buf,
-    unsigned long size)
+  template <typename ConstVectorType>
+  ConstVectorType init_const_vector(const void* buf, unsigned long size)
   {
     static const char* FUN = "PlainTypes::init_const_vector()";
 
@@ -211,204 +224,191 @@ namespace PlainTypes
     uint32_t begin_offset = *static_cast<const uint32_t*>(buf);
     uint32_t end_offset = static_cast<const uint32_t*>(buf)[1];
 
-    if(begin_offset > end_offset || end_offset > size)
+    if (begin_offset > end_offset || end_offset > size)
     {
       Gears::ErrorStream ostr;
-      ostr << FUN << ": start or end position great than size: "
-        "start-offset = " << begin_offset <<
-        ", end-offset = " << end_offset <<
-        ", size = " << size;
+      ostr << FUN
+           << ": start or end position great than size: "
+              "start-offset = "
+           << begin_offset << ", end-offset = " << end_offset << ", size = " << size;
       throw CorruptedStruct(ostr.str());
     }
 
-    return ConstVectorType(
-      buf_ptr + begin_offset,
-      buf_ptr + end_offset,
+    return ConstVectorType(buf_ptr + begin_offset, buf_ptr + end_offset,
       typename ConstVectorType::ReadPolicy(buf_ptr + size));
   }
 }
 
-template<typename ReadPolicyType, const unsigned long STEP>
+template <typename ReadPolicyType, const unsigned long STEP>
 typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator
-operator+(
-  int n,
-  typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator it);
+operator+(int n, typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator it);
 
-template<typename ReadPolicyType, const unsigned long STEP>
+template <typename ReadPolicyType, const unsigned long STEP>
 typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator
-operator-(
-  typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator it,
-  int n);
+operator-(typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator it, int n);
 
 namespace PlainTypes
 {
   /* ConstVector<ReadPolicyType, STEP>::const_iterator */
-  template<typename ReadPolicyType, const unsigned long STEP>
-  ConstVector<ReadPolicyType, STEP>::const_iterator::const_iterator()
-    : ptr_(0)
-  {}
+  template <typename ReadPolicyType, const unsigned long STEP>
+  ConstVector<ReadPolicyType, STEP>::const_iterator::const_iterator() : ptr_(0)
+  {
+  }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  ConstVector<ReadPolicyType, STEP>::const_iterator::const_iterator(
-    const void* ptr, const ReadPolicyType& read_policy)
-    : ptr_((const char*)ptr),
-      read_policy_(read_policy)
-  {}
+  template <typename ReadPolicyType, const unsigned long STEP>
+  ConstVector<ReadPolicyType, STEP>::const_iterator::
+    const_iterator(const void* ptr, const ReadPolicyType& read_policy)
+    : ptr_((const char*)ptr), read_policy_(read_policy)
+  {
+  }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator&
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator++()
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator& ConstVector<ReadPolicyType, STEP>::
+    const_iterator::operator++()
   {
     ptr_ += STEP;
     return *this;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator++(int)
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator ConstVector<ReadPolicyType, STEP>::
+    const_iterator::operator++(int)
   {
     const_iterator ret(ptr_);
     ++*this;
     return ret;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator&
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator--()
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator& ConstVector<ReadPolicyType, STEP>::
+    const_iterator::operator--()
   {
     ptr_ -= STEP;
     return *this;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator--(int)
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator ConstVector<ReadPolicyType, STEP>::
+    const_iterator::operator--(int)
   {
     const_iterator ret(ptr_);
     --*this;
     return ret;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator
-  ConstVector<ReadPolicyType, STEP>::const_iterator::advance(int n) const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator ConstVector<ReadPolicyType, STEP>::
+    const_iterator::advance(int n) const
   {
     return const_iterator(ptr_ + STEP * n, read_policy_);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_iterator::operator==(
-    const const_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_iterator::
+  operator==(const const_iterator& right) const
   {
     return ptr_ == right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_iterator::operator!=(
-    const const_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_iterator::
+  operator!=(const const_iterator& right) const
   {
     return ptr_ != right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_iterator::operator<(
-    const const_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_iterator::
+  operator<(const const_iterator& right) const
   {
     return ptr_ < right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_iterator::operator<=(
-    const const_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_iterator::
+  operator<=(const const_iterator& right) const
   {
     return ptr_ <= right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_iterator::operator>(
-    const const_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_iterator::
+  operator>(const const_iterator& right) const
   {
     return ptr_ > right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_iterator::operator>=(
-    const const_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_iterator::
+  operator>=(const const_iterator& right) const
   {
     return ptr_ >= right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  int ConstVector<ReadPolicyType, STEP>::const_iterator::operator-(
-    const const_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  int ConstVector<ReadPolicyType, STEP>::const_iterator::
+  operator-(const const_iterator& right) const
   {
     return (ptr_ - right.ptr_) / STEP;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator&
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator+=(int n)
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator& ConstVector<ReadPolicyType, STEP>::
+    const_iterator::operator+=(int n)
   {
     ptr_ = (const char*)ptr_ + n * STEP;
     return *this;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator&
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator-=(int n)
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator& ConstVector<ReadPolicyType, STEP>::
+    const_iterator::operator-=(int n)
   {
     return *this += -n;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator+(int n) const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator ConstVector<ReadPolicyType, STEP>::
+    const_iterator::operator+(int n) const
   {
     return this->advance(n);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator-(int n) const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator ConstVector<ReadPolicyType, STEP>::
+    const_iterator::operator-(int n) const
   {
     return this->advance(-n);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ReadPolicyType::result_type
-  ConstVector<ReadPolicyType, STEP>::const_iterator::operator*() const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ReadPolicyType::result_type ConstVector<ReadPolicyType, STEP>::const_iterator::
+  operator*() const
   {
     return read_policy_(ptr_);
   }
 
   /* ConstVector<ReadPolicyType, STEP>::const_reverse_iterator */
-  template<typename ReadPolicyType, const unsigned long STEP>
-  ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::const_reverse_iterator()
-    : ptr_(0)
-  {}
+  template <typename ReadPolicyType, const unsigned long STEP>
+  ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::const_reverse_iterator() : ptr_(0)
+  {
+  }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::const_reverse_iterator(
-    const void* ptr, const ReadPolicyType& read_policy)
-    : ptr_((const char*)ptr),
-      read_policy_(read_policy)
-  {}
+  template <typename ReadPolicyType, const unsigned long STEP>
+  ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+    const_reverse_iterator(const void* ptr, const ReadPolicyType& read_policy)
+    : ptr_((const char*)ptr), read_policy_(read_policy)
+  {
+  }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::const_reverse_iterator(
-    const const_iterator& init)
-    : ptr_(init.ptr_),
-      read_policy_(init.read_policy_)
-  {}
+  template <typename ReadPolicyType, const unsigned long STEP>
+  ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+    const_reverse_iterator(const const_iterator& init)
+    : ptr_(init.ptr_), read_policy_(init.read_policy_)
+  {
+  }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator&
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator++()
   {
@@ -416,7 +416,7 @@ namespace PlainTypes
     return *this;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator++(int)
   {
@@ -425,7 +425,7 @@ namespace PlainTypes
     return ret;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator&
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator--()
   {
@@ -433,7 +433,7 @@ namespace PlainTypes
     return *this;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator--(int)
   {
@@ -442,70 +442,63 @@ namespace PlainTypes
     return ret;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::advance(int n) const
   {
     return const_reverse_iterator(ptr_ - STEP * n, read_policy_);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator==(
-    const const_reverse_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+  operator==(const const_reverse_iterator& right) const
   {
     return ptr_ == right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator!=(
-    const const_reverse_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+  operator!=(const const_reverse_iterator& right) const
   {
     return ptr_ != right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator<(
-    const const_reverse_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+  operator<(const const_reverse_iterator& right) const
   {
     return ptr_ > right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator<=(
-    const const_reverse_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+  operator<=(const const_reverse_iterator& right) const
   {
     return ptr_ >= right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator>(
-    const const_reverse_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+  operator>(const const_reverse_iterator& right) const
   {
     return ptr_ < right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator>=(
-    const const_reverse_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  bool ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+  operator>=(const const_reverse_iterator& right) const
   {
     return ptr_ <= right.ptr_;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  int ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator-(
-    const const_reverse_iterator& right)
-    const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  int ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+  operator-(const const_reverse_iterator& right) const
   {
     return (right.ptr_ - ptr_) / STEP;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator&
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator+=(int n)
   {
@@ -513,104 +506,97 @@ namespace PlainTypes
     return *this;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator&
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator-=(int n)
   {
     return *this += n;
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator+(int n) const
   {
     return this->advance(n);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator
   ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator-(int n) const
   {
     return this->advance(-n);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ReadPolicyType::result_type
-  ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::operator*() const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ReadPolicyType::result_type ConstVector<ReadPolicyType, STEP>::const_reverse_iterator::
+  operator*() const
   {
     return read_policy_(ptr_ - STEP);
   }
 
   /* ConstVector<ReadPolicyType, STEP> */
-  template<typename ReadPolicyType, const unsigned long STEP>
-  ConstVector<ReadPolicyType, STEP>::ConstVector()
-    : first_(0), last_(0)
-  {}
+  template <typename ReadPolicyType, const unsigned long STEP>
+  ConstVector<ReadPolicyType, STEP>::ConstVector() : first_(0), last_(0)
+  {
+  }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  ConstVector<ReadPolicyType, STEP>::ConstVector(
-    const void* first,
-    const void* last,
-    const ReadPolicyType& read_policy)
-    : first_(first),
-      last_(last),
-      read_policy_(read_policy)
-  {}
+  template <typename ReadPolicyType, const unsigned long STEP>
+  ConstVector<ReadPolicyType, STEP>::
+    ConstVector(const void* first, const void* last, const ReadPolicyType& read_policy)
+    : first_(first), last_(last), read_policy_(read_policy)
+  {
+  }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator
-  ConstVector<ReadPolicyType, STEP>::begin() const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator ConstVector<ReadPolicyType, STEP>::
+    begin() const
   {
     return const_iterator(first_, read_policy_);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ConstVector<ReadPolicyType, STEP>::const_iterator
-  ConstVector<ReadPolicyType, STEP>::end() const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ConstVector<ReadPolicyType, STEP>::const_iterator ConstVector<ReadPolicyType, STEP>::
+    end() const
   {
     return const_iterator(last_, read_policy_);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator
   ConstVector<ReadPolicyType, STEP>::rbegin() const
   {
     return const_reverse_iterator(last_, read_policy_);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   typename ConstVector<ReadPolicyType, STEP>::const_reverse_iterator
   ConstVector<ReadPolicyType, STEP>::rend() const
   {
     return const_reverse_iterator(first_, read_policy_);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
-  typename ReadPolicyType::result_type
-  ConstVector<ReadPolicyType, STEP>::back() const
+  template <typename ReadPolicyType, const unsigned long STEP>
+  typename ReadPolicyType::result_type ConstVector<ReadPolicyType, STEP>::back() const
   {
     return read_policy_(static_cast<const char*>(last_) - STEP);
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   unsigned long ConstVector<ReadPolicyType, STEP>::size() const
   {
     return end() - begin();
   }
 
-  template<typename ReadPolicyType, const unsigned long STEP>
+  template <typename ReadPolicyType, const unsigned long STEP>
   bool ConstVector<ReadPolicyType, STEP>::empty() const
   {
     return size() == 0;
   }
 }
 
-template<typename ReadPolicyType, const unsigned long STEP>
-inline
-typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator
-operator+(
-  int n,
-  typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator it)
+template <typename ReadPolicyType, const unsigned long STEP>
+inline typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator
+operator+(int n, typename PlainTypes::ConstVector<ReadPolicyType, STEP>::const_iterator it)
 {
   return it.advance(n);
 }

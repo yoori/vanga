@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -52,12 +52,12 @@ public:
   struct MetricSelection
   {
     unsigned long sqd;
-    unsigned long logloss;    
+    unsigned long logloss;
   };
 
   DECLARE_GEARS_EXCEPTION(Exception, Gears::DescriptiveException);
 
-  typedef PredictedLogLossGain UseLogLossGain;
+  using UseLogLossGain = PredictedLogLossGain;
   //typedef LogLossGain UseLogLossGain;
 
   struct Fold
@@ -66,44 +66,33 @@ public:
     unsigned long weight;
   };
 
-  typedef std::vector<Fold> FoldArray;
+  using FoldArray = std::vector<Fold>;
 
-  struct DTreeProp: public Gears::AtomicRefCountable
+  struct DTreeProp : public Gears::AtomicRefCountable
   {
-    typedef std::map<std::string, std::string> PropMap;
+    using PropMap = std::map<std::string, std::string>;
     PropMap props;
 
-    std::string
-    to_string() const
-    {
-      std::ostringstream ss;
-      for(auto it = props.begin(); it != props.end(); ++it)
-      {
-        ss << (it != props.begin() ? "," : "") << it->first << "=" << it->second;
-      }
-      return ss.str();
-    }
+    std::string to_string() const;
 
   protected:
-    virtual ~DTreeProp() throw() {}
+    virtual ~DTreeProp() throw();
   };
 
-  typedef Gears::IntrusivePtr<DTreeProp> DTreeProp_var;
+  using DTreeProp_var = Gears::IntrusivePtr<DTreeProp>;
 
-  typedef SVM<PredictedBoolLabel> SVMImpl;
+  using SVMImpl = SVM<PredictedBoolLabel>;
 
-  typedef Gears::IntrusivePtr<SVMImpl> SVMImpl_var;
+  using SVMImpl_var = Gears::IntrusivePtr<SVMImpl>;
 
-  typedef std::vector<SVMImpl_var> SVMImplArray;
+  using SVMImplArray = std::vector<SVMImpl_var>;
 
 public:
   Application_() throw();
 
-  virtual
-  ~Application_() throw();
+  virtual ~Application_() throw();
 
-  void
-  main(int& argc, char** argv)
+  void main(int& argc, char** argv)
     /*throw(Gears::Exception)*/;
 
 protected:
@@ -113,123 +102,66 @@ protected:
    *     Train => SubTrain + Noise + SubTest
    *     SubTrain => SubTrainBag's
    */
-  void
-  train_dtree_set_(
-    double& best_test0_loss,
-    DTree_var& best_dtree,
-    DTree_var& new_dtree,
-    const DTree* prev_dtree,
-    SVMImpl* ext_train_svm,
-    const std::list<SVMImpl_var>& ext_test_svms,
-    unsigned long max_global_iterations,
-    unsigned long step_depth,
-    unsigned long check_depth,
-    double alpha_coef,
-    unsigned long train_bags,
-    unsigned long gain_check_bags,
-    const char* opt_step_model_out,
-    unsigned long threads,
-    bool anneal,
-    bool allow_negative_gain,
-    const MetricSelection& metric_selection)
-    throw();
+  void train_dtree_set_(double& best_test0_loss, DTree_var& best_dtree, DTree_var& new_dtree,
+    const DTree* prev_dtree, SVMImpl* ext_train_svm, const std::list<SVMImpl_var>& ext_test_svms,
+    unsigned long max_global_iterations, unsigned long step_depth, unsigned long check_depth,
+    double alpha_coef, unsigned long train_bags, unsigned long gain_check_bags,
+    const char* opt_step_model_out, unsigned long threads, bool anneal, bool allow_negative_gain,
+    const MetricSelection& metric_selection) throw();
 
-  double
-  train_on_bags_(
-    DTree_var& res_tree,
-    std::string& selected_metric,
-    TreeLearner<PredictedBoolLabel>::Context* context,
-    SVMImpl* train_svm,
-    const std::list<SVMImpl_var>& test_svms,
-    unsigned long gain_check_bags,
-    unsigned long max_iterations,
-    unsigned long step_depth,
-    unsigned long check_depth,
-    double alpha_coef,
-    bool print_trace,
-    bool allow_negative_gain,
-    Gears::TaskRunner* task_runner,
+  double train_on_bags_(DTree_var& res_tree, std::string& selected_metric,
+    TreeLearner<PredictedBoolLabel>::Context* context, SVMImpl* train_svm,
+    const std::list<SVMImpl_var>& test_svms, unsigned long gain_check_bags,
+    unsigned long max_iterations, unsigned long step_depth, unsigned long check_depth,
+    double alpha_coef, bool print_trace, bool allow_negative_gain, Gears::TaskRunner* task_runner,
     const MetricSelection& metric_selection);
 
-  void
-  init_bags_(
-    SVMImplArray& bags,
-    SVMImpl_var& test_svm,
-    SVMImpl_var& train_svm,
-    SVMImpl* ext_train_svm,
-    unsigned long train_bags);
+  void init_bags_(SVMImplArray& bags, SVMImpl_var& test_svm, SVMImpl_var& train_svm,
+    SVMImpl* ext_train_svm, unsigned long train_bags);
 
-  void
-  prepare_bags_(
-    TreeLearner<PredictedBoolLabel>::Context_var& context,
-    SVMImplArray& bags,
-    DTree* predictor,
-    bool anneal);
+  void prepare_bags_(TreeLearner<PredictedBoolLabel>::Context_var& context, SVMImplArray& bags,
+    DTree* predictor, bool anneal);
 
-  void
-  select_best_forest_(
-    std::vector<unsigned long>& indexes,
-    const std::vector<PredArrayHolder_var>& preds,
-    const SVMImpl* svm,
-    unsigned long max_trees);
+  void select_best_forest_(std::vector<unsigned long>& indexes,
+    const std::vector<PredArrayHolder_var>& preds, const SVMImpl* svm, unsigned long max_trees);
 
-  void
-  div_bags_(
-    SVMImplArray& bags,
-    unsigned long bag_number,
+  void div_bags_(SVMImplArray& bags, unsigned long bag_number, SVMImpl* svm);
+
+  template <int FOLD_SIZE>
+  void fill_bags_(SVMImplArray& bags, const Fold (&folds)[FOLD_SIZE], unsigned long bag_number,
     SVMImpl* svm);
 
-  template<int FOLD_SIZE>
-  void
-  fill_bags_(
-    SVMImplArray& bags,
-    const Fold (&folds)[FOLD_SIZE],
-    unsigned long bag_number,
-    SVMImpl* svm);
+  static DTreeProp_var fill_dtree_prop_(unsigned long step_depth, unsigned long best_iteration,
+    const SVMImplArray& bags, unsigned long train_size);
 
-  static DTreeProp_var
-  fill_dtree_prop_(
-    unsigned long step_depth,
-    unsigned long best_iteration,
-    const SVMImplArray& bags,
-    unsigned long train_size);
+  void load_dictionary_(Vanga::FeatureDictionary& dict, const char* file);
 
-  void
-  load_dictionary_(
-    Vanga::FeatureDictionary& dict,
-    const char* file);
+  void load_name_dictionary_(Vanga::FeatureNameDictionary& dict, const char* file);
 
-  void
-  load_name_dictionary_(
-    Vanga::FeatureNameDictionary& dict,
-    const char* file);
+  void deep_print_(std::ostream& ostr, DTree* predictor, const char* prefix,
+    const FeatureDictionary* dict, double base, const SVMImpl* svm,
+    const FeatureNameDictionary* name_dict) const throw();
 
-  void
-  deep_print_(
-    std::ostream& ostr,
-    DTree* predictor,
-    const char* prefix,
-    const FeatureDictionary* dict,
-    double base,
-    const SVMImpl* svm,
-    const FeatureNameDictionary* name_dict)
-    const throw();
+  void ensemble_(double& min_logloss, double& logloss1, double& logloss2, double& coef1,
+    double& coef2, DTree* predictor1, DTree* predictor2, const SVMImpl* svm);
 
-  void
-  ensemble_(
-    double& min_logloss,
-    double& logloss1,
-    double& logloss2,
-    double& coef1,
-    double& coef2,
-    DTree* predictor1,
-    DTree* predictor2,
-    const SVMImpl* svm);
-
-  double
-  eval_reg_logloss_(DTree* dtree, const SVMImpl* svm);
+  double eval_reg_logloss_(DTree* dtree, const SVMImpl* svm);
 };
 
-typedef Gears::Singleton<Application_> Application;
+inline std::string Application_::DTreeProp::to_string() const
+{
+  std::ostringstream ss;
+  for (auto it = props.begin(); it != props.end(); ++it)
+  {
+    ss << (it != props.begin() ? "," : "") << it->first << "=" << it->second;
+  }
+  return ss.str();
+}
+
+inline Application_::DTreeProp::~DTreeProp() throw()
+{
+}
+
+using Application = Gears::Singleton<Application_>;
 
 #endif /*UTILS_DTREETRAINER_APPLICATION_HPP_*/

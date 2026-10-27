@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -30,12 +30,10 @@ namespace Gears
   //
 
   template <typename CharType>
-  int
-  CharTraits<CharType>::compare(const CharType* str1, const CharType* str2,
-    size_t size) noexcept
+  int CharTraits<CharType>::
+    compare(const CharType* str1, const CharType* str2, size_t size) noexcept
   {
-    for (const CharType* END = str1 + size; str1 != END;
-      str1++, str2++)
+    for (const CharType* END = str1 + size; str1 != END; str1++, str2++)
     {
       if (!std::char_traits<CharType>::eq(*str1, *str2))
       {
@@ -46,9 +44,7 @@ namespace Gears
   }
 
   template <typename CharType>
-  CharType*
-  CharTraits<CharType>::copy(CharType* str1, const CharType* str2,
-    size_t size) noexcept
+  CharType* CharTraits<CharType>::copy(CharType* str1, const CharType* str2, size_t size) noexcept
   {
     if (size == 1)
     {
@@ -66,63 +62,57 @@ namespace Gears
   //
 
   template <typename CharType>
-  void
-  CheckerNone<CharType>::check_position(size_t /*length*/, size_t /*pos*/,
+  void CheckerNone<CharType>::
+    check_position(size_t /*length*/, size_t /*pos*/, const char* /*error_func*/) noexcept
+  {
+  }
+
+  template <typename CharType>
+  void CheckerNone<CharType>::
+    check_pointer(const CharType* /*ptr*/, const char* /*error_func*/) noexcept
+  {
+  }
+
+  template <typename CharType>
+  void CheckerNone<CharType>::check_pointer(const CharType* /*begin*/, const CharType* /*end*/,
     const char* /*error_func*/) noexcept
-  {}
+  {
+  }
 
   template <typename CharType>
-  void
-  CheckerNone<CharType>::check_pointer(const CharType* /*ptr*/,
-    const char* /*error_func*/) noexcept
-  {}
-
-  template <typename CharType>
-  void
-  CheckerNone<CharType>::check_pointer(const CharType* /*begin*/,
-    const CharType* /*end*/, const char* /*error_func*/) noexcept
-  {}
-
-  template <typename CharType>
-  void
-  CheckerNone<CharType>::check_pointer(const CharType* /*ptr*/,
-    size_t /*count*/, const char* /*error_func*/) noexcept
-  {}
-
+  void CheckerNone<CharType>::
+    check_pointer(const CharType* /*ptr*/, size_t /*count*/, const char* /*error_func*/) noexcept
+  {
+  }
 
   //
   // CheckerRough class
   //
 
   template <typename CharType>
-  void
-  CheckerRough<CharType>::check_position(size_t length, size_t pos,
-    const char* error_func) /*throw (OutOfRange)*/
+  void CheckerRough<CharType>::
+    check_position(size_t length, size_t pos, const char* error_func) /*throw (OutOfRange)*/
   {
     if (pos > length)
     {
       char error[sizeof(DescriptiveException)];
-      std::snprintf(error, sizeof(error),
-        "BasicSub%s(): out of range", error_func);
+      std::snprintf(error, sizeof(error), "BasicSub%s(): out of range", error_func);
       throw OutOfRange(error);
     }
   }
 
   template <typename CharType>
-  void
-  CheckerRough<CharType>::throw_logic_error_(const char* error_func)
-    /*throw (LogicError)*/
+  void CheckerRough<CharType>::throw_logic_error_(const char* error_func)
+  /*throw (LogicError)*/
   {
     char error[sizeof(DescriptiveException)];
-    std::snprintf(error, sizeof(error),
-      "BasicSub%s(): null pointer dereference", error_func);
+    std::snprintf(error, sizeof(error), "BasicSub%s(): null pointer dereference", error_func);
     throw LogicError(error);
   }
 
   template <typename CharType>
-  void
-  CheckerRough<CharType>::check_pointer(const CharType* ptr,
-    const char* error_func) /*throw (LogicError)*/
+  void CheckerRough<CharType>::
+    check_pointer(const CharType* ptr, const char* error_func) /*throw (LogicError)*/
   {
     if (!ptr)
     {
@@ -131,9 +121,8 @@ namespace Gears
   }
 
   template <typename CharType>
-  void
-  CheckerRough<CharType>::check_pointer(const CharType* ptr, size_t count,
-    const char* error_func) /*throw (LogicError)*/
+  void CheckerRough<CharType>::
+    check_pointer(const CharType* ptr, size_t count, const char* error_func) /*throw (LogicError)*/
   {
     if (!ptr && count)
     {
@@ -142,16 +131,14 @@ namespace Gears
   }
 
   template <typename CharType>
-  void
-  CheckerRough<CharType>::check_pointer(const CharType* begin,
-    const CharType* end, const char* error_func) /*throw (LogicError)*/
+  void CheckerRough<CharType>::check_pointer(const CharType* begin, const CharType* end,
+    const char* error_func) /*throw (LogicError)*/
   {
     if ((!begin) != (!end) || end < begin)
     {
       throw_logic_error_(error_func);
     }
   }
-
 
   //
   // BasicSubString class
@@ -160,8 +147,8 @@ namespace Gears
   // begin_ + pos
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::Pointer
-  BasicSubString<CharType, Traits, Checker>::begin_plus_position_(
-    SizeType position, const char* error_func) const /*throw (OutOfRange)*/
+  BasicSubString<CharType, Traits, Checker>::
+    begin_plus_position_(SizeType position, const char* error_func) const /*throw (OutOfRange)*/
   {
     Checker::check_position(length_, position, error_func);
     return begin_ + position;
@@ -169,8 +156,8 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::get_available_length_(
-    SizeType pos, SizeType count) const noexcept
+  BasicSubString<CharType, Traits, Checker>::
+    get_available_length_(SizeType pos, SizeType count) const noexcept
   {
     return std::min(count, length_ - pos);
   }
@@ -181,24 +168,23 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   template <typename BasicStringTraits, typename Allocator>
-  BasicSubString<CharType, Traits, Checker>::BasicSubString(
-    const std::basic_string<BasicStringValueType, BasicStringTraits,
-      Allocator>& str) /*throw (Exception)*/
+  BasicSubString<CharType, Traits, Checker>::BasicSubString(const std::
+      basic_string<BasicStringValueType, BasicStringTraits, Allocator>& str) /*throw (Exception)*/
     : begin_(str.data()), length_(str.size())
   {
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>::BasicSubString(Pointer ptr,
-    SizeType count) /*throw (LogicError)*/
+  BasicSubString<CharType, Traits, Checker>::
+    BasicSubString(Pointer ptr, SizeType count) /*throw (LogicError)*/
     : begin_(ptr), length_(count)
   {
     Checker::check_pointer(ptr, count, __FUNCTION__);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>::BasicSubString(Pointer begin,
-    Pointer end) /*throw (LogicError)*/
+  BasicSubString<CharType, Traits, Checker>::
+    BasicSubString(Pointer begin, Pointer end) /*throw (LogicError)*/
     : begin_(begin)
   {
     Checker::check_pointer(begin, end, __FUNCTION__);
@@ -215,22 +201,19 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>::BasicSubString() noexcept
-    : begin_(0), length_(0)
+  BasicSubString<CharType, Traits, Checker>::BasicSubString() noexcept : begin_(0), length_(0)
   {
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>::
-    BasicSubString(int, SizeType) noexcept
+  BasicSubString<CharType, Traits, Checker>::BasicSubString(int, SizeType) noexcept
   {
     //Helper::compiler_fail(Helper::constructor_case());
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>&
-  BasicSubString<CharType, Traits, Checker>::assign(Pointer ptr,
-    SizeType count) /*throw (LogicError)*/
+  BasicSubString<CharType, Traits, Checker>& BasicSubString<CharType, Traits, Checker>::
+    assign(Pointer ptr, SizeType count) /*throw (LogicError)*/
   {
     Checker::check_pointer(ptr, count, __FUNCTION__);
     begin_ = ptr;
@@ -239,9 +222,8 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>&
-  BasicSubString<CharType, Traits, Checker>::assign(Pointer begin,
-    Pointer end) /*throw (LogicError)*/
+  BasicSubString<CharType, Traits, Checker>& BasicSubString<CharType, Traits, Checker>::
+    assign(Pointer begin, Pointer end) /*throw (LogicError)*/
   {
     Checker::check_pointer(begin, end, __FUNCTION__);
     begin_ = begin;
@@ -250,9 +232,8 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>&
-  BasicSubString<CharType, Traits, Checker>::assign(const BasicSubString& str,
-    SizeType pos, SizeType count) /*throw (OutOfRange)*/
+  BasicSubString<CharType, Traits, Checker>& BasicSubString<CharType, Traits, Checker>::
+    assign(const BasicSubString& str, SizeType pos, SizeType count) /*throw (OutOfRange)*/
   {
     begin_ = str.begin_plus_position_(pos, __FUNCTION__);
     length_ = str.get_available_length_(pos, count);
@@ -260,9 +241,8 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>&
-  BasicSubString<CharType, Traits, Checker>::assign(const BasicSubString& str)
-    noexcept
+  BasicSubString<CharType, Traits, Checker>& BasicSubString<CharType, Traits, Checker>::
+    assign(const BasicSubString& str) noexcept
   {
     begin_ = str.begin_;
     length_ = str.length_;
@@ -272,7 +252,7 @@ namespace Gears
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::ConstReference
   BasicSubString<CharType, Traits, Checker>::at(SizeType pos) const
-    /*throw (OutOfRange)*/
+  /*throw (OutOfRange)*/
   {
     return *begin_plus_position_(pos, __FUNCTION__);
   }
@@ -280,7 +260,7 @@ namespace Gears
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::Reference
   BasicSubString<CharType, Traits, Checker>::at(SizeType pos)
-    /*throw (OutOfRange)*/
+  /*throw (OutOfRange)*/
   {
     return *begin_plus_position_(pos, __FUNCTION__);
   }
@@ -300,27 +280,23 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  void
-  BasicSubString<CharType, Traits, Checker>::clear() noexcept
+  void BasicSubString<CharType, Traits, Checker>::clear() noexcept
   {
     begin_ = 0;
     length_ = 0;
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>
-  BasicSubString<CharType, Traits, Checker>::substr(SizeType pos,
-    SizeType count) const /*throw (OutOfRange)*/
+  BasicSubString<CharType, Traits, Checker> BasicSubString<CharType, Traits, Checker>::
+    substr(SizeType pos, SizeType count) const /*throw (OutOfRange)*/
   {
-    return BasicSubString<CharType, Traits, Checker>(
-      begin_plus_position_(pos, __FUNCTION__),
+    return BasicSubString<CharType, Traits, Checker>(begin_plus_position_(pos, __FUNCTION__),
       get_available_length_(pos, count));
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  int
-  BasicSubString<CharType, Traits, Checker>::compare(
-    const BasicSubString<CharType, Traits, Checker>& str) const noexcept
+  int BasicSubString<CharType, Traits, Checker>::
+    compare(const BasicSubString<CharType, Traits, Checker>& str) const noexcept
   {
     const SizeType LEN = std::min(length_, str.length_);
     if (const int RESULT = Traits::compare(begin_, str.begin_, LEN))
@@ -331,26 +307,22 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  int
-  BasicSubString<CharType, Traits, Checker>::compare(SizeType pos1,
-    SizeType count1, const BasicSubString& str) const /*throw (OutOfRange)*/
+  int BasicSubString<CharType, Traits, Checker>::
+    compare(SizeType pos1, SizeType count1, const BasicSubString& str) const /*throw (OutOfRange)*/
   {
     return substr(pos1, count1).compare(str);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  int
-  BasicSubString<CharType, Traits, Checker>::compare(SizeType pos1,
-    SizeType count1, const BasicSubString& str, SizeType pos2,
-    SizeType count2) const /*throw (OutOfRange)*/
+  int BasicSubString<CharType, Traits, Checker>::compare(SizeType pos1, SizeType count1,
+    const BasicSubString& str, SizeType pos2, SizeType count2) const /*throw (OutOfRange)*/
   {
     return substr(pos1, count1).compare(str.substr(pos2, count2));
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  int
-  BasicSubString<CharType, Traits, Checker>::compare(
-    ConstPointer str) const /*throw (LogicError)*/
+  int BasicSubString<CharType, Traits, Checker>::
+    compare(ConstPointer str) const /*throw (LogicError)*/
   {
     Checker::check_pointer(str, __FUNCTION__);
 
@@ -374,27 +346,23 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  int
-  BasicSubString<CharType, Traits, Checker>::compare(SizeType pos1,
-    SizeType count1, ConstPointer ptr) const /*throw (LogicError)*/
+  int BasicSubString<CharType, Traits, Checker>::
+    compare(SizeType pos1, SizeType count1, ConstPointer ptr) const /*throw (LogicError)*/
   {
     return substr(pos1, count1).compare(ptr);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  int
-  BasicSubString<CharType, Traits, Checker>::compare(SizeType pos1,
-    SizeType count1, ConstPointer ptr, SizeType count2) const
-    /*throw (LogicError)*/
+  int BasicSubString<CharType, Traits, Checker>::
+    compare(SizeType pos1, SizeType count1, ConstPointer ptr, SizeType count2) const
+  /*throw (LogicError)*/
   {
-    return substr(pos1, count1).compare(
-      BasicSubString(const_cast<Pointer>(ptr), count2));
+    return substr(pos1, count1).compare(BasicSubString(const_cast<Pointer>(ptr), count2));
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  BasicSubString<CharType, Traits, Checker>::equal(ConstPointer str) const
-    /*throw (LogicError)*/
+  bool BasicSubString<CharType, Traits, Checker>::equal(ConstPointer str) const
+  /*throw (LogicError)*/
   {
     Checker::check_pointer(str, __FUNCTION__);
 
@@ -413,9 +381,7 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  BasicSubString<CharType, Traits, Checker>::equal(
-    const BasicSubString& str) const noexcept
+  bool BasicSubString<CharType, Traits, Checker>::equal(const BasicSubString& str) const noexcept
   {
     if (str.length_ != length_)
     {
@@ -426,8 +392,8 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::copy(BasicStringValueType* ptr,
-    SizeType count, SizeType pos) const /*throw (OutOfRange, LogicError)*/
+  BasicSubString<CharType, Traits, Checker>::copy(BasicStringValueType* ptr, SizeType count,
+    SizeType pos) const /*throw (OutOfRange, LogicError)*/
   {
     count = get_available_length_(pos, count);
     Checker::check_pointer(ptr, count, __FUNCTION__);
@@ -450,8 +416,7 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  BasicSubString<CharType, Traits, Checker>::empty() const noexcept
+  bool BasicSubString<CharType, Traits, Checker>::empty() const noexcept
   {
     return !length_;
   }
@@ -471,9 +436,8 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>&
-  BasicSubString<CharType, Traits, Checker>::erase_front(SizeType count)
-    noexcept
+  BasicSubString<CharType, Traits, Checker>& BasicSubString<CharType, Traits, Checker>::
+    erase_front(SizeType count) noexcept
   {
     if (begin_)
     {
@@ -485,9 +449,8 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  BasicSubString<CharType, Traits, Checker>&
-  BasicSubString<CharType, Traits, Checker>::erase_back(SizeType count)
-    noexcept
+  BasicSubString<CharType, Traits, Checker>& BasicSubString<CharType, Traits, Checker>::
+    erase_back(SizeType count) noexcept
   {
     if (begin_)
     {
@@ -498,8 +461,7 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::find(ValueType ch,
-    SizeType pos) const noexcept
+  BasicSubString<CharType, Traits, Checker>::find(ValueType ch, SizeType pos) const noexcept
   {
     if (pos < length_)
     {
@@ -514,8 +476,8 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::find(const BasicSubString& str,
-    SizeType pos) const noexcept
+  BasicSubString<CharType, Traits, Checker>::
+    find(const BasicSubString& str, SizeType pos) const noexcept
   {
     if (!str.length_)
     {
@@ -529,15 +491,15 @@ namespace Gears
     }
 
     const ConstPointer END = begin_ + length_;
-    const ConstPointer FOUND = std::search(begin_ + pos, END,
-      str.begin_, str.begin_ + str.length_, Traits::eq);
+    const ConstPointer FOUND = std::
+      search(begin_ + pos, END, str.begin_, str.begin_ + str.length_, Traits::eq);
     return FOUND != END ? FOUND - begin_ : NPOS;
   }
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::find(ConstPointer ptr,
-    SizeType pos, SizeType count) const /*throw (LogicError)*/
+  BasicSubString<CharType, Traits, Checker>::
+    find(ConstPointer ptr, SizeType pos, SizeType count) const /*throw (LogicError)*/
   {
     return find(BasicSubString<CharType, Traits, Checker>(ptr, count), pos);
   }
@@ -545,8 +507,8 @@ namespace Gears
 #ifdef BASIC_STRING_INTERFACE_IMITATION
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::find(ConstPointer ptr,
-    SizeType pos) const /*throw (LogicError)*/
+  BasicSubString<CharType, Traits, Checker>::
+    find(ConstPointer ptr, SizeType pos) const /*throw (LogicError)*/
   {
     return find(BasicSubString<CharType, Traits, Checker>(ptr), pos);
   }
@@ -568,8 +530,7 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::rfind(ValueType ch,
-    SizeType pos) const noexcept
+  BasicSubString<CharType, Traits, Checker>::rfind(ValueType ch, SizeType pos) const noexcept
   {
     if (length_)
     {
@@ -580,6 +541,7 @@ namespace Gears
         {
           return last - begin_;
         }
+
         if (last == begin_)
         {
           return NPOS;
@@ -591,8 +553,8 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::rfind(const BasicSubString& str,
-    SizeType pos) const noexcept
+  BasicSubString<CharType, Traits, Checker>::
+    rfind(const BasicSubString& str, SizeType pos) const noexcept
   {
     if (str.length_ > length_)
     {
@@ -614,12 +576,13 @@ namespace Gears
       pos = length_ - str.length_;
     }
 
-    for (ConstPointer data = begin_ + pos; ; data--)
+    for (ConstPointer data = begin_ + pos;; data--)
     {
       if (!Traits::compare(data, str.begin_, str.length_))
       {
         return data - begin_;
       }
+
       if (data == begin_)
       {
         break;
@@ -631,8 +594,8 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::rfind(ConstPointer ptr,
-    SizeType pos, SizeType count) const /*throw (LogicError)*/
+  BasicSubString<CharType, Traits, Checker>::
+    rfind(ConstPointer ptr, SizeType pos, SizeType count) const /*throw (LogicError)*/
   {
     return rfind(BasicSubString<CharType, Traits, Checker>(ptr), pos);
   }
@@ -640,8 +603,8 @@ namespace Gears
 #ifdef BASIC_STRING_INTERFACE_IMITATION
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::SizeType
-  BasicSubString<CharType, Traits, Checker>::rfind(ConstPointer ptr,
-    SizeType pos) const /*throw (LogicError)*/
+  BasicSubString<CharType, Traits, Checker>::
+    rfind(ConstPointer ptr, SizeType pos) const /*throw (LogicError)*/
   {
     return rfind(BasicSubString<CharType, Traits, Checker>(ptr), pos);
   }
@@ -655,9 +618,7 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  void
-  BasicSubString<CharType, Traits, Checker>::swap(
-    BasicSubString& right) noexcept
+  void BasicSubString<CharType, Traits, Checker>::swap(BasicSubString& right) noexcept
   {
     std::swap(begin_, right.begin_);
     std::swap(length_, right.length_);
@@ -665,10 +626,9 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   template <typename BasicStringTraits, typename Allocator>
-  BasicSubString<CharType, Traits, Checker>&
-  BasicSubString<CharType, Traits, Checker>::operator =(
-    const std::basic_string<BasicStringValueType, BasicStringTraits,
-      Allocator>& str) /*throw (Exception)*/
+  BasicSubString<CharType, Traits, Checker>& BasicSubString<CharType, Traits, Checker>::
+  operator=(const std::
+      basic_string<BasicStringValueType, BasicStringTraits, Allocator>& str) /*throw (Exception)*/
   {
     begin_ = str.data();
     length_ = str.size();
@@ -677,16 +637,16 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::ConstReference
-  BasicSubString<CharType, Traits, Checker>::operator [](SizeType pos) const
-    /*throw (OutOfRange)*/
+  BasicSubString<CharType, Traits, Checker>::operator[](SizeType pos) const
+  /*throw (OutOfRange)*/
   {
     return *begin_plus_position_(pos, __FUNCTION__);
   }
 
   template <typename CharType, typename Traits, typename Checker>
   typename BasicSubString<CharType, Traits, Checker>::Reference
-  BasicSubString<CharType, Traits, Checker>::operator [](SizeType pos)
-    /*throw (OutOfRange)*/
+  BasicSubString<CharType, Traits, Checker>::operator[](SizeType pos)
+  /*throw (OutOfRange)*/
   {
     return *begin_plus_position_(pos, __FUNCTION__);
   }
@@ -700,27 +660,23 @@ namespace Gears
 
   template <typename CharType, typename Traits, typename Checker>
   template <typename BasicStringTraits, typename Allocator>
-  void
-  BasicSubString<CharType, Traits, Checker>::assign_to(
-    std::basic_string<BasicStringValueType, BasicStringTraits,
-      Allocator>& str) const /*throw (Exception)*/
+  void BasicSubString<CharType, Traits, Checker>::
+    assign_to(std::basic_string<BasicStringValueType, BasicStringTraits, Allocator>& str)
+      const /*throw (Exception)*/
   {
     str.assign(begin_, length_);
   }
 
   template <typename CharType, typename Traits, typename Checker>
   template <typename BasicStringTraits, typename Allocator>
-  void
-  BasicSubString<CharType, Traits, Checker>::append_to(
-    std::basic_string<BasicStringValueType, BasicStringTraits,
-      Allocator>& str) const /*throw (Exception)*/
+  void BasicSubString<CharType, Traits, Checker>::
+    append_to(std::basic_string<BasicStringValueType, BasicStringTraits, Allocator>& str)
+      const /*throw (Exception)*/
   {
     str.append(begin_, length_);
   }
 
-  template <typename T>
-  void
-  Helper::compiler_fail(T& p) noexcept
+  template <typename T> void Helper::compiler_fail(T& p) noexcept
   {
     //sizeof(T);
   }
@@ -730,12 +686,11 @@ namespace Gears
   //
 
   template <typename CharType, typename Traits, typename Checker>
-  std::basic_ostream<
-    typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType>&
-  operator <<(std::basic_ostream<
-    typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType>&
-      ostr, const BasicSubString<CharType, Traits, Checker>& substr)
-    /*throw (Exception)*/
+  std::basic_ostream<typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType>&
+  operator<<(std::basic_ostream<typename BasicSubString<CharType, Traits, Checker>::
+                 BasicStringValueType>& ostr,
+    const BasicSubString<CharType, Traits, Checker>& substr)
+  /*throw (Exception)*/
   {
     if (!substr.empty())
     {
@@ -745,220 +700,183 @@ namespace Gears
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator ==(const BasicSubString<CharType, Traits, Checker>& substr,
+  bool operator==(const BasicSubString<CharType, Traits, Checker>& substr,
     typename BasicSubString<CharType, Traits, Checker>::ConstPointer str)
-    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
+  /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
   {
     return substr.equal(str);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator ==(typename BasicSubString<CharType, Traits, Checker>::ConstPointer
-    str, const BasicSubString<CharType, Traits, Checker>& substr)
-    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
+  bool operator==(typename BasicSubString<CharType, Traits, Checker>::ConstPointer str,
+    const BasicSubString<CharType, Traits, Checker>& substr)
+  /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
   {
     return substr.equal(str);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator ==(const BasicSubString<CharType, Traits, Checker>& left_substr,
+  bool operator==(const BasicSubString<CharType, Traits, Checker>& left_substr,
     const BasicSubString<CharType, Traits, Checker>& right_substr) noexcept
   {
     return left_substr.equal(right_substr);
   }
 
-  template <typename CharType, typename Traits, typename Checker,
-    typename BasicStringTraits, typename Allocator>
-  bool
-  operator ==(const BasicSubString<CharType, Traits, Checker>& substr,
-    const std::basic_string<
-      typename BasicSubString<CharType, Traits, Checker>::
-      BasicStringValueType, BasicStringTraits, Allocator>& str)
-    /*throw (Exception)*/
+  template <typename CharType, typename Traits, typename Checker, typename BasicStringTraits,
+    typename Allocator>
+  bool operator==(const BasicSubString<CharType, Traits, Checker>& substr,
+    const std::
+      basic_string<typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
+        BasicStringTraits, Allocator>& str)
+  /*throw (Exception)*/
   {
     return substr.equal(str);
   }
 
-  template <typename CharType, typename Traits, typename Checker,
-    typename BasicStringTraits, typename Allocator>
-  bool
-  operator ==(const std::basic_string<
-    typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
-      BasicStringTraits, Allocator>& str,
+  template <typename CharType, typename Traits, typename Checker, typename BasicStringTraits,
+    typename Allocator>
+  bool operator==(const std::basic_string<typename BasicSubString<CharType, Traits, Checker>::
+                                            BasicStringValueType,
+                    BasicStringTraits, Allocator>& str,
     const BasicSubString<CharType, Traits, Checker>& substr)
-    /*throw (Exception)*/
+  /*throw (Exception)*/
   {
     return substr.equal(str);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator ==(
-    int, const BasicSubString<CharType, Traits, Checker>&)
-    noexcept
+  bool operator==(int, const BasicSubString<CharType, Traits, Checker>&) noexcept
   {
     //Helper::compiler_fail(Helper::pointers_case());
     return false;
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator ==(
-    const BasicSubString<CharType, Traits, Checker>&, int)
-    noexcept
+  bool operator==(const BasicSubString<CharType, Traits, Checker>&, int) noexcept
   {
     //Helper::compiler_fail(Helper::pointers_case());
     return false;
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator !=(const BasicSubString<CharType, Traits, Checker>& substr,
+  bool operator!=(const BasicSubString<CharType, Traits, Checker>& substr,
     typename BasicSubString<CharType, Traits, Checker>::ConstPointer str)
-    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
+  /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
   {
     return !substr.equal(str);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator !=(typename BasicSubString<CharType, Traits, Checker>::
-    ConstPointer str, const BasicSubString<CharType, Traits, Checker>& substr)
-    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
+  bool operator!=(typename BasicSubString<CharType, Traits, Checker>::ConstPointer str,
+    const BasicSubString<CharType, Traits, Checker>& substr)
+  /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
   {
     return !substr.equal(str);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator !=(const BasicSubString<CharType, Traits, Checker>& left_substr,
+  bool operator!=(const BasicSubString<CharType, Traits, Checker>& left_substr,
     const BasicSubString<CharType, Traits, Checker>& right_substr) noexcept
   {
     return !left_substr.equal(right_substr);
   }
 
-  template <typename CharType, typename Traits, typename Checker,
-    typename BasicStringTraits, typename Allocator>
-  bool
-  operator !=(const BasicSubString<CharType, Traits, Checker>& substr,
-    const std::basic_string<
-      typename BasicSubString<CharType, Traits, Checker>::
-        BasicStringValueType, BasicStringTraits, Allocator>& str)
-    /*throw (Exception)*/
+  template <typename CharType, typename Traits, typename Checker, typename BasicStringTraits,
+    typename Allocator>
+  bool operator!=(const BasicSubString<CharType, Traits, Checker>& substr,
+    const std::
+      basic_string<typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
+        BasicStringTraits, Allocator>& str)
+  /*throw (Exception)*/
   {
     return !substr.equal(str);
   }
 
-  template <typename CharType, typename Traits, typename Checker,
-    typename BasicStringTraits, typename Allocator>
-  bool
-  operator !=(const std::basic_string<
-    typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
-      BasicStringTraits, Allocator>& str,
+  template <typename CharType, typename Traits, typename Checker, typename BasicStringTraits,
+    typename Allocator>
+  bool operator!=(const std::basic_string<typename BasicSubString<CharType, Traits, Checker>::
+                                            BasicStringValueType,
+                    BasicStringTraits, Allocator>& str,
     const BasicSubString<CharType, Traits, Checker>& substr)
-    /*throw (Exception)*/
+  /*throw (Exception)*/
   {
     return !substr.equal(str);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator !=(
-    int, const BasicSubString<CharType, Traits, Checker>&)
-    noexcept
+  bool operator!=(int, const BasicSubString<CharType, Traits, Checker>&) noexcept
   {
     //Helper::compiler_fail(Helper::pointers_case());
     return false;
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator !=(
-    const BasicSubString<CharType, Traits, Checker>&, int)
-    noexcept
+  bool operator!=(const BasicSubString<CharType, Traits, Checker>&, int) noexcept
   {
     //Helper::compiler_fail(Helper::pointers_case());
     return false;
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator <(const BasicSubString<CharType, Traits, Checker>& substr,
+  bool operator<(const BasicSubString<CharType, Traits, Checker>& substr,
     typename BasicSubString<CharType, Traits, Checker>::ConstPointer str)
-    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
+  /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
   {
     return substr.compare(str) < 0;
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator <(typename BasicSubString<CharType, Traits, Checker>::
-    ConstPointer str, const BasicSubString<CharType, Traits, Checker>& substr)
-    /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
+  bool operator<(typename BasicSubString<CharType, Traits, Checker>::ConstPointer str,
+    const BasicSubString<CharType, Traits, Checker>& substr)
+  /*throw (typename BasicSubString<CharType, Traits, Checker>::LogicError)*/
   {
-    return !operator <(substr, str);
+    return !operator<(substr, str);
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator <(const BasicSubString<CharType, Traits, Checker>& left_substr,
+  bool operator<(const BasicSubString<CharType, Traits, Checker>& left_substr,
     const BasicSubString<CharType, Traits, Checker>& right_substr) noexcept
   {
     return left_substr.compare(right_substr) < 0;
   }
 
-  template <typename CharType, typename Traits, typename Checker,
-    typename BasicStringTraits, typename Allocator>
-  bool
-  operator <(const BasicSubString<CharType, Traits, Checker>& substr,
-    const std::basic_string<
-      typename BasicSubString<CharType, Traits, Checker>::
-      BasicStringValueType, BasicStringTraits, Allocator>& str)
-    noexcept
+  template <typename CharType, typename Traits, typename Checker, typename BasicStringTraits,
+    typename Allocator>
+  bool operator<(const BasicSubString<CharType, Traits, Checker>& substr,
+    const std::
+      basic_string<typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
+        BasicStringTraits, Allocator>& str) noexcept
   {
     return substr.compare(str) < 0;
   }
 
-  template <typename CharType, typename Traits, typename Checker,
-    typename BasicStringTraits, typename Allocator>
+  template <typename CharType, typename Traits, typename Checker, typename BasicStringTraits,
+    typename Allocator>
   bool
-  operator <(const std::basic_string<
-    typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
-      BasicStringTraits, Allocator>& str,
-    const BasicSubString<CharType, Traits, Checker>& substr)
-    noexcept
+  operator<(const std::
+              basic_string<typename BasicSubString<CharType, Traits, Checker>::BasicStringValueType,
+                BasicStringTraits, Allocator>& str,
+    const BasicSubString<CharType, Traits, Checker>& substr) noexcept
   {
     return substr.compare(str) > 0;
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator <(
-    int, const BasicSubString<CharType, Traits, Checker>&)
-    noexcept
+  bool operator<(int, const BasicSubString<CharType, Traits, Checker>&) noexcept
   {
     //Helper::compiler_fail(Helper::pointers_case());
     return false;
   }
 
   template <typename CharType, typename Traits, typename Checker>
-  bool
-  operator <(
-    const BasicSubString<CharType, Traits, Checker>&, int)
-    noexcept
+  bool operator<(const BasicSubString<CharType, Traits, Checker>&, int) noexcept
   {
     //Helper::compiler_fail(Helper::pointers_case());
     return false;
   }
 
-  template <typename Hash,
-    typename CharType, typename Traits, typename Checker>
-  void
-  hash_add(Hash& hash,
-    const BasicSubString<CharType, Traits, Checker>& value) noexcept
+  template <typename Hash, typename CharType, typename Traits, typename Checker>
+  void hash_add(Hash& hash, const BasicSubString<CharType, Traits, Checker>& value) noexcept
   {
     hash.add(value.data(), value.size());
   }

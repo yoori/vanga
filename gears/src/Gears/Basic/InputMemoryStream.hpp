@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -31,8 +31,8 @@
  * InputMemoryStreamBuffer
  * InputMemoryStream
  */
-OPEN_NAMESPACE(Gears)
-
+namespace Gears
+{
   /**
    * Input memory buffer
    * Using supplied memory region as a stream content
@@ -42,13 +42,13 @@ OPEN_NAMESPACE(Gears)
   class InputMemoryStreamBuffer : public std::basic_streambuf<Elem, Traits>
   {
   public:
-    typedef typename Traits::int_type Int;
-    typedef typename Traits::pos_type Position;
-    typedef typename Traits::off_type Offset;
+    using Int = typename Traits::int_type;
+    using Position = typename Traits::pos_type;
+    using Offset = typename Traits::off_type;
 
-    typedef Elem* Pointer;
-    typedef const Elem* ConstPointer;
-    typedef size_t Size;
+    using Pointer = Elem*;
+    using ConstPointer = const Elem*;
+    using Size = size_t;
 
     /**
      * Constructor
@@ -61,47 +61,38 @@ OPEN_NAMESPACE(Gears)
     /**
      * @return The pointer to data not read yet
      */
-    ConstPointer
-    data() const noexcept;
+    ConstPointer data() const noexcept;
 
     /**
      * @return The size of data not read yet
      */
-    Size
-    size() const noexcept;
+    Size size() const noexcept;
 
   protected:
-    virtual Position
-    seekoff(
-      Offset off,
-      std::ios_base::seekdir way,
-      std::ios_base::openmode which)
+    virtual Position seekoff(Offset off, std::ios_base::seekdir way, std::ios_base::openmode which)
       /*throw(Gears::Exception)*/;
 
-    virtual Position
-    seekpos(Position pos, std::ios_base::openmode which)
+    virtual Position seekpos(Position pos, std::ios_base::openmode which)
       /*throw(Gears::Exception)*/;
 
-    virtual Int
-    underflow() noexcept;
+    virtual Int underflow() noexcept;
   };
 
   /**
    * Input memory stream. Uses InputMemoryBuffer for data access.
    */
-  template <typename Elem, typename Traits = std::char_traits<Elem> >
-  class InputMemoryStream:
-    public InputMemoryStreamBuffer<Elem, Traits>,
-    public std::basic_istream<Elem, Traits>
+  template <typename Elem, typename Traits = std::char_traits<Elem>>
+  class InputMemoryStream : public InputMemoryStreamBuffer<Elem, Traits>,
+                            public std::basic_istream<Elem, Traits>
   {
   private:
-    typedef InputMemoryStreamBuffer<Elem, Traits> StreamBuffer;
-    typedef std::basic_istream<Elem, Traits> Stream;
+    using StreamBuffer = InputMemoryStreamBuffer<Elem, Traits>;
+    using Stream = std::basic_istream<Elem, Traits>;
 
   public:
-    typedef Elem* Pointer;
-    typedef const Elem* ConstPointer;
-    typedef size_t Size;
+    using Pointer = Elem*;
+    using ConstPointer = const Elem*;
+    using Size = size_t;
 
     /**
      * Constructor
@@ -130,9 +121,7 @@ OPEN_NAMESPACE(Gears)
     InputMemoryStream(const std::basic_string<Elem, Allocator>& str)
       /*throw(Gears::Exception)*/;
   };
-
-CLOSE_NAMESPACE
-
+}
 #include "InputMemoryStream.tpp"
 
 #endif /*GEARS_INPUTMEMORYSTREAM_HPP*/

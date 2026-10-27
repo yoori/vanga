@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -27,47 +27,54 @@ namespace Gears
 {
   struct StringSerializer
   {
-    static void
-    read(std::string& key, void* buf, unsigned long buf_size)
-    {
-      key.assign(static_cast<const char*>(buf), buf_size);
-    }
+    static void read(std::string& key, void* buf, unsigned long buf_size);
 
-    static void
-    write(void* buf, unsigned long buf_size, const std::string& key)
-    {
-      ::memcpy(buf, key.data(), buf_size);
-    }
+    static void write(void* buf, unsigned long buf_size, const std::string& key);
 
-    static unsigned long
-    size(const std::string& key)
-    {
-      return key.size();
-    }
+    static unsigned long size(const std::string& key);
   };
+
+  inline void StringSerializer::read(std::string& key, void* buf, unsigned long buf_size)
+  {
+    key.assign(static_cast<const char*>(buf), buf_size);
+  }
+
+  inline void StringSerializer::write(void* buf, unsigned long buf_size, const std::string& key)
+  {
+    ::memcpy(buf, key.data(), buf_size);
+  }
+
+  inline unsigned long StringSerializer::size(const std::string& key)
+  {
+    return key.size();
+  }
 
   struct NumericSerializer
   {
-    static void
-    read(uint64_t& key, void* buf, unsigned long buf_size)
-    {
-      assert(buf_size == 8);
-      key = *static_cast<const uint64_t*>(buf);
-    }
+    static void read(uint64_t& key, void* buf, unsigned long buf_size);
 
-    static void
-    write(void* buf, unsigned long buf_size, uint64_t key)
-    {
-      assert(buf_size == 8);
-      *static_cast<uint64_t*>(buf) = key;
-    }
+    static void write(void* buf, unsigned long buf_size, uint64_t key);
 
-    static unsigned long
-    size(uint64_t)
-    {
-      return 8;
-    }
+    static unsigned long size(uint64_t);
   };
+
+  inline void NumericSerializer::read(uint64_t& key, void* buf, unsigned long buf_size)
+  {
+    assert(buf_size == 8);
+    key = *static_cast<const uint64_t*>(buf);
+  }
+
+  inline void NumericSerializer::write(void* buf, unsigned long buf_size, uint64_t key)
+  {
+    assert(buf_size == 8);
+    *static_cast<uint64_t*>(buf) = key;
+  }
+
+  inline unsigned long NumericSerializer::size(uint64_t)
+  {
+    return 8;
+  }
+
 }
 
 #endif /*GEARS_KEYSERIALIZER_HPP_*/

@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -31,25 +31,31 @@ namespace PlainTypes
   class ConstBuf
   {
   public:
-    ConstBuf(const void* buf, unsigned long buf_size)
-      : buf_(static_cast<const unsigned char*>(buf)),
-        buf_size_(buf_size)
-    {}
+    ConstBuf(const void* buf, unsigned long buf_size);
 
-    const unsigned char* get() const
-    {
-      return buf_;
-    }
+    const unsigned char* get() const;
 
-    unsigned long size() const
-    {
-      return buf_size_;
-    }
+    unsigned long size() const;
 
   protected:
     const unsigned char* buf_;
     unsigned long buf_size_;
   };
+
+  inline ConstBuf::ConstBuf(const void* buf, unsigned long buf_size)
+    : buf_(static_cast<const unsigned char*>(buf)), buf_size_(buf_size)
+  {
+  }
+
+  inline const unsigned char* ConstBuf::get() const
+  {
+    return buf_;
+  }
+
+  inline unsigned long ConstBuf::size() const
+  {
+    return buf_size_;
+  }
 
   struct CharCastPolicy
   {
@@ -82,56 +88,42 @@ namespace PlainTypes
 
 namespace PlainTypes
 {
-  inline
-  char
-  CharCastPolicy::read_cast(const void* buf)
+  inline char CharCastPolicy::read_cast(const void* buf)
   {
     return *static_cast<const int32_t*>(buf);
   }
 
-  inline
-  char&
-  CharCastPolicy::write_cast(void* buf)
+  inline char& CharCastPolicy::write_cast(void* buf)
   {
     return *static_cast<char*>(buf);
   }
 
-  inline
-  int32_t
-  IntCastPolicy::read_cast(const void* buf)
+  inline int32_t IntCastPolicy::read_cast(const void* buf)
   {
     return *static_cast<const int32_t*>(buf);
   }
 
-  inline
-  int32_t&
-  IntCastPolicy::write_cast(void* buf)
+  inline int32_t& IntCastPolicy::write_cast(void* buf)
   {
     return *static_cast<int32_t*>(buf);
   }
 
-  inline
-  uint32_t
-  UIntCastPolicy::read_cast(const void* buf)
+  inline uint32_t UIntCastPolicy::read_cast(const void* buf)
   {
     return *static_cast<const uint32_t*>(buf);
   }
 
-  inline uint32_t&
-  UIntCastPolicy::write_cast(void* buf)
+  inline uint32_t& UIntCastPolicy::write_cast(void* buf)
   {
     return *static_cast<uint32_t*>(buf);
   }
 
-  inline uint64_t
-  UInt64CastPolicy::read_cast(const void* buf)
+  inline uint64_t UInt64CastPolicy::read_cast(const void* buf)
   {
     return *static_cast<const uint64_t*>(buf);
   }
 
-  inline
-  uint64_t&
-  UInt64CastPolicy::write_cast(void* buf)
+  inline uint64_t& UInt64CastPolicy::write_cast(void* buf)
   {
     return *static_cast<uint64_t*>(buf);
   }

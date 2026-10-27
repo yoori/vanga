@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -46,7 +46,7 @@ namespace Gears
    * variable.  The waiting threads, upon awakening, reacquire the
    * mutex and re-evaluate the condition.
    */
-  class Condition: private Uncopyable
+  class Condition : private Uncopyable
   {
   public:
     // Can be raised if system API errors occurred
@@ -73,8 +73,7 @@ namespace Gears
      * shall be called with mutex locked by the calling thread
      * or undefined behavior results.
      */
-    void
-    wait(Mutex& mutex) /*throw(ResourceError, Gears::Exception)*/;
+    void wait(Mutex& mutex) /*throw(ResourceError, Gears::Exception)*/;
 
     /**
      * Block on condition, or until absolute time-of-day has passed.
@@ -90,10 +89,7 @@ namespace Gears
      * Implementation add this time interval to current system time.
      * @return false if timeout.
      */
-    bool
-    timed_wait(Mutex& mutex,
-      const Time* time,
-      bool time_is_relative = false)
+    bool timed_wait(Mutex& mutex, const Time* time, bool time_is_relative = false)
       /*throw(ResourceError, Gears::Exception)*/;
 
     /**
@@ -101,15 +97,13 @@ namespace Gears
      * of the threads that are blocked on Condition
      * (if any threads are blocked on this).
      */
-    void
-    signal() /*throw(ResourceError, Gears::Exception)*/;
+    void signal() /*throw(ResourceError, Gears::Exception)*/;
 
     /**
      * Signal *all* waiting threads. This method shall unblock all threads
      * currently blocked on Condition
      */
-    void
-    broadcast() /*throw(ResourceError, Gears::Exception)*/;
+    void broadcast() /*throw(ResourceError, Gears::Exception)*/;
 
   private:
     pthread_cond_t cond_;
@@ -123,7 +117,7 @@ namespace Gears
    *  And it will delegate calls to used Condition while created.
    *  Available only for mutex lock policy.
    */
-  class ConditionGuard: private Mutex::WriteGuard
+  class ConditionGuard : private Mutex::WriteGuard
   {
   public:
     /**
@@ -131,14 +125,12 @@ namespace Gears
      * @param conditional methods calls will be delegate to this object
      * @param mutex lock mutex for conditional using
      */
-    ConditionGuard(Mutex& mutex, Condition& condition)
-      noexcept;
+    ConditionGuard(Mutex& mutex, Condition& condition) noexcept;
 
     /**
      * Block on condition. Delegate call to conditional.
      */
-    void
-    wait() /*throw(Condition::ResourceError, Gears::Exception)*/;
+    void wait() /*throw(Condition::ResourceError, Gears::Exception)*/;
 
     /**
      * Block on condition or until absolute time-of-day has passed.
@@ -151,10 +143,7 @@ namespace Gears
      * interval.
      * Implementation add this time interval to current system time.
      */
-    bool
-    timed_wait(
-      const Time* time,
-      bool time_is_relative = false)
+    bool timed_wait(const Time* time, bool time_is_relative = false)
       /*throw(Condition::ResourceError, Gears::Exception)*/;
 
   private:

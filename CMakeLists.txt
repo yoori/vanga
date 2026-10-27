@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(Vanga)
 
+enable_testing()
+
 SET(GCC_ROOT ""
   CACHE
   STRING "Custom GCC root. Define CMAKE_CXX_COMPILER and CMAKE_C_COMPILER appropriately!"

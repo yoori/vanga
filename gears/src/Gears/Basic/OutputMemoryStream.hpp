@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -48,21 +48,18 @@ namespace Gears
    * Output memory buffer
    * Can preallocate memory region of desired size
    */
-  template<
-    typename Elem,
-    typename Traits,
-    typename Allocator,
+  template <typename Elem, typename Traits, typename Allocator,
     typename AllocatorInitializer = Allocator>
   class OutputMemoryStreamBuffer : public std::basic_streambuf<Elem, Traits>
   {
   public:
-    typedef typename Traits::int_type Int;
-    typedef typename Traits::pos_type Position;
-    typedef typename Traits::off_type Offset;
+    using Int = typename Traits::int_type;
+    using Position = typename Traits::pos_type;
+    using Offset = typename Traits::off_type;
 
-    typedef typename Allocator::value_type* Pointer;
-    typedef const typename Allocator::value_type* ConstPointer;
-    typedef typename Allocator::size_type Size;
+    using Pointer = typename Allocator::value_type*;
+    using ConstPointer = const typename Allocator::value_type*;
+    using Size = typename Allocator::size_type;
 
     /**
      * Constructor
@@ -77,41 +74,33 @@ namespace Gears
      * Destructor
      * Frees allocated memory region
      */
-    virtual
-    ~OutputMemoryStreamBuffer() noexcept;
+    virtual ~OutputMemoryStreamBuffer() noexcept;
 
     /**
      * @return The pointer to filled data
      */
-    ConstPointer
-    data() const noexcept;
+    ConstPointer data() const noexcept;
 
     /**
      * @return The size of filled data
      */
-    Size
-    size() const noexcept;
+    Size size() const noexcept;
 
   protected:
-    virtual Position
-    seekoff(Offset off,
-      std::ios_base::seekdir way,
+    virtual Position seekoff(Offset off, std::ios_base::seekdir way,
       std::ios_base::openmode which) /*throw(Gears::Exception)*/;
 
-    virtual Position
-    seekpos(Position pos, std::ios_base::openmode which)
+    virtual Position seekpos(Position pos, std::ios_base::openmode which)
       /*throw(Gears::Exception)*/;
 
-    virtual Int
-    overflow(Int c = Traits::eof()) /*throw(Gears::Exception)*/;
+    virtual Int overflow(Int c = Traits::eof()) /*throw(Gears::Exception)*/;
 
   private:
     /**
      * Extends allocated memory region
      * @return whether or not extension was successful
      */
-    bool
-    extend() /*throw(Gears::Exception)*/;
+    bool extend() /*throw(Gears::Exception)*/;
 
   private:
     Allocator allocator_;
@@ -122,15 +111,13 @@ namespace Gears
    * Initializer of MemoryBuffer
    * Required because of order of construction
    */
-  template <typename Buffer>
-  class MemoryBufferHolder
+  template <typename Buffer> class MemoryBufferHolder
   {
   public:
-    typedef typename Buffer::char_type Elem;
+    using Elem = typename Buffer::char_type;
 
-    typedef typename Gears::BasicSubString<const Elem,
-      CharTraits<typename RemoveConst<Elem>::Result>,
-        CheckerNone<Elem> > SubString;
+    using SubString = typename Gears::
+      BasicSubString<const Elem, CharTraits<typename RemoveConst<Elem>::Result>, CheckerNone<Elem>>;
 
     /**
      * Constructor
@@ -143,8 +130,7 @@ namespace Gears
      * Constructs memory buffer with one parameter
      * @param var parameter for buffer's constructor
      */
-    template <typename T>
-    MemoryBufferHolder(T var) /*throw(Gears::Exception)*/;
+    template <typename T> MemoryBufferHolder(T var) /*throw(Gears::Exception)*/;
 
     /**
      * Constructor
@@ -160,8 +146,7 @@ namespace Gears
      * zero at the end.
      * @return SubString spreads the buffer
      */
-    SubString
-    str() const /*throw(Gears::Exception)*/;
+    SubString str() const /*throw(Gears::Exception)*/;
 
     /**
      * Templatized version of string which allow get SubString
@@ -169,21 +154,18 @@ namespace Gears
      * @return SubString spreads the buffer
      */
     template <typename Traits, typename Checker>
-    BasicSubString<const Elem, Traits, Checker>
-    str() const /*throw(Gears::Exception)*/;
+    BasicSubString<const Elem, Traits, Checker> str() const /*throw(Gears::Exception)*/;
 
   protected:
     /**
      * @return pointer to holding buffer
      */
-    Buffer*
-    buffer() noexcept;
+    Buffer* buffer() noexcept;
 
     /**
      * @return pointer to holding buffer
      */
-    const Buffer*
-    buffer() const noexcept;
+    const Buffer* buffer() const noexcept;
 
   private:
     Buffer buffer_;
@@ -192,21 +174,18 @@ namespace Gears
   /**
    * Output memory stream. Uses OutputMemoryStreamBuffer for data access.
    */
-  template <
-    typename Elem,
-    typename Traits = std::char_traits<Elem>,
-    typename Allocator = std::allocator<Elem>,
-    typename AllocatorInitializer = Allocator, const size_t SIZE = 0>
-  class OutputMemoryStream :
-    public MemoryBufferHolder<
-      OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer> >,
-    public std::basic_ostream<Elem, Traits>
+  template <typename Elem, typename Traits = std::char_traits<Elem>,
+    typename Allocator = std::allocator<Elem>, typename AllocatorInitializer = Allocator,
+    const size_t SIZE = 0>
+  class OutputMemoryStream
+    : public MemoryBufferHolder<
+        OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>>,
+      public std::basic_ostream<Elem, Traits>
   {
   private:
-    typedef MemoryBufferHolder<
-      OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer> >
-        Holder;
-    typedef std::basic_ostream<Elem, Traits> Stream;
+    using Holder =
+      MemoryBufferHolder<OutputMemoryStreamBuffer<Elem, Traits, Allocator, AllocatorInitializer>>;
+    using Stream = std::basic_ostream<Elem, Traits>;
 
   public:
     /**
@@ -236,15 +215,12 @@ namespace Gears
    * // buf IS nul-terminated here. strlen(buf) <= 4.
    */
   template <const size_t SIZE>
-  class OutputBufferStream: public OutputMemoryStream<
-    char,
-    std::char_traits<char>,
-    FixedBufferAllocator<char, SIZE>,
-    FixedBufferAllocator<char, SIZE>,
-    SIZE - 1>
+  class OutputBufferStream
+    : public OutputMemoryStream<char, std::char_traits<char>, FixedBufferAllocator<char, SIZE>,
+        FixedBufferAllocator<char, SIZE>, SIZE - 1>
   {
   private:
-    typedef FixedBufferAllocator<char, SIZE> Allocator;
+    using Allocator = FixedBufferAllocator<char, SIZE>;
 
   public:
     /**
@@ -264,21 +240,17 @@ namespace Gears
    * Output memory stream holding memory buffer of size SIZE+1.
    */
   template <const size_t SIZE>
-  class OutputStackStream :
-    public OutputMemoryStream<
-      char,
-      std::char_traits<char>,
-      StackAllocator<char, SIZE + 1>,
-      size_t,
-      SIZE>
-  {};
+  class OutputStackStream : public OutputMemoryStream<char, std::char_traits<char>,
+                              StackAllocator<char, SIZE + 1>, size_t, SIZE>
+  {
+  };
 
   /**
    * Default class for throwing DescriptiveException successors
    */
-  class ErrorStream :
-    public OutputStackStream<sizeof(Gears::DescriptiveException)>
-  {};
+  class ErrorStream : public OutputStackStream<sizeof(Gears::DescriptiveException)>
+  {
+  };
 } /*Gears*/
 
 #include "OutputMemoryStream.tpp"

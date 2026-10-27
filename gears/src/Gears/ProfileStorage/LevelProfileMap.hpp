@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -43,23 +43,9 @@ namespace Gears
       NONBLOCK_RUNTIME,
     };
 
-    LevelMapTraits(
-      Mode mode_val,
-      unsigned long rw_buffer_size_val,
-      uint64_t rwlevel_max_size_val,
-      uint64_t max_undumped_size_val,
-      unsigned long max_levels0_val,
-      const Time& expire_time_val,
-      FileController* file_controller_val = 0)
-      noexcept
-      : mode(mode_val),
-        rw_buffer_size(rw_buffer_size_val),
-        rwlevel_max_size(rwlevel_max_size_val),
-        max_undumped_size(max_undumped_size_val),
-        max_levels0(max_levels0_val),
-        expire_time(expire_time_val),
-        file_controller(add_ref(file_controller_val))
-    {}
+    LevelMapTraits(Mode mode_val, unsigned long rw_buffer_size_val, uint64_t rwlevel_max_size_val,
+      uint64_t max_undumped_size_val, unsigned long max_levels0_val, const Time& expire_time_val,
+      FileController* file_controller_val = 0) noexcept;
 
     Mode mode;
     unsigned long rw_buffer_size;
@@ -70,100 +56,82 @@ namespace Gears
     FileController_var file_controller;
   };
 
-  template<typename KeyType, typename KeySerializerType>
-  class LevelProfileMap:
-    public virtual ProfileMap<KeyType>,
-    public CompositeActiveObject
+  inline LevelMapTraits::LevelMapTraits(Mode mode_val, unsigned long rw_buffer_size_val,
+    uint64_t rwlevel_max_size_val, uint64_t max_undumped_size_val, unsigned long max_levels0_val,
+    const Time& expire_time_val, FileController* file_controller_val) noexcept
+    : mode(mode_val), rw_buffer_size(rw_buffer_size_val), rwlevel_max_size(rwlevel_max_size_val),
+      max_undumped_size(max_undumped_size_val), max_levels0(max_levels0_val),
+      expire_time(expire_time_val), file_controller(add_ref(file_controller_val))
+  {
+  }
+
+  template <typename KeyType, typename KeySerializerType>
+  class LevelProfileMap : public virtual ProfileMap<KeyType>, public CompositeActiveObject
   {
   public:
     DECLARE_GEARS_EXCEPTION(Exception, typename ProfileMap<KeyType>::Exception);
     DECLARE_GEARS_EXCEPTION(Blocked, Exception);
     DECLARE_GEARS_EXCEPTION(NotActive, Exception);
 
-    typedef KeySerializerType KeySerializerT;
+    using KeySerializerT = KeySerializerType;
 
   public:
-    LevelProfileMap(
-      ActiveObjectCallback* callback,
-      const char* directory,
-      const char* file_prefix,
-      const LevelMapTraits& traits,
-      LoadingProgressCallbackBase* progress_checker_parent = 0)
+    LevelProfileMap(ActiveObjectCallback* callback, const char* directory, const char* file_prefix,
+      const LevelMapTraits& traits, LoadingProgressCallbackBase* progress_checker_parent = 0)
       /*throw (Gears::Exception)*/;
 
-    virtual void
-    wait_preconditions(const KeyType&, OperationPriority) const
+    virtual void wait_preconditions(const KeyType&, OperationPriority) const
       /*throw(NotActive, Exception)*/;
 
-    virtual bool
-    check_profile(const KeyType& key) const /*throw(Exception)*/;
+    virtual bool check_profile(const KeyType& key) const /*throw(Exception)*/;
 
-    virtual ConstSmartMemBuf_var
-    get_profile(
-      const KeyType& key,
-      Time* last_access_time = 0)
+    virtual ConstSmartMemBuf_var get_profile(const KeyType& key, Time* last_access_time = 0)
       /*throw(Exception)*/;
 
-    virtual void
-    save_profile(
-      const KeyType& key,
-      ConstSmartMemBuf* mem_buf,
-      const Time& now = Time::get_time_of_day(),
-      OperationPriority op_priority = OP_RUNTIME)
+    virtual void save_profile(const KeyType& key, ConstSmartMemBuf* mem_buf,
+      const Time& now = Time::get_time_of_day(), OperationPriority op_priority = OP_RUNTIME)
       /*throw(NotActive, Blocked, Exception)*/;
 
-    virtual bool
-    remove_profile(
-      const KeyType& key,
-      OperationPriority op_priority = OP_RUNTIME)
+    virtual bool remove_profile(const KeyType& key, OperationPriority op_priority = OP_RUNTIME)
       /*throw(NotActive, Blocked, Exception)*/;
 
-    virtual void
-    copy_keys(typename ProfileMap<KeyType>::KeyList& keys) /*throw(Exception)*/;
+    virtual void copy_keys(typename ProfileMap<KeyType>::KeyList& keys) /*throw(Exception)*/;
 
-    virtual void
-    clear_expired(const Time& /*expire_time*/)
+    virtual void clear_expired(const Time& /*expire_time*/)
       /*throw(Exception)*/
-    {}
+      ;
 
-    virtual unsigned long
-    size() const noexcept;
+    virtual unsigned long size() const noexcept;
 
-    virtual uint64_t
-    area_size() const noexcept;
+    virtual uint64_t area_size() const noexcept;
 
-    bool
-    empty() const noexcept;
+    bool empty() const noexcept;
 
-    void
-    dump() noexcept;
+    void dump() noexcept;
 
     // ActiveObject interface
-    virtual void
-    activate_object() /*throw(ActiveObject::Exception)*/;
+    virtual void activate_object() /*throw(ActiveObject::Exception)*/;
 
-    void
-    deactivate_object() noexcept;
+    void deactivate_object() noexcept;
 
-    void
-    wait_object() noexcept;
+    void wait_object() noexcept;
 
   public:
     class LevelAssigner;
 
-    typedef Gears::Mutex MapHolderChangeSyncPolicy;
-    typedef Gears::Mutex MergeTaskCountSyncPolicy;
-    typedef Gears::Mutex OpSyncPolicy;
-    typedef Gears::RWLock SyncPolicy;
+    using MapHolderChangeSyncPolicy = Gears::Mutex;
+    using MergeTaskCountSyncPolicy = Gears::Mutex;
+    using OpSyncPolicy = Gears::Mutex;
+    using SyncPolicy = Gears::RWLock;
 
-    struct LevelHolder: public Gears::AtomicRefCountable
+    struct LevelHolder : public Gears::AtomicRefCountable
     {
       LevelHolder() noexcept;
 
       unsigned long index;
       unsigned long sub_index;
       unsigned long uniq_index;
-      Gears::IntrusivePtr<ReadBaseLevel<KeyType> > read_level;
+      Gears::IntrusivePtr<ReadBaseLevel<KeyType>> read_level;
       std::string full_index_file_name;
       std::string full_body_file_name;
       bool to_remove;
@@ -174,25 +142,23 @@ namespace Gears
     };
 
     struct LevelHolderPtrLess;
-    
-    typedef IntrusivePtr<LevelHolder> LevelHolder_var;
-    typedef std::vector<LevelHolder_var> LevelHolderArray;
 
-    struct MapHolder: public Gears::AtomicRefCountable
+    using LevelHolder_var = IntrusivePtr<LevelHolder>;
+    using LevelHolderArray = std::vector<LevelHolder_var>;
+
+    struct MapHolder : public Gears::AtomicRefCountable
     {
-      IntrusivePtr<
-        RWMemLevel<KeyType, KeySerializerType> > rw_level;
+      IntrusivePtr<RWMemLevel<KeyType, KeySerializerType>> rw_level;
       LevelHolderArray levels;
 
     protected:
-      virtual ~MapHolder() noexcept
-      {}
+      virtual ~MapHolder() noexcept;
     };
 
-    typedef Gears::IntrusivePtr<MapHolder> MapHolder_var;
-    typedef Gears::IntrusivePtr<const MapHolder> ConstMapHolder_var;
-    typedef LevelProfileMap<KeyType, KeySerializerType> ThisMap;
-    typedef Gears::IntrusivePtr<ThisMap> ThisMap_var;
+    using MapHolder_var = Gears::IntrusivePtr<MapHolder>;
+    using ConstMapHolder_var = Gears::IntrusivePtr<const MapHolder>;
+    using ThisMap = LevelProfileMap<KeyType, KeySerializerType>;
+    using ThisMap_var = Gears::IntrusivePtr<ThisMap>;
 
     class DumpRWLevelTask;
     class DumpMemLevelTask;
@@ -206,100 +172,53 @@ namespace Gears
     };
 
   protected:
-    virtual
-    ~LevelProfileMap() noexcept;
+    virtual ~LevelProfileMap() noexcept;
 
     // task methods
-    void
-    exchange_rw_level_i_()
+    void exchange_rw_level_i_()
       /*throw(Exception)*/;
 
-    void
-    dump_mem_level_(
-      unsigned long index,
-      unsigned long sub_index)
+    void dump_mem_level_(unsigned long index, unsigned long sub_index)
       /*throw(Gears::Exception)*/;
 
-    void
-    merge_levels_()
-      noexcept;
+    void merge_levels_() noexcept;
 
-    void
-    add_level_(
-      MapHolder* map_holder,
-      LoadingProgressCallbackBase_var progress_checker_parent,
-      const char* directory,
-      const char* file_name)
+    void add_level_(MapHolder* map_holder, LoadingProgressCallbackBase_var progress_checker_parent,
+      const char* directory, const char* file_name)
       /*throw(Exception)*/;
 
     typename ReadBaseLevel<KeyType>::Iterator_var
-    create_filter_iterator_(
-      typename ReadBaseLevel<KeyType>::Iterator* it)
-      noexcept;
+    create_filter_iterator_(typename ReadBaseLevel<KeyType>::Iterator* it) noexcept;
 
-    ConstMapHolder_var
-    get_map_holder_() const noexcept;
+    ConstMapHolder_var get_map_holder_() const noexcept;
 
-    template<typename IteratorType, typename MapHolderType>
+    template <typename IteratorType, typename MapHolderType>
     IteratorType
-    find_level_(
-      MapHolderType* map_holder,
-      unsigned long index,
-      unsigned long sub_index)
-      noexcept;
+    find_level_(MapHolderType* map_holder, unsigned long index, unsigned long sub_index) noexcept;
+
+    bool rw_level_dump_check_by_size_i_(const MapHolder* map_holder) const noexcept;
+
+    bool rw_level_dump_check_by_time_i_(const Time& now) const noexcept;
+
+    static bool merge_check_(const MapHolder* map_holder) noexcept;
+
+    FileNames index_file_name_(unsigned long index, unsigned long sub_index,
+      unsigned long uniq_index) const noexcept;
+
+    FileNames body_file_name_(unsigned long index, unsigned long sub_index,
+      unsigned long uniq_index) const noexcept;
+
+    std::string index_merge_file_name_() const noexcept;
+
+    std::string body_merge_file_name_() const noexcept;
+
+    static void print_levels_(std::ostream& ostr, const MapHolder* map_holder) noexcept;
+
+    bool signal_by_undumped_size_(unsigned long prev_undumped_size,
+      unsigned long new_undumped_size) const noexcept;
 
     bool
-    rw_level_dump_check_by_size_i_(
-      const MapHolder* map_holder)
-      const noexcept;
-
-    bool
-    rw_level_dump_check_by_time_i_(
-      const Time& now)
-      const noexcept;
-
-    static
-    bool
-    merge_check_(const MapHolder* map_holder)
-      noexcept;
-
-    FileNames
-    index_file_name_(
-      unsigned long index,
-      unsigned long sub_index,
-      unsigned long uniq_index)
-      const noexcept;
-
-    FileNames
-    body_file_name_(
-      unsigned long index,
-      unsigned long sub_index,
-      unsigned long uniq_index)
-      const noexcept;
-
-    std::string
-    index_merge_file_name_()
-      const noexcept;
-
-    std::string
-    body_merge_file_name_()
-      const noexcept;
-
-    static void
-    print_levels_(std::ostream& ostr, const MapHolder* map_holder)
-      noexcept;
-
-    bool
-    signal_by_undumped_size_(
-      unsigned long prev_undumped_size,
-      unsigned long new_undumped_size)
-      const noexcept;
-
-    bool
-    signal_by_levels_change_(
-      unsigned long prev_levels0,
-      unsigned long new_levels0)
-      const noexcept;
+    signal_by_levels_change_(unsigned long prev_levels0, unsigned long new_levels0) const noexcept;
 
   private:
     const std::string file_directory_;
@@ -337,6 +256,18 @@ namespace Gears
     mutable SyncPolicy map_holder_lock_;
     MapHolder_var map_holder_;
   };
+
+  template <typename KeyType, typename KeySerializerType>
+  void LevelProfileMap<KeyType, KeySerializerType>::clear_expired(const Time& /*expire_time*/)
+  /*throw(Exception)*/
+  {
+  }
+
+  template <typename KeyType, typename KeySerializerType>
+  LevelProfileMap<KeyType, KeySerializerType>::MapHolder::~MapHolder() noexcept
+  {
+  }
+
 }
 
 #include "LevelProfileMap.tpp"

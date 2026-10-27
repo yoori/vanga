@@ -10,8 +10,8 @@
 
 # define YY_NO_UNISTD_H
 
-  typedef yy::PlainParser::token token;
-  typedef yy::PlainParser::token_type token_type;
+  using token = yy::PlainParser::token;
+  using token_type = yy::PlainParser::token_type;
 %}
 
 %option c++

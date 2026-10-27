@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -31,164 +31,225 @@ namespace Gears
 {
   struct PairEqual
   {
-    template<typename FirstType, typename SecondType>
-    bool
-    operator()(
-      const std::pair<FirstType, SecondType>& left,
-      const std::pair<FirstType, SecondType>& right) const
-    {
-      return left == right;
-    }
+    template <typename FirstType, typename SecondType>
+    bool operator()(const std::pair<FirstType, SecondType>& left,
+      const std::pair<FirstType, SecondType>& right) const;
   };
+
+  template <typename FirstType, typename SecondType>
+  bool PairEqual::operator()(const std::pair<FirstType, SecondType>& left,
+    const std::pair<FirstType, SecondType>& right) const
+  {
+    return left == right;
+  }
 
   struct FirstArg
   {
-    template<typename FirstArgType, typename SecondArgType>
-    const FirstArgType&
-    operator()(const FirstArgType& left, const SecondArgType& /*right*/) const
-    {
-      return left;
-    }
+    template <typename FirstArgType, typename SecondArgType>
+    const FirstArgType& operator()(const FirstArgType& left, const SecondArgType& /*right*/) const;
   };
+
+  template <typename FirstArgType, typename SecondArgType>
+  const FirstArgType& FirstArg::
+  operator()(const FirstArgType& left, const SecondArgType& /*right*/) const
+  {
+    return left;
+  }
 
   struct SecondArg
   {
-    template<typename FirstArgType, typename SecondArgType>
-    const SecondArgType&
-    operator()(const FirstArgType& left, const SecondArgType& right) const
-    {
-      return right;
-    }
+    template <typename FirstArgType, typename SecondArgType>
+    const SecondArgType& operator()(const FirstArgType& left, const SecondArgType& right) const;
   };
 
-  template<typename IteratorType>
-  struct IteratorRange: public std::pair<IteratorType, IteratorType>
+  template <typename FirstArgType, typename SecondArgType>
+  const SecondArgType& SecondArg::
+  operator()(const FirstArgType& left, const SecondArgType& right) const
   {
-    typedef typename IteratorType::value_type value_type;
-    typedef IteratorType const_iterator;
+    return right;
+  }
 
-    IteratorRange() {}
+  template <typename IteratorType>
+  struct IteratorRange : public std::pair<IteratorType, IteratorType>
+  {
+    using value_type = typename IteratorType::value_type;
+    using const_iterator = IteratorType;
 
-    IteratorRange(const IteratorType& first, const IteratorType& second)
-      : std::pair<IteratorType, IteratorType>(first, second)
-    {}
+    IteratorRange();
 
-    const IteratorType& begin() const
-    {
-      return this->first;
-    }
+    IteratorRange(const IteratorType& first, const IteratorType& second);
 
-    const IteratorType& end() const
-    {
-      return this->second;
-    }
+    const IteratorType& begin() const;
+
+    const IteratorType& end() const;
   };
 
-  template<typename InsertIteratorType,
-    typename FilterOpType>
-  class FilterInsertIterator:
-    public std::iterator<std::output_iterator_tag, void, void, void, void>
+  template <typename IteratorType> IteratorRange<IteratorType>::IteratorRange()
+  {
+  }
+
+  template <typename IteratorType>
+  IteratorRange<IteratorType>::IteratorRange(const IteratorType& first, const IteratorType& second)
+    : std::pair<IteratorType, IteratorType>(first, second)
+  {
+  }
+
+  template <typename IteratorType> const IteratorType& IteratorRange<IteratorType>::begin() const
+  {
+    return this->first;
+  }
+
+  template <typename IteratorType> const IteratorType& IteratorRange<IteratorType>::end() const
+  {
+    return this->second;
+  }
+
+  template <typename InsertIteratorType, typename FilterOpType>
+  class FilterInsertIterator : public std::
+                                 iterator<std::output_iterator_tag, void, void, void, void>
   {
   public:
-    FilterInsertIterator(
-      InsertIteratorType ins_it,
-      FilterOpType filter_op)
-      : ins_it_(ins_it), filter_op_(filter_op)
-    {}
+    FilterInsertIterator(InsertIteratorType ins_it, FilterOpType filter_op);
 
-    template<typename ValueType>
-    FilterInsertIterator& operator=(const ValueType& val)
-    {
-      if(filter_op_(val))
-      {
-        *(ins_it_++) = val;
-      }
+    template <typename ValueType> FilterInsertIterator& operator=(const ValueType& val);
 
-      return *this;
-    }
+    FilterInsertIterator& operator*();
 
-    FilterInsertIterator& operator*()
-    {
-      return *this;
-    }
+    FilterInsertIterator& operator++();
 
-    FilterInsertIterator& operator++()
-    {
-      return *this;
-    }
+    FilterInsertIterator operator++(int);
 
-    FilterInsertIterator operator++(int)
-    {
-      return *this;
-    }
-
-    InsertIteratorType base() const
-    {
-      return ins_it_;
-    }
+    InsertIteratorType base() const;
 
   private:
     InsertIteratorType ins_it_;
     FilterOpType filter_op_;
   };
 
-  template<typename InsertIteratorType, typename ModifyOpType>
-  class ModifyInsertIterator:
-    public std::iterator<std::output_iterator_tag, void, void, void, void>
+  template <typename InsertIteratorType, typename FilterOpType>
+  FilterInsertIterator<InsertIteratorType, FilterOpType>::
+    FilterInsertIterator(InsertIteratorType ins_it, FilterOpType filter_op)
+    : ins_it_(ins_it), filter_op_(filter_op)
+  {
+  }
+
+  template <typename InsertIteratorType, typename FilterOpType>
+  template <typename ValueType>
+  FilterInsertIterator<InsertIteratorType, FilterOpType>&
+  FilterInsertIterator<InsertIteratorType, FilterOpType>::operator=(const ValueType& val)
+  {
+    if (filter_op_(val))
+    {
+      *(ins_it_++) = val;
+    }
+
+    return *this;
+  }
+
+  template <typename InsertIteratorType, typename FilterOpType>
+  FilterInsertIterator<InsertIteratorType, FilterOpType>&
+  FilterInsertIterator<InsertIteratorType, FilterOpType>::operator*()
+  {
+    return *this;
+  }
+
+  template <typename InsertIteratorType, typename FilterOpType>
+  FilterInsertIterator<InsertIteratorType, FilterOpType>&
+  FilterInsertIterator<InsertIteratorType, FilterOpType>::operator++()
+  {
+    return *this;
+  }
+
+  template <typename InsertIteratorType, typename FilterOpType>
+  FilterInsertIterator<InsertIteratorType, FilterOpType>
+  FilterInsertIterator<InsertIteratorType, FilterOpType>::operator++(int)
+  {
+    return *this;
+  }
+
+  template <typename InsertIteratorType, typename FilterOpType>
+  InsertIteratorType FilterInsertIterator<InsertIteratorType, FilterOpType>::base() const
+  {
+    return ins_it_;
+  }
+
+  template <typename InsertIteratorType, typename ModifyOpType>
+  class ModifyInsertIterator : public std::
+                                 iterator<std::output_iterator_tag, void, void, void, void>
   {
   public:
-    ModifyInsertIterator(
-      InsertIteratorType ins_it,
-      ModifyOpType modify_op)
-      : ins_it_(ins_it), modify_op_(modify_op)
-    {}
+    ModifyInsertIterator(InsertIteratorType ins_it, ModifyOpType modify_op);
 
-    template<typename ValueType>
-    ModifyInsertIterator& operator=(const ValueType& val)
-    {
-      *(ins_it_++) = modify_op_(val);
-      return *this;
-    }
+    template <typename ValueType> ModifyInsertIterator& operator=(const ValueType& val);
 
-    ModifyInsertIterator& operator*()
-    {
-      return *this;
-    }
+    ModifyInsertIterator& operator*();
 
-    ModifyInsertIterator& operator++()
-    {
-      return *this;
-    }
+    ModifyInsertIterator& operator++();
 
-    ModifyInsertIterator& operator++(int)
-    {
-      return *this;
-    }
+    ModifyInsertIterator& operator++(int);
 
-    InsertIteratorType base() const
-    {
-      return ins_it_;
-    }
+    InsertIteratorType base() const;
 
   private:
     InsertIteratorType ins_it_;
     ModifyOpType modify_op_;
   };
 
-  template<typename InsertIteratorType, typename FilterOpType>
+  template <typename InsertIteratorType, typename ModifyOpType>
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>::
+    ModifyInsertIterator(InsertIteratorType ins_it, ModifyOpType modify_op)
+    : ins_it_(ins_it), modify_op_(modify_op)
+  {
+  }
+
+  template <typename InsertIteratorType, typename ModifyOpType>
+  template <typename ValueType>
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>&
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>::operator=(const ValueType& val)
+  {
+    *(ins_it_++) = modify_op_(val);
+    return *this;
+  }
+
+  template <typename InsertIteratorType, typename ModifyOpType>
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>&
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>::operator*()
+  {
+    return *this;
+  }
+
+  template <typename InsertIteratorType, typename ModifyOpType>
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>&
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>::operator++()
+  {
+    return *this;
+  }
+
+  template <typename InsertIteratorType, typename ModifyOpType>
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>&
+  ModifyInsertIterator<InsertIteratorType, ModifyOpType>::operator++(int)
+  {
+    return *this;
+  }
+
+  template <typename InsertIteratorType, typename ModifyOpType>
+  InsertIteratorType ModifyInsertIterator<InsertIteratorType, ModifyOpType>::base() const
+  {
+    return ins_it_;
+  }
+
+  template <typename InsertIteratorType, typename FilterOpType>
   FilterInsertIterator<InsertIteratorType, FilterOpType>
   filter_inserter(InsertIteratorType ins_it, FilterOpType filter_op)
   {
-    return FilterInsertIterator<InsertIteratorType, FilterOpType>(
-      ins_it, filter_op);
+    return FilterInsertIterator<InsertIteratorType, FilterOpType>(ins_it, filter_op);
   }
 
-  template<typename InsertIteratorType, typename ModifyOpType>
+  template <typename InsertIteratorType, typename ModifyOpType>
   ModifyInsertIterator<InsertIteratorType, ModifyOpType>
   modify_inserter(InsertIteratorType ins_it, ModifyOpType modify_op)
   {
-    return ModifyInsertIterator<InsertIteratorType, ModifyOpType>(
-      ins_it, modify_op);
+    return ModifyInsertIterator<InsertIteratorType, ModifyOpType>(ins_it, modify_op);
   }
 
   /*
@@ -239,28 +300,20 @@ namespace Gears
   };
   */
 
-  template<
-    typename FirstInputIteratorType,
-    typename SecondInputIteratorType,
-    typename OutputIteratorType,
-    typename LessOpType,
-    typename MergeOpType>
-  OutputIteratorType
-  merge_unique(
-    FirstInputIteratorType first_it, FirstInputIteratorType first_end,
+  template <typename FirstInputIteratorType, typename SecondInputIteratorType,
+    typename OutputIteratorType, typename LessOpType, typename MergeOpType>
+  OutputIteratorType merge_unique(FirstInputIteratorType first_it, FirstInputIteratorType first_end,
     SecondInputIteratorType second_it, SecondInputIteratorType second_end,
-    OutputIteratorType output_it,
-    LessOpType less_op,
-    MergeOpType merge_op)
+    OutputIteratorType output_it, LessOpType less_op, MergeOpType merge_op)
   {
-    while(first_it != first_end && second_it != second_end)
+    while (first_it != first_end && second_it != second_end)
     {
-      if(less_op(*first_it, *second_it))
+      if (less_op(*first_it, *second_it))
       {
         *(output_it++) = *first_it;
         ++first_it;
       }
-      else if(less_op(*second_it, *first_it))
+      else if (less_op(*second_it, *first_it))
       {
         *(output_it++) = *second_it;
         ++second_it;
@@ -273,69 +326,41 @@ namespace Gears
       }
     }
 
-    return std::copy(first_it, first_end,
-      std::copy(second_it, second_end, output_it));
+    return std::copy(first_it, first_end, std::copy(second_it, second_end, output_it));
   }
 
-  template<
-    typename FirstInputIteratorType,
-    typename SecondInputIteratorType,
-    typename OutputIteratorType,
-    typename LessOpType>
-  OutputIteratorType
-  merge_unique(
-    FirstInputIteratorType first_it, FirstInputIteratorType first_end,
+  template <typename FirstInputIteratorType, typename SecondInputIteratorType,
+    typename OutputIteratorType, typename LessOpType>
+  OutputIteratorType merge_unique(FirstInputIteratorType first_it, FirstInputIteratorType first_end,
     SecondInputIteratorType second_it, SecondInputIteratorType second_end,
-    OutputIteratorType output_it,
-    LessOpType less_op)
+    OutputIteratorType output_it, LessOpType less_op)
   {
-    return merge_unique(
-      first_it, first_end,
-      second_it, second_end,
-      output_it,
-      less_op,
-      FirstArg());
+    return merge_unique(first_it, first_end, second_it, second_end, output_it, less_op, FirstArg());
   }
 
-  template<
-    typename FirstInputIteratorType,
-    typename SecondInputIteratorType,
+  template <typename FirstInputIteratorType, typename SecondInputIteratorType,
     typename OutputIteratorType>
-  OutputIteratorType
-  merge_unique(
-    FirstInputIteratorType first_it, FirstInputIteratorType first_end,
+  OutputIteratorType merge_unique(FirstInputIteratorType first_it, FirstInputIteratorType first_end,
     SecondInputIteratorType second_it, SecondInputIteratorType second_end,
     OutputIteratorType output_it)
   {
-    return merge_unique(
-      first_it, first_end,
-      second_it, second_end,
-      output_it,
-      std::less<typename std::iterator_traits<FirstInputIteratorType>::
-        value_type>(),
-      FirstArg());
+    return merge_unique(first_it, first_end, second_it, second_end, output_it,
+      std::less<typename std::iterator_traits<FirstInputIteratorType>::value_type>(), FirstArg());
   }
 
-  template<
-    typename FirstInputIteratorType,
-    typename SecondInputIteratorType,
-    typename OutputIteratorType,
-    typename LessOpType,
-    typename CrossOpType>
-  OutputIteratorType
-  cross(
-    FirstInputIteratorType first_it, FirstInputIteratorType first_end,
+  template <typename FirstInputIteratorType, typename SecondInputIteratorType,
+    typename OutputIteratorType, typename LessOpType, typename CrossOpType>
+  OutputIteratorType cross(FirstInputIteratorType first_it, FirstInputIteratorType first_end,
     SecondInputIteratorType second_it, SecondInputIteratorType second_end,
-    OutputIteratorType output_it,
-    LessOpType less_op, CrossOpType cross_op)
+    OutputIteratorType output_it, LessOpType less_op, CrossOpType cross_op)
   {
-    while(first_it != first_end && second_it != second_end)
+    while (first_it != first_end && second_it != second_end)
     {
-      if(less_op(*first_it, *second_it))
+      if (less_op(*first_it, *second_it))
       {
         ++first_it;
       }
-      else if(less_op(*second_it, *first_it))
+      else if (less_op(*second_it, *first_it))
       {
         ++second_it;
       }
@@ -350,48 +375,56 @@ namespace Gears
     return output_it;
   }
 
-  template<typename RangeIteratorType, typename LessOpType>
-  struct _RangeLess
+  template <typename RangeIteratorType, typename LessOpType> struct _RangeLess
   {
-    _RangeLess() {}
-    _RangeLess(const LessOpType& less_val): less_op(less_val) {}
+    _RangeLess();
+    _RangeLess(const LessOpType& less_val);
 
-    bool operator()(
-      const RangeIteratorType& left, const RangeIteratorType& right) const
-    {
-      return less_op(*(left.first), *(right.first));
-    }
+    bool operator()(const RangeIteratorType& left, const RangeIteratorType& right) const;
 
     LessOpType less_op;
   };
 
-  template<
-    typename RangeInputInteratorType,
-    typename OutputIteratorType,
-    typename LessOpType>
-  OutputIteratorType custom_merge_n(
-    RangeInputInteratorType range_begin,
-    RangeInputInteratorType range_end,
-    OutputIteratorType output_it,
-    LessOpType less_op) /*throw (Gears::Exception)*/
+  template <typename RangeIteratorType, typename LessOpType>
+  _RangeLess<RangeIteratorType, LessOpType>::_RangeLess()
   {
-    typedef typename std::iterator_traits<
-      RangeInputInteratorType>::value_type::const_iterator SubIterator;
-    typedef IteratorRange<SubIterator> ItRange;
-    typedef std::multiset<ItRange, _RangeLess<ItRange, LessOpType> > RangeSet;
+  }
+
+  template <typename RangeIteratorType, typename LessOpType>
+  _RangeLess<RangeIteratorType, LessOpType>::_RangeLess(const LessOpType& less_val)
+    : less_op(less_val)
+  {
+  }
+
+  template <typename RangeIteratorType, typename LessOpType>
+  bool _RangeLess<RangeIteratorType, LessOpType>::
+  operator()(const RangeIteratorType& left, const RangeIteratorType& right) const
+  {
+    return less_op(*(left.first), *(right.first));
+  }
+
+  template <typename RangeInputInteratorType, typename OutputIteratorType, typename LessOpType>
+  OutputIteratorType
+  custom_merge_n(RangeInputInteratorType range_begin, RangeInputInteratorType range_end,
+    OutputIteratorType output_it, LessOpType less_op) /*throw (Gears::Exception)*/
+  {
+    using SubIterator = typename std::iterator_traits<RangeInputInteratorType>::value_type::
+      const_iterator;
+    using ItRange = IteratorRange<SubIterator>;
+    using RangeSet = std::multiset<ItRange, _RangeLess<ItRange, LessOpType>>;
     RangeSet range_set(less_op);
 
     /* init range set */
-    for(; range_begin != range_end; ++range_begin)
+    for (; range_begin != range_end; ++range_begin)
     {
-      if(range_begin->begin() != range_begin->end())
+      if (range_begin->begin() != range_begin->end())
       {
         range_set.insert(ItRange(range_begin->begin(), range_begin->end()));
       }
     }
 
     /* merge loop */
-    while(!range_set.empty())
+    while (!range_set.empty())
     {
       typename RangeSet::iterator cur_it = range_set.begin();
       *output_it++ = *cur_it->first;
@@ -399,7 +432,7 @@ namespace Gears
       /* update range set */
       ItRange cur_range = *cur_it;
       range_set.erase(cur_it++);
-      if(++(cur_range.first) != cur_range.second)
+      if (++(cur_range.first) != cur_range.second)
       {
         range_set.insert(cur_range);
       }
@@ -408,21 +441,19 @@ namespace Gears
     return output_it;
   }
 
-  template<typename IteratorType>
-  IteratorRange<IteratorType>
-  iterator_range(IteratorType begin, IteratorType end)
+  template <typename IteratorType>
+  IteratorRange<IteratorType> iterator_range(IteratorType begin, IteratorType end)
   {
     return IteratorRange<IteratorType>(begin, end);
   }
 
-  template<typename IteratorType>
+  template <typename IteratorType>
   std::ostream&
-  print(std::ostream& out,
-    IteratorType it_begin, IteratorType it_end, const char* delim = ", ")
+  print(std::ostream& out, IteratorType it_begin, IteratorType it_end, const char* delim = ", ")
   {
-    for(IteratorType it = it_begin; it != it_end; ++it)
+    for (IteratorType it = it_begin; it != it_end; ++it)
     {
-      if(it != it_begin)
+      if (it != it_begin)
       {
         out << delim;
       }

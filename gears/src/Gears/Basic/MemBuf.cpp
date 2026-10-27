@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -25,24 +25,18 @@
 #include <cassert>
 #endif
 
-
 namespace Gears
 {
   MemBuf::MemBuf(BasicBufAllocator* allocator) noexcept
-    : allocator_(add_ref(
-        allocator ? allocator : BasicBufAllocator::get_default_allocator())),
-      ptr_(0),
-      size_(0),
-      capacity_(2 * DEV_MEMBUF_BOUNDS)
-  {}
+    : allocator_(add_ref(allocator ? allocator : BasicBufAllocator::get_default_allocator())),
+      ptr_(0), size_(0), capacity_(2 * DEV_MEMBUF_BOUNDS)
+  {
+  }
 
   MemBuf::MemBuf(std::size_t size, BasicBufAllocator* allocator)
     /*throw (OutOfMemory)*/
-    : allocator_(add_ref(
-        allocator ? allocator : BasicBufAllocator::get_default_allocator())),
-      ptr_(0),
-      size_(0),
-      capacity_(2 * DEV_MEMBUF_BOUNDS)
+    : allocator_(add_ref(allocator ? allocator : BasicBufAllocator::get_default_allocator())),
+      ptr_(0), size_(0), capacity_(2 * DEV_MEMBUF_BOUNDS)
   {
     static const char* FUN = "MemBuf::MemBuf()";
 
@@ -59,10 +53,7 @@ namespace Gears
   }
 
   MemBuf::MemBuf(const MemBuf& right) /*throw (OutOfMemory)*/
-    : allocator_(right.allocator_),
-      ptr_(0),
-      size_(0),
-      capacity_(2 * DEV_MEMBUF_BOUNDS)
+    : allocator_(right.allocator_), ptr_(0), size_(0), capacity_(2 * DEV_MEMBUF_BOUNDS)
   {
     static const char* FUN = "MemBuf::MemBuf()";
 
@@ -81,11 +72,8 @@ namespace Gears
 
   MemBuf::MemBuf(const MemBuf& right, BasicBufAllocator* allocator)
     /*throw (OutOfMemory)*/
-    : allocator_(add_ref(
-        allocator ? allocator : BasicBufAllocator::get_default_allocator())),
-      ptr_(0),
-      size_(0),
-      capacity_(2 * DEV_MEMBUF_BOUNDS)
+    : allocator_(add_ref(allocator ? allocator : BasicBufAllocator::get_default_allocator())),
+      ptr_(0), size_(0), capacity_(2 * DEV_MEMBUF_BOUNDS)
   {
     static const char* FUN = "MemBuf::MemBuf()";
 
@@ -103,22 +91,15 @@ namespace Gears
   }
 
   MemBuf::MemBuf(MemBuf&& right) noexcept
-    : allocator_(right.allocator_),
-      ptr_(0),
-      size_(0),
-      capacity_(2 * DEV_MEMBUF_BOUNDS)
+    : allocator_(right.allocator_), ptr_(0), size_(0), capacity_(2 * DEV_MEMBUF_BOUNDS)
   {
     swap(right);
   }
 
-  MemBuf::MemBuf(const void* ptr, std::size_t size,
-    BasicBufAllocator* allocator)
+  MemBuf::MemBuf(const void* ptr, std::size_t size, BasicBufAllocator* allocator)
     /*throw (RangeError, OutOfMemory)*/
-    : allocator_(add_ref(allocator ? allocator :
-        BasicBufAllocator::get_default_allocator())),
-      ptr_(0),
-      size_(0),
-      capacity_(2 * DEV_MEMBUF_BOUNDS)
+    : allocator_(add_ref(allocator ? allocator : BasicBufAllocator::get_default_allocator())),
+      ptr_(0), size_(0), capacity_(2 * DEV_MEMBUF_BOUNDS)
   {
     static const char* FUN = "MemBuf::MemBuf()";
 
@@ -140,8 +121,7 @@ namespace Gears
     clear();
   }
 
-  void
-  MemBuf::clear() noexcept
+  void MemBuf::clear() noexcept
   {
     if (capacity())
     {
@@ -164,8 +144,7 @@ namespace Gears
     capacity_ = 2 * DEV_MEMBUF_BOUNDS;
   }
 
-  void
-  MemBuf::alloc(std::size_t size) /*throw (Gears::Exception, OutOfMemory)*/
+  void MemBuf::alloc(std::size_t size) /*throw (Gears::Exception, OutOfMemory)*/
   {
     static const char* FUN = "MemBuf::alloc()";
 
@@ -175,7 +154,7 @@ namespace Gears
       try
       {
         std::size_t tmp_capacity = size + 2 * DEV_MEMBUF_BOUNDS;
-        ptr_ = allocator_->allocate(tmp_capacity);  // modify tmp_capacity
+        ptr_ = allocator_->allocate(tmp_capacity); // modify tmp_capacity
         capacity_ = tmp_capacity;
       }
       catch (const Gears::Exception& ex)
@@ -186,31 +165,28 @@ namespace Gears
       }
 #if DEV_MEMBUF_BOUNDS > 0
       memset(ptr_, 0xDD, DEV_MEMBUF_BOUNDS);
-      memset(static_cast<unsigned char*>(ptr_) + capacity_ -
-        DEV_MEMBUF_BOUNDS, 0xDD, DEV_MEMBUF_BOUNDS);
+      memset(static_cast<unsigned char*>(ptr_) + capacity_ - DEV_MEMBUF_BOUNDS, 0xDD,
+        DEV_MEMBUF_BOUNDS);
 #endif
     }
     size_ = size;
   }
 
-  void
-  MemBuf::resize(std::size_t size) /*throw (RangeError)*/
+  void MemBuf::resize(std::size_t size) /*throw (RangeError)*/
   {
     static const char* FUN = "MemBuf::resize()";
 
     if (size > capacity())
     {
       ErrorStream ostr;
-      ostr << FUN << ": requested size=" << size << " exceeds capacity=" <<
-        capacity();
+      ostr << FUN << ": requested size=" << size << " exceeds capacity=" << capacity();
       throw RangeError(ostr.str());
     }
 
     size_ = size;
   }
 
-  void
-  MemBuf::swap(MemBuf& right) noexcept
+  void MemBuf::swap(MemBuf& right) noexcept
   {
     std::swap(ptr_, right.ptr_);
     std::swap(size_, right.size_);
@@ -218,16 +194,14 @@ namespace Gears
     std::swap(allocator_, right.allocator_);
   }
 
-  void
-  MemBuf::assign(const void* ptr, std::size_t size)
-    /*throw (Gears::Exception, OutOfMemory)*/
+  void MemBuf::assign(const void* ptr, std::size_t size)
+  /*throw (Gears::Exception, OutOfMemory)*/
   {
     alloc(size);
     memcpy(data(), ptr, size);
   }
 
-  MemBuf&
-  MemBuf::operator =(MemBuf&& right) noexcept
+  MemBuf& MemBuf::operator=(MemBuf&& right) noexcept
   {
     if (&right != this)
     {
@@ -236,17 +210,14 @@ namespace Gears
     return *this;
   }
 
-
-  ConstSmartMemBuf_var
-  transfer_membuf(SmartMemBuf* ptr) /*throw (Gears::Exception)*/
+  ConstSmartMemBuf_var transfer_membuf(SmartMemBuf* ptr) /*throw (Gears::Exception)*/
   {
     return new ConstSmartMemBuf(std::move(ptr->membuf()));
   }
 
-
   MemBufBoundsGuard::MemBufBoundsGuard(size_t bounds) noexcept
   {
     assert("MemBuf of UnixCommons is built and used with different flags" &&
-      bounds == DEV_MEMBUF_BOUNDS);
+           bounds == DEV_MEMBUF_BOUNDS);
   }
 }

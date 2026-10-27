@@ -8,3 +8,5 @@ vanga_add_executable(GearsIntervalTest
   )
 
 install(TARGETS GearsIntervalTest DESTINATION bin)
+
+add_test(NAME GearsIntervalTest COMMAND GearsIntervalTest)

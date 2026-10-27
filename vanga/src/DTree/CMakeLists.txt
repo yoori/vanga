@@ -13,6 +13,8 @@ set(_PUBLIC_HEADERS
 set(
   VANGADTREE_SOURCE_FILES
     DTree.cpp
+    CatBoost.cpp
+    FloatFeatures.cpp
     Predictor.cpp
     SVM.cpp
     Utils.cpp

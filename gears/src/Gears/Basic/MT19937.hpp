@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -55,56 +55,48 @@ namespace Gears
      * Constructor
      * @param value initial seed number
      */
-    explicit
-    MT19937(const uint32_t value) noexcept;
+    explicit MT19937(const uint32_t value) noexcept;
     /**
      * Constructor
      * @param value pointer to data for initial seed
      * @param size data size
      */
-    explicit
-    MT19937(const uint32_t* value, size_t size = STATE_SIZE) noexcept;
+    explicit MT19937(const uint32_t* value, size_t size = STATE_SIZE) noexcept;
 
     /**
      * Initializes object
      * Uses /dev/urandom for initialization
      */
-    void
-    seed() noexcept;
+    void seed() noexcept;
     /**
      * Initializes object
      * @param value initial seed number
      */
-    void
-    seed(uint32_t value) noexcept;
+    void seed(uint32_t value) noexcept;
     /**
      * Initializes object
      * @param value pointer to data for initial seed
      * @param size data size
      */
-    void
-    seed(const uint32_t* value, size_t size = STATE_SIZE) noexcept;
+    void seed(const uint32_t* value, size_t size = STATE_SIZE) noexcept;
 
     /**
      * Creates next random number in the sequence
      * @return random number in [0..2^32-1] range
      */
-    uint32_t
-    rand() noexcept;
+    uint32_t rand() noexcept;
 
   protected:
     /**
      * Initializes state
      * @param value initial seed number
      */
-    void
-    initialize(uint32_t value) noexcept;
+    void initialize(uint32_t value) noexcept;
 
     /**
      * Refreshes state after each pass
      */
-    void
-    reinit() noexcept;
+    void reinit() noexcept;
 
   private:
     uint32_t State_[STATE_SIZE];
@@ -119,27 +111,22 @@ namespace Gears
 
 namespace Gears
 {
-  inline
-  MT19937::MT19937() noexcept
+  inline MT19937::MT19937() noexcept
   {
     seed();
   }
 
-  inline
-  MT19937::MT19937(const uint32_t value) noexcept
+  inline MT19937::MT19937(const uint32_t value) noexcept
   {
     seed(value);
   }
 
-  inline
-  MT19937::MT19937(const uint32_t* value, size_t size) noexcept
+  inline MT19937::MT19937(const uint32_t* value, size_t size) noexcept
   {
     seed(value, size);
   }
 
-  inline
-  uint32_t
-  MT19937::rand() noexcept
+  inline uint32_t MT19937::rand() noexcept
   {
     if (!Left_)
     {
@@ -156,9 +143,7 @@ namespace Gears
 
   namespace MT19937Helper
   {
-    inline
-    uint32_t
-    MT19937_hash(const void* data, size_t size) noexcept
+    inline uint32_t MT19937_hash(const void* data, size_t size) noexcept
     {
       const uint8_t* ptr = static_cast<const uint8_t*>(data);
       uint32_t value = 0;
@@ -170,28 +155,19 @@ namespace Gears
       return value;
     }
 
-    template <typename T>
-    inline
-    uint32_t
-    MT19937_hash(const T data) noexcept
+    template <typename T> inline uint32_t MT19937_hash(const T data) noexcept
     {
       return MT19937_hash(&data, sizeof(data));
     }
 
-    inline
-    uint32_t
-    MT19937_mix(const uint32_t m, const uint32_t s0,
-      const uint32_t s1) noexcept
+    inline uint32_t MT19937_mix(const uint32_t m, const uint32_t s0, const uint32_t s1) noexcept
     {
-      return m ^
-        (((s0 & 0x80000000ul) | (s1 & 0x7FFFFFFFul)) >> 1) ^
-        (-(s1 & 0x00000001ul) & 0x9908B0DFul);
+      return m ^ (((s0 & 0x80000000ul) | (s1 & 0x7FFFFFFFul)) >> 1) ^
+             (-(s1 & 0x00000001ul) & 0x9908B0DFul);
     }
   }
 
-  inline
-  void
-  MT19937::reinit() noexcept
+  inline void MT19937::reinit() noexcept
   {
     static const size_t PERIOD_LENGTH = 397;
 
@@ -202,19 +178,15 @@ namespace Gears
     }
     for (int i = PERIOD_LENGTH; --i; ++p)
     {
-      *p = MT19937Helper::MT19937_mix(p[PERIOD_LENGTH - STATE_SIZE],
-        p[0], p[1]);
+      *p = MT19937Helper::MT19937_mix(p[PERIOD_LENGTH - STATE_SIZE], p[0], p[1]);
     }
-    *p = MT19937Helper::MT19937_mix(p[PERIOD_LENGTH - STATE_SIZE],
-      p[0], State_[0]);
+    *p = MT19937Helper::MT19937_mix(p[PERIOD_LENGTH - STATE_SIZE], p[0], State_[0]);
 
     Left_ = STATE_SIZE;
     Next_ = State_;
   }
 
-  inline
-  void
-  MT19937::seed() noexcept
+  inline void MT19937::seed() noexcept
   {
     int urandom = open("/dev/urandom", O_RDONLY);
     if (urandom >= 0)
@@ -240,30 +212,23 @@ namespace Gears
 
     char hostname[256];
     gethostname(hostname, sizeof(hostname));
-    seed(
-      MT19937Helper::MT19937_hash(hostname, sizeof(hostname)) ^
-      MT19937Helper::MT19937_hash(Time::get_time_of_day()) ^
-      MT19937Helper::MT19937_hash(clock()) ^
-      MT19937Helper::MT19937_hash(getpid()));
+    seed(MT19937Helper::MT19937_hash(hostname, sizeof(hostname)) ^
+         MT19937Helper::MT19937_hash(Time::get_time_of_day()) ^
+         MT19937Helper::MT19937_hash(clock()) ^ MT19937Helper::MT19937_hash(getpid()));
   }
 
-  inline
-  void
-  MT19937::seed(uint32_t value) noexcept
+  inline void MT19937::seed(uint32_t value) noexcept
   {
     initialize(value);
     reinit();
   }
 
-  inline
-  void
-  MT19937::seed(const uint32_t* value, size_t size) noexcept
+  inline void MT19937::seed(const uint32_t* value, size_t size) noexcept
   {
     initialize(0x21414B53ul);
     size_t i = 1;
     uint32_t j = 0;
-    for (size_t k = (STATE_SIZE > size ? STATE_SIZE : size);
-      k; --k)
+    for (size_t k = (STATE_SIZE > size ? STATE_SIZE : size); k; --k)
     {
       State_[i] ^= (State_[i - 1] ^ (State_[i - 1] >> 30)) * 1664525ul;
       State_[i] += value[j] + j;
@@ -272,6 +237,7 @@ namespace Gears
         State_[0] = State_[STATE_SIZE - 1];
         i = 1;
       }
+
       if (++j >= size)
       {
         j = 0;
@@ -291,9 +257,7 @@ namespace Gears
     reinit();
   }
 
-  inline
-  void
-  MT19937::initialize(uint32_t value) noexcept
+  inline void MT19937::initialize(uint32_t value) noexcept
   {
     uint32_t* s = State_;
     *s++ = value;

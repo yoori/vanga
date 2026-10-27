@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -36,24 +36,22 @@ namespace Gears
   /**
    * A job performed by ThreadRunner in the threads.
    */
-  class ThreadJob: public AtomicRefCountable
+  class ThreadJob : public AtomicRefCountable
   {
   public:
     /**
      * Work process for the job.
      */
-    virtual void
-    work() noexcept = 0;
+    virtual void work() noexcept = 0;
 
   protected:
     /**
      * Destructor.
      */
-    virtual
-    ~ThreadJob() noexcept;
+    virtual ~ThreadJob() noexcept;
   };
 
-  typedef IntrusivePtr<ThreadJob> ThreadJob_var;
+  using ThreadJob_var = IntrusivePtr<ThreadJob>;
 
   /**
    * Creates several threads and executes specified job(s) in them.
@@ -89,10 +87,7 @@ namespace Gears
      * @param number_of_jobs number of jobs to run concurrently.
      * @param options threads options
      */
-    ThreadRunner(
-      ThreadJob* job,
-      unsigned int number_of_jobs,
-      const Options& options = Options())
+    ThreadRunner(ThreadJob* job, unsigned int number_of_jobs, const Options& options = Options())
       /*throw(Gears::Exception, PosixException)*/;
 
     /**
@@ -102,10 +97,7 @@ namespace Gears
      * @param options threads options
      */
     template <typename Functor>
-    ThreadRunner(
-      size_t number_of_jobs,
-      Functor functor,
-      const Options& options = Options())
+    ThreadRunner(size_t number_of_jobs, Functor functor, const Options& options = Options())
       /*throw(Gears::Exception, PosixException)*/;
 
     /**
@@ -115,10 +107,7 @@ namespace Gears
      * @param options threads options
      */
     template <typename ForwardIterator>
-    ThreadRunner(
-      ForwardIterator begin,
-      ForwardIterator end,
-      const Options& options = Options())
+    ThreadRunner(ForwardIterator begin, ForwardIterator end, const Options& options = Options())
       /*throw(Gears::Exception, PosixException)*/;
 
     /**
@@ -131,29 +120,25 @@ namespace Gears
      * Number of jobs to execute
      * @return number of jobs
      */
-    size_t
-    number_of_jobs() const noexcept;
+    size_t number_of_jobs() const noexcept;
 
     /**
      * Return if jobs are running or not. Thread unsafe.
      * @return jobs running status
      */
-    bool
-    running() const noexcept;
+    bool running() const noexcept;
 
     /**
      * Creates threads and runs the jobs. If creation of a thread fails,
      * no jobs will run. Thread unsafe.
      */
-    void
-    start() /*throw(AlreadyStarted, PosixException, Gears::Exception)*/;
+    void start() /*throw(AlreadyStarted, PosixException, Gears::Exception)*/;
 
     /**
      * Waits for termination of previously started threads.
      * Thread unsafe.
      */
-    void
-    wait_for_completion() /*throw(PosixException)*/;
+    void wait_for_completion() /*throw(PosixException)*/;
 
   private:
     class PThreadAttr
@@ -162,6 +147,7 @@ namespace Gears
       PThreadAttr() /*throw(PosixException)*/;
       ~PThreadAttr() noexcept;
       operator pthread_attr_t*() noexcept;
+
     private:
       pthread_attr_t attr_;
     };
@@ -174,11 +160,9 @@ namespace Gears
     };
 
   private:
-    static void*
-    thread_func_(void* arg) noexcept;
+    static void* thread_func_(void* arg) noexcept;
 
-    void
-    thread_func_(ThreadJob& job) noexcept;
+    void thread_func_(ThreadJob& job) noexcept;
 
   private:
     Options options_;
@@ -195,46 +179,41 @@ namespace Gears
   // ThreadJob class
   //
 
-  inline
-  ThreadJob::~ThreadJob() noexcept
-  {}
+  inline ThreadJob::~ThreadJob() noexcept
+  {
+  }
 
   //
   // ThreadRunner::Options class
   //
 
-  inline
-  ThreadRunner::Options::Options(size_t stack_size) noexcept
-    : stack_size(stack_size < PTHREAD_STACK_MIN ? DEFAULT_STACK_SIZE :
-        stack_size)
-  {}
+  inline ThreadRunner::Options::Options(size_t stack_size) noexcept
+    : stack_size(stack_size < PTHREAD_STACK_MIN ? DEFAULT_STACK_SIZE : stack_size)
+  {
+  }
 
   //
   // ThreadRunner::PThreadAttr class
   //
 
-  inline
-  ThreadRunner::PThreadAttr::PThreadAttr() /*throw(PosixException)*/
+  inline ThreadRunner::PThreadAttr::PThreadAttr() /*throw(PosixException)*/
   {
     static const char* FUN = "ThreadRunner::PThreadAttr::PThreadAttr()";
 
     const int res = ::pthread_attr_init(&attr_);
 
-    if(res)
+    if (res)
     {
-      throw_errno_exception<PosixException>(res, FUN,
-        ": failed to initialize attribute");
+      throw_errno_exception<PosixException>(res, FUN, ": failed to initialize attribute");
     }
   }
 
-  inline
-  ThreadRunner::PThreadAttr::~PThreadAttr() noexcept
+  inline ThreadRunner::PThreadAttr::~PThreadAttr() noexcept
   {
     ::pthread_attr_destroy(&attr_);
   }
 
-  inline
-  ThreadRunner::PThreadAttr::operator pthread_attr_t*() noexcept
+  inline ThreadRunner::PThreadAttr::operator pthread_attr_t*() noexcept
   {
     return &attr_;
   }
@@ -243,34 +222,28 @@ namespace Gears
   // ThreadRunner class
   //
 
-  inline
-  ThreadRunner::~ThreadRunner() noexcept
+  inline ThreadRunner::~ThreadRunner() noexcept
   {
     try
     {
       wait_for_completion();
     }
     catch (...)
-    {}
+    {
+    }
   }
 
-  inline
-  size_t
-  ThreadRunner::number_of_jobs() const noexcept
+  inline size_t ThreadRunner::number_of_jobs() const noexcept
   {
     return number_of_jobs_;
   }
 
-  inline
-  bool
-  ThreadRunner::running() const noexcept
+  inline bool ThreadRunner::running() const noexcept
   {
     return is_running_ != 0;
   }
 
-  inline
-  void*
-  ThreadRunner::thread_func_(void* arg) noexcept
+  inline void* ThreadRunner::thread_func_(void* arg) noexcept
   {
     JobInfo* info = static_cast<JobInfo*>(arg);
     info->runner->thread_func_(*info->job);

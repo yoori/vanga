@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -36,21 +36,19 @@ namespace Gears
   /**
    * General Task to be processed by TaskRunner.
    */
-  class Task: public virtual AtomicRefCountable
+  class Task : public virtual AtomicRefCountable
   {
   public:
     /**
      * Method is called by TaskRunner when the object's order arrives.
      */
-    virtual void
-    execute() /*throw(Gears::Exception)*/ = 0;
+    virtual void execute() /*throw(Gears::Exception)*/ = 0;
 
   protected:
-    virtual
-    ~Task() noexcept;
+    virtual ~Task() noexcept;
   };
 
-  typedef IntrusivePtr<Task> Task_var;
+  using Task_var = IntrusivePtr<Task>;
 
   /**
    * Performs tasks in several threads parallelly.
@@ -69,10 +67,7 @@ namespace Gears
      * @param stack_size their stack sizes
      * @param max_pending_tasks maximum task queue length
      */
-    TaskRunner(
-      ActiveObjectCallback* callback,
-      unsigned int threads_number,
-      size_t stack_size = 0,
+    TaskRunner(ActiveObjectCallback* callback, unsigned int threads_number, size_t stack_size = 0,
       unsigned long max_pending_tasks = 0)
       /*throw(InvalidArgument, Exception, Gears::Exception)*/;
 
@@ -84,8 +79,7 @@ namespace Gears
      * If you put limitations on the size of the queue, and it's full,
      * method waits for the release up to timeout
      */
-    void
-    enqueue_task(Task* task, const Time* timeout = 0)
+    void enqueue_task(Task* task, const Time* timeout = 0)
       /*throw(InvalidArgument, Overflow, NotActive, Gears::Exception)*/;
 
     /**
@@ -93,62 +87,49 @@ namespace Gears
      * This number does not have much meaning in MT environment
      * @return number of tasks enqueued
      */
-    unsigned long
-    task_count() noexcept;
+    unsigned long task_count() noexcept;
 
     /**
      * Waits for the moment task queue is empty and returns control.
      * In MT environment tasks can be added at the very same moment of
      * return of control.
      */
-    void
-    wait_for_queue_exhausting() /*throw(Gears::Exception)*/;
+    void wait_for_queue_exhausting() /*throw(Gears::Exception)*/;
 
     /**
      * Clear task queue
      */
-    virtual void
-    clear() /*throw(Gears::Exception)*/;
+    virtual void clear() /*throw(Gears::Exception)*/;
 
   protected:
-    virtual
-    ~TaskRunner() noexcept;
+    virtual ~TaskRunner() noexcept;
 
   private:
-    class TaskRunnerJob: public SingleJob
+    class TaskRunnerJob : public SingleJob
     {
     public:
-      TaskRunnerJob(
-        ActiveObjectCallback* callback,
-        unsigned long number_of_threads,
+      TaskRunnerJob(ActiveObjectCallback* callback, unsigned long number_of_threads,
         unsigned long max_pending_tasks)
         /*throw(Gears::Exception)*/;
 
-      virtual void
-      work() noexcept;
+      virtual void work() noexcept;
 
-      virtual void
-      terminate() noexcept;
+      virtual void terminate() noexcept;
 
-      void
-      enqueue_task(Task* task, const Time* timeout)
+      void enqueue_task(Task* task, const Time* timeout)
         /*throw(InvalidArgument, Overflow, NotActive, Gears::Exception)*/;
 
-      unsigned long
-      task_count() noexcept;
+      unsigned long task_count() noexcept;
 
-      void
-      wait_for_queue_exhausting() /*throw(Gears::Exception)*/;
+      void wait_for_queue_exhausting() /*throw(Gears::Exception)*/;
 
-      void
-      clear() /*throw(Gears::Exception)*/;
+      void clear() /*throw(Gears::Exception)*/;
 
     protected:
-      virtual
-      ~TaskRunnerJob() noexcept;
+      virtual ~TaskRunnerJob() noexcept;
 
     private:
-      typedef std::deque<Task_var> Tasks;
+      using Tasks = std::deque<Task_var>;
 
     private:
       const unsigned long NUMBER_OF_THREADS_;
@@ -158,38 +139,30 @@ namespace Gears
       const bool LIMITED_;
     };
 
-    typedef IntrusivePtr<TaskRunnerJob>
-      TaskRunnerJob_var;
+    using TaskRunnerJob_var = IntrusivePtr<TaskRunnerJob>;
 
     TaskRunnerJob& job_;
   };
 
-  typedef IntrusivePtr<TaskRunner>
-    TaskRunner_var;
+  using TaskRunner_var = IntrusivePtr<TaskRunner>;
 
   /**
    * Task with specified RC implementation
    */
-  class TaskImpl:
-    public virtual Task,
-    public virtual AtomicRefCountable
+  class TaskImpl : public virtual Task, public virtual AtomicRefCountable
   {
   protected:
     /**
      * Destructor
      */
-    virtual
-    ~TaskImpl() noexcept;
+    virtual ~TaskImpl() noexcept;
   };
 
   /**
    * Should be put into the Planner.
    * When time arrives, it puts itself into TaskRunner.
    */
-  class TaskGoal:
-    public Goal,
-    public Task,
-    public virtual AtomicRefCountable
+  class TaskGoal : public Goal, public Task, public virtual AtomicRefCountable
   {
   public:
     /**
@@ -202,15 +175,13 @@ namespace Gears
      * Implementation of Goal::deliver.
      * Puts the object into the TaskRunner.
      */
-    virtual void
-    deliver() /*throw(Gears::Exception)*/;
+    virtual void deliver() /*throw(Gears::Exception)*/;
 
   protected:
     /**
      * Destructor
      */
-    virtual
-    ~TaskGoal() noexcept;
+    virtual ~TaskGoal() noexcept;
 
   private:
     TaskRunner_var task_runner_;
@@ -219,9 +190,7 @@ namespace Gears
   /**
    * Reusable version of TaskGoal
    */
-  class GoalTask:
-    public Goal,
-    public Task
+  class GoalTask : public Goal, public Task
   {
   public:
     /**
@@ -238,22 +207,19 @@ namespace Gears
      * Implementation of Goal::deliver.
      * Puts the object into the TaskRunner.
      */
-    virtual void
-    deliver() /*throw(Gears::Exception)*/;
+    virtual void deliver() /*throw(Gears::Exception)*/;
 
     /**
      * Put the object into the Planner. Call this in execute().
      * @param when time of putting the object into the TaskRunner
      */
-    void
-    schedule(const Time& time) /*throw(Gears::Exception)*/;
+    void schedule(const Time& time) /*throw(Gears::Exception)*/;
 
   protected:
     /**
      * Destructor
      */
-    virtual
-    ~GoalTask() noexcept;
+    virtual ~GoalTask() noexcept;
 
   private:
     Scheduler_var planner_;
@@ -271,34 +237,33 @@ namespace Gears
   // Task class
   //
 
-  inline
-  Task::~Task() noexcept
-  {}
+  inline Task::~Task() noexcept
+  {
+  }
 
   //
   // TaskImpl class
   //
 
-  inline
-  TaskImpl::~TaskImpl() noexcept
-  {}
+  inline TaskImpl::~TaskImpl() noexcept
+  {
+  }
 
   //
   // TaskGoal class
   //
 
-  inline
-  TaskGoal::TaskGoal(TaskRunner* task_runner)
+  inline TaskGoal::TaskGoal(TaskRunner* task_runner)
     /*throw(Gears::Exception)*/
     : task_runner_(Gears::add_ref(task_runner))
-  {}
+  {
+  }
 
-  inline
-  TaskGoal::~TaskGoal() noexcept
-  {}
+  inline TaskGoal::~TaskGoal() noexcept
+  {
+  }
 
-  inline void
-  TaskGoal::deliver() /*throw(Gears::Exception)*/
+  inline void TaskGoal::deliver() /*throw(Gears::Exception)*/
   {
     task_runner_->enqueue_task(this);
   }
@@ -307,27 +272,22 @@ namespace Gears
   // GoalTask class
   //
 
-  inline
-  GoalTask::GoalTask(Scheduler* planner, TaskRunner* task_runner)
+  inline GoalTask::GoalTask(Scheduler* planner, TaskRunner* task_runner)
     /*throw(Gears::Exception)*/
-    : planner_(Gears::add_ref(planner)),
-      task_runner_(Gears::add_ref(task_runner))
-  {}
+    : planner_(Gears::add_ref(planner)), task_runner_(Gears::add_ref(task_runner))
+  {
+  }
 
-  inline
-  GoalTask::~GoalTask() noexcept
-  {}
+  inline GoalTask::~GoalTask() noexcept
+  {
+  }
 
-  inline
-  void
-  GoalTask::deliver() /*throw(Gears::Exception)*/
+  inline void GoalTask::deliver() /*throw(Gears::Exception)*/
   {
     task_runner_->enqueue_task(this);
   }
 
-  inline
-  void
-  GoalTask::schedule(const Time& when) /*throw(Gears::Exception)*/
+  inline void GoalTask::schedule(const Time& when) /*throw(Gears::Exception)*/
   {
     planner_->schedule(this, when);
   }
@@ -336,9 +296,7 @@ namespace Gears
   // TaskRunner::TaskRunnerJob class
   //
 
-  inline
-  unsigned long
-  TaskRunner::TaskRunnerJob::task_count() noexcept
+  inline unsigned long TaskRunner::TaskRunnerJob::task_count() noexcept
   {
     LockType::ReadGuard guard(mutex());
     return tasks_.size();
@@ -348,31 +306,23 @@ namespace Gears
   // TaskRunner class
   //
 
-  inline
-  void
-  TaskRunner::enqueue_task(Task* task, const Time* timeout)
-    /*throw(InvalidArgument, Overflow, NotActive, Gears::Exception)*/
+  inline void TaskRunner::enqueue_task(Task* task, const Time* timeout)
+  /*throw(InvalidArgument, Overflow, NotActive, Gears::Exception)*/
   {
     job_.enqueue_task(task, timeout);
   }
 
-  inline
-  unsigned long
-  TaskRunner::task_count() noexcept
+  inline unsigned long TaskRunner::task_count() noexcept
   {
     return job_.task_count();
   }
 
-  inline
-  void
-  TaskRunner::wait_for_queue_exhausting() /*throw(Gears::Exception)*/
+  inline void TaskRunner::wait_for_queue_exhausting() /*throw(Gears::Exception)*/
   {
     job_.wait_for_queue_exhausting();
   }
 
-  inline
-  void
-  TaskRunner::clear() /*throw(Gears::Exception)*/
+  inline void TaskRunner::clear() /*throw(Gears::Exception)*/
   {
     job_.clear();
   }

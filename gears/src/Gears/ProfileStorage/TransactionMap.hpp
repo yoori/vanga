@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -28,9 +28,9 @@
 
 namespace Gears
 {
-  class TransactionBase: public virtual AtomicRefCountable
+  class TransactionBase : public virtual AtomicRefCountable
   {
-    typedef Mutex SyncPolicy;
+    using SyncPolicy = Mutex;
 
   public:
     class TransactionHolderBase
@@ -40,21 +40,17 @@ namespace Gears
       AtomicCounter lock_count_;
 
     public:
-      TransactionHolderBase(): lock_count_(1)
-      {}
+      TransactionHolderBase();
 
-      virtual void
-      add_ref() const noexcept = 0;
+      virtual void add_ref() const noexcept = 0;
 
-      virtual void
-      remove_ref() const noexcept = 0;
+      virtual void remove_ref() const noexcept = 0;
 
     protected:
       virtual ~TransactionHolderBase() noexcept;
     };
 
-    typedef IntrusivePtr<TransactionHolderBase>
-      TransactionHolderBase_var;
+    using TransactionHolderBase_var = IntrusivePtr<TransactionHolderBase>;
 
     /**
      * lock holder->lock_ for write
@@ -62,13 +58,16 @@ namespace Gears
     TransactionBase(TransactionHolderBase* holder) noexcept;
 
   protected:
-    virtual
-    ~TransactionBase() noexcept;
+    virtual ~TransactionBase() noexcept;
 
   private:
     TransactionHolderBase_var holder_;
     SyncPolicy::WriteGuard locker_;
   };
+
+  inline TransactionBase::TransactionHolderBase::TransactionHolderBase() : lock_count_(1)
+  {
+  }
 
   /**
    * TransactionImplType must inherit TransactionBase.
@@ -76,27 +75,22 @@ namespace Gears
    * created for each key. And lock application if it try get already
    * opened transaction, and wait it close.
    */
-  template <typename KeyType, typename TransactionImplType>
-  class TransactionMap
+  template <typename KeyType, typename TransactionImplType> class TransactionMap
   {
   public:
     DECLARE_GEARS_EXCEPTION(Exception, Gears::DescriptiveException);
     DECLARE_GEARS_EXCEPTION(MaxWaitersReached, Exception);
 
-    typedef TransactionImplType Transaction;
+    using Transaction = TransactionImplType;
 
-    typedef IntrusivePtr<TransactionImplType>
-      Transaction_var;
+    using Transaction_var = IntrusivePtr<TransactionImplType>;
 
-    typedef typename TransactionImplType::ArgType TransactionArgType;
+    using TransactionArgType = typename TransactionImplType::ArgType;
 
   public:
     TransactionMap(unsigned long max_waiters = 0) noexcept;
 
-    Transaction_var
-    get_transaction(
-      const KeyType& key,
-      bool check_max_waiters = true,
+    Transaction_var get_transaction(const KeyType& key, bool check_max_waiters = true,
       const TransactionArgType& arg = TransactionArgType())
       /*throw (MaxWaitersReached, Exception)*/;
 
@@ -107,23 +101,17 @@ namespace Gears
      * Override AtomicImpl : delegate transaction close into map,
      * if need delete object for erase from open_transaction_map_.
      */
-    class TransactionHolder: public TransactionBase::TransactionHolderBase
+    class TransactionHolder : public TransactionBase::TransactionHolderBase
     {
     public:
-      TransactionHolder(
-        TransactionMap& transaction_map,
-        const KeyType& key)
-        noexcept;
+      TransactionHolder(TransactionMap& transaction_map, const KeyType& key) noexcept;
 
-      void
-      add_ref() const noexcept;
+      void add_ref() const noexcept;
 
-      void
-      remove_ref() const noexcept;
+      void remove_ref() const noexcept;
 
     protected:
-      virtual
-      ~TransactionHolder() noexcept;
+      virtual ~TransactionHolder() noexcept;
 
     private:
       mutable AtomicCounter ref_count_;
@@ -136,30 +124,26 @@ namespace Gears
      * child classes must override this method,
      * can be implemented as strategy
      */
-    virtual Transaction_var
-    create_transaction_impl_(
-      TransactionHolder* holder,
-      const KeyType& key,
+    virtual Transaction_var create_transaction_impl_(TransactionHolder* holder, const KeyType& key,
       const TransactionArgType& arg)
-      /*throw (Gears::Exception)*/ = 0;
+      /*throw (Gears::Exception)*/
+      = 0;
 
   private:
-    typedef Mutex SyncPolicy;
+    using SyncPolicy = Mutex;
 
-    typedef IntrusivePtr<TransactionHolder>
-      TransactionHolder_var;
+    using TransactionHolder_var = IntrusivePtr<TransactionHolder>;
 
   private:
     /**
      * remove Transaction from open_transaction_map_
      */
-    void
-    close_i_(const KeyType& key) noexcept;
+    void close_i_(const KeyType& key) noexcept;
 
   private:
     const unsigned long max_waiters_;
     SyncPolicy open_transaction_map_lock_;
-    typedef std::map<KeyType, TransactionHolder*> OpenedTransactionMap;
+    using OpenedTransactionMap = std::map<KeyType, TransactionHolder*>;
     OpenedTransactionMap open_transaction_map_;
   };
 }
@@ -170,49 +154,40 @@ namespace Gears
 
 namespace Gears
 {
-  inline
-  TransactionBase::TransactionHolderBase::~TransactionHolderBase() noexcept
-  {}
+  inline TransactionBase::TransactionHolderBase::~TransactionHolderBase() noexcept
+  {
+  }
 
-  inline
-  TransactionBase::TransactionBase(TransactionHolderBase* holder)
-    noexcept
-    : holder_(Gears::add_ref(holder)),
-      locker_(holder->lock_)
-  {}
+  inline TransactionBase::TransactionBase(TransactionHolderBase* holder) noexcept
+    : holder_(Gears::add_ref(holder)), locker_(holder->lock_)
+  {
+  }
 
-  inline
-  TransactionBase::~TransactionBase() noexcept
+  inline TransactionBase::~TransactionBase() noexcept
   {
     holder_->lock_count_ += -1;
   }
 
   template <typename KeyType, typename TransactionImplType>
   TransactionMap<KeyType, TransactionImplType>::TransactionHolder::
-    TransactionHolder(TransactionMap& transactions_map, const KeyType& key)
-    noexcept
-    : ref_count_(1),
-      key_(key),
-      transactions_map_(transactions_map)
-  {}
+    TransactionHolder(TransactionMap& transactions_map, const KeyType& key) noexcept
+    : ref_count_(1), key_(key), transactions_map_(transactions_map)
+  {
+  }
 
   template <typename KeyType, typename TransactionImplType>
-  TransactionMap<KeyType, TransactionImplType>::TransactionHolder::
-    ~TransactionHolder() noexcept
-  {}
+  TransactionMap<KeyType, TransactionImplType>::TransactionHolder::~TransactionHolder() noexcept
+  {
+  }
 
   template <typename KeyType, typename TransactionImplType>
-  void
-  TransactionMap<KeyType, TransactionImplType>::TransactionHolder::
-    add_ref() const noexcept
+  void TransactionMap<KeyType, TransactionImplType>::TransactionHolder::add_ref() const noexcept
   {
     ref_count_.add(1);
   }
 
   template <typename KeyType, typename TransactionImplType>
-  void
-  TransactionMap<KeyType, TransactionImplType>::TransactionHolder::
-    remove_ref() const noexcept
+  void TransactionMap<KeyType, TransactionImplType>::TransactionHolder::remove_ref() const noexcept
   {
     // We must first lock open_transaction_map_lock_ to avoid
     // using holder_ in get_transaction, it can be removed here.
@@ -221,7 +196,7 @@ namespace Gears
 
     int result_counter = ref_count_.add_and_fetch(-1);
     assert(result_counter >= 0);
-    if(result_counter == 0)
+    if (result_counter == 0)
     {
       transactions_map_.close_i_(key_);
       delete this;
@@ -229,11 +204,10 @@ namespace Gears
   }
 
   template <typename KeyType, typename TransactionImplType>
-  TransactionMap<KeyType, TransactionImplType>::
-    TransactionMap(unsigned long max_waiters)
-    noexcept
+  TransactionMap<KeyType, TransactionImplType>::TransactionMap(unsigned long max_waiters) noexcept
     : max_waiters_(max_waiters)
-  {}
+  {
+  }
 
   /**
    * lock open_transaction_map_lock_,  find key:
@@ -245,11 +219,8 @@ namespace Gears
   template <typename KeyType, typename TransactionImplType>
   typename TransactionMap<KeyType, TransactionImplType>::Transaction_var
   TransactionMap<KeyType, TransactionImplType>::
-  get_transaction(
-    const KeyType& key,
-    bool check_max_waiters,
-    const TransactionArgType& arg)
-    /*throw (MaxWaitersReached, Exception)*/
+    get_transaction(const KeyType& key, bool check_max_waiters, const TransactionArgType& arg)
+  /*throw (MaxWaitersReached, Exception)*/
   {
     static const char* FUN = "TransactionMap::get_transaction()";
 
@@ -262,13 +233,11 @@ namespace Gears
       {
         SyncPolicy::WriteGuard lock(open_transaction_map_lock_);
 
-        typename OpenedTransactionMap::iterator it =
-          open_transaction_map_.find(key);
-        if (it == open_transaction_map_.end())  // not exists
+        typename OpenedTransactionMap::iterator it = open_transaction_map_.find(key);
+        if (it == open_transaction_map_.end()) // not exists
         {
           holder = new TransactionHolder(*this, key);
-          Transaction_var transac(
-            create_transaction_impl_(holder, key, arg));
+          Transaction_var transac(create_transaction_impl_(holder, key, arg));
           open_transaction_map_.insert(std::make_pair(key, holder.in()));
           return transac;
         }
@@ -277,9 +246,7 @@ namespace Gears
         // we must add reference to this holder, because transaction use it
         holder = Gears::add_ref(it->second);
         lock_count = it->second->lock_count_;
-        if(check_max_waiters &&
-           max_waiters_ != 0 &&
-           lock_count >= max_waiters_)
+        if (check_max_waiters && max_waiters_ != 0 && lock_count >= max_waiters_)
         {
           max_waiters_reached = true;
         }
@@ -289,12 +256,12 @@ namespace Gears
         }
       }
 
-      if(max_waiters_reached)
+      if (max_waiters_reached)
       {
         // throw outside lock
         ErrorStream ostr;
-        ostr << FUN << ": already opened " << lock_count <<
-          " transactions, max waiters = " << max_waiters_;
+        ostr << FUN << ": already opened " << lock_count
+             << " transactions, max waiters = " << max_waiters_;
         throw MaxWaitersReached(ostr.str());
       }
 
@@ -303,7 +270,7 @@ namespace Gears
         // exist already opened transaction
         return create_transaction_impl_(holder, key, arg);
       }
-      catch(...)
+      catch (...)
       {
         holder->lock_count_ += -1;
         throw;
@@ -323,15 +290,13 @@ namespace Gears
 
   template <typename KeyType, typename TransactionImplType>
   TransactionMap<KeyType, TransactionImplType>::~TransactionMap() noexcept
-  {}
+  {
+  }
 
   template <typename KeyType, typename TransactionImplType>
-  void
-  TransactionMap<KeyType, TransactionImplType>::close_i_(const KeyType& key)
-    noexcept
+  void TransactionMap<KeyType, TransactionImplType>::close_i_(const KeyType& key) noexcept
   {
-    typename OpenedTransactionMap::iterator it =
-      open_transaction_map_.find(key);
+    typename OpenedTransactionMap::iterator it = open_transaction_map_.find(key);
     if (it != open_transaction_map_.end())
     {
       open_transaction_map_.erase(it);

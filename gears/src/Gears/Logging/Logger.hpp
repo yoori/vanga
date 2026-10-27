@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -43,7 +43,7 @@ namespace Gears
   /**
    * Supplies simple usage for BaseLogger interface
    */
-  class BasicLogger: public Gears::AtomicRefCountable
+  class BasicLogger : public Gears::AtomicRefCountable
   {
   public:
     DECLARE_GEARS_EXCEPTION(Exception, LoggerException);
@@ -69,8 +69,7 @@ namespace Gears
      * Gets logger trace level.
      * @return current trace level
      */
-    virtual unsigned long
-    log_level() noexcept = 0;
+    virtual unsigned long log_level() noexcept = 0;
 
     /**
      * Sets logger trace level.
@@ -78,8 +77,7 @@ namespace Gears
      * level should not be logged.
      * @param value new log level.
      */
-    virtual void
-    log_level(unsigned long value) noexcept = 0;
+    virtual void log_level(unsigned long value) noexcept = 0;
 
     /**
      * Logs text with severity, aspect and code specified.
@@ -89,59 +87,55 @@ namespace Gears
      * @param code log record code
      * @return success status
      */
-    virtual bool
-    log(const Gears::SubString& text,
-      unsigned long severity = INFO,
+    virtual bool log(const Gears::SubString& text, unsigned long severity = INFO,
       const Gears::SubString& aspect = Gears::SubString(),
-      const Gears::SubString& code = Gears::SubString())
-      = 0;
+      const Gears::SubString& code = Gears::SubString()) = 0;
 
   protected:
-    BasicLogger() noexcept = default;
+    BasicLogger() noexcept;
 
     /**
      * Destructor
      */
-    virtual
-    ~BasicLogger() noexcept = default;
+    virtual ~BasicLogger() noexcept;
   };
 
+  inline BasicLogger::~BasicLogger() noexcept = default;
+  inline BasicLogger::BasicLogger() noexcept = default;
   /**
    * Base class for all of the loggers
    */
-  class Logger: public BasicLogger
+  class Logger : public BasicLogger
   {
   protected:
     /**
      * Destructor
      */
-    virtual
-    ~Logger() noexcept = default;
+    virtual ~Logger() noexcept;
   };
 
-  typedef Gears::IntrusivePtr<Logger> Logger_var;
+  inline Logger::~Logger() noexcept = default;
+  using Logger_var = Gears::IntrusivePtr<Logger>;
 
   /**
    * Simple class proxy for Logger
    * holds own logger, tranship calls to held logger
    * Immutable
    */
-  class SimpleLoggerHolder: public Logger
+  class SimpleLoggerHolder : public Logger
   {
   public:
     /*
      * Construct holder with logger to hold
      * @param logger logger to hold
      */
-    explicit
-    SimpleLoggerHolder(Logger* logger) noexcept;
+    explicit SimpleLoggerHolder(Logger* logger) noexcept;
 
     /**
      * Gets logger trace level.
      * @return current trace level
      */
-    virtual unsigned long
-    log_level() noexcept;
+    virtual unsigned long log_level() noexcept;
 
     /**
      * Sets logger trace level.
@@ -149,8 +143,7 @@ namespace Gears
      * level should not be logged.
      * @param value new log level.
      */
-    virtual void
-    log_level(unsigned long value) noexcept;
+    virtual void log_level(unsigned long value) noexcept;
 
     /**
      * Logs text with severity, aspect and code specified.
@@ -160,24 +153,20 @@ namespace Gears
      * @param code log record code
      * @return success status
      */
-    virtual
-    bool
-    log(const Gears::SubString& text,
-      unsigned long severity = INFO,
+    virtual bool log(const Gears::SubString& text, unsigned long severity = INFO,
       const Gears::SubString& aspect = Gears::SubString(),
-      const Gears::SubString& code = Gears::SubString())
-      noexcept;
+      const Gears::SubString& code = Gears::SubString()) noexcept;
 
   protected:
     /**
      * Destructor
      */
-    virtual
-    ~SimpleLoggerHolder() noexcept = default;
+    virtual ~SimpleLoggerHolder() noexcept;
 
     mutable Logger_var logger_;
   };
 
+  inline SimpleLoggerHolder::~SimpleLoggerHolder() noexcept = default;
   /*
    * Class proxy for Logger
    * Holds own logger, tranship calls to held logger
@@ -190,22 +179,19 @@ namespace Gears
      * Construct holder with logger to hold
      * @param logger logger to hold
      */
-    explicit
-    LoggerHolder(Logger* logger = 0) noexcept;
+    explicit LoggerHolder(Logger* logger = 0) noexcept;
 
     /*
      * Set in held logger
      * @param logger logger to hold
      */
-    void
-    logger(Logger* logger) noexcept;
+    void logger(Logger* logger) noexcept;
 
     /**
      * Gets logger trace level.
      * @return current trace level
      */
-    virtual unsigned long
-    log_level() noexcept;
+    virtual unsigned long log_level() noexcept;
 
     /**
      * Sets logger trace level.
@@ -213,8 +199,7 @@ namespace Gears
      * level should not be logged.
      * @param value new log level.
      */
-    virtual void
-    log_level(unsigned long value) noexcept;
+    virtual void log_level(unsigned long value) noexcept;
 
     /**
      * Logs text with severity, aspect and code specified.
@@ -224,33 +209,29 @@ namespace Gears
      * @param code log record code
      * @return success status
      */
-    virtual
-    bool
-    log(const Gears::SubString& text,
-      unsigned long severity = INFO,
+    virtual bool log(const Gears::SubString& text, unsigned long severity = INFO,
       const Gears::SubString& aspect = Gears::SubString(),
-      const Gears::SubString& code = Gears::SubString())
-      noexcept;
+      const Gears::SubString& code = Gears::SubString()) noexcept;
 
   protected:
     /**
      * Destructor
      */
-    virtual
-    ~LoggerHolder() noexcept = default;
+    virtual ~LoggerHolder() noexcept;
 
   private:
     Gears::SpinLock mutex_;
     volatile SigAtomicType log_level_;
   };
 
-  typedef Gears::IntrusivePtr<LoggerHolder> LoggerHolder_var;
+  inline LoggerHolder::~LoggerHolder() noexcept = default;
+  using LoggerHolder_var = Gears::IntrusivePtr<LoggerHolder>;
 
   /**
    * Logger uses another logger and puts predefined aspect and/or error_code
    * if required.
    */
-  class LoggerDefaultHolder: public LoggerHolder
+  class LoggerDefaultHolder : public LoggerHolder
   {
   public:
     /**
@@ -259,9 +240,7 @@ namespace Gears
      * @param aspect aspect to use if unspecified in log() call
      * @param code error code to use if unspecified in log() call
      */
-    explicit
-    LoggerDefaultHolder(
-      Logger* logger = 0,
+    explicit LoggerDefaultHolder(Logger* logger = 0,
       const Gears::SubString& aspect = Gears::SubString(),
       const Gears::SubString& code = Gears::SubString())
       /*throw(Gears::Exception)*/;
@@ -274,42 +253,36 @@ namespace Gears
      * @param code log record code
      * @return success status
      */
-    virtual
-    bool
-    log(const Gears::SubString& text,
-      unsigned long severity = INFO,
+    virtual bool log(const Gears::SubString& text, unsigned long severity = INFO,
       const Gears::SubString& aspect = Gears::SubString(),
-      const Gears::SubString& code = Gears::SubString())
-      noexcept;
+      const Gears::SubString& code = Gears::SubString()) noexcept;
 
   protected:
-    virtual
-    ~LoggerDefaultHolder() noexcept = default;
+    virtual ~LoggerDefaultHolder() noexcept;
 
   protected:
     std::string aspect_;
     std::string code_;
   };
 
+  inline LoggerDefaultHolder::~LoggerDefaultHolder() noexcept = default;
   /**
    * NullLogger
    */
-  class NullLogger: public Logger
+  class NullLogger : public Logger
   {
   public:
     /**
      * Gets logger trace level
      * @return zero
      */
-    virtual unsigned long
-    log_level() noexcept;
+    virtual unsigned long log_level() noexcept;
 
     /**X
      * Does nothing
      * @param value new log level
      */
-    virtual void
-    log_level(unsigned long value) noexcept;
+    virtual void log_level(unsigned long value) noexcept;
 
     /**
      * Ignores passed log record information
@@ -319,17 +292,15 @@ namespace Gears
      * @param code log record code
      * @return true
      */
-    virtual bool
-    log(const Gears::SubString& text,
-      unsigned long severity = INFO,
+    virtual bool log(const Gears::SubString& text, unsigned long severity = INFO,
       const Gears::SubString& aspect = Gears::SubString(),
-      const Gears::SubString& code = Gears::SubString())
-      noexcept;
+      const Gears::SubString& code = Gears::SubString()) noexcept;
 
   protected:
-    virtual
-    ~NullLogger() noexcept = default;
+    virtual ~NullLogger() noexcept;
   };
+
+  inline NullLogger::~NullLogger() noexcept = default;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -342,26 +313,17 @@ namespace Gears
   // NullLogger class
   //
 
-  inline
-  unsigned long
-  NullLogger::log_level() noexcept
+  inline unsigned long NullLogger::log_level() noexcept
   {
     return 0;
   }
 
-  inline
-  void
-  NullLogger::log_level(unsigned long /*level*/) noexcept
-  {}
+  inline void NullLogger::log_level(unsigned long /*level*/) noexcept
+  {
+  }
 
-  inline
-  bool
-  NullLogger::log(
-    const Gears::SubString& /*text*/,
-    unsigned long /*severity*/,
-    const Gears::SubString& /*aspect*/,
-    const Gears::SubString& /*code*/)
-    noexcept
+  inline bool NullLogger::log(const Gears::SubString& /*text*/, unsigned long /*severity*/,
+    const Gears::SubString& /*aspect*/, const Gears::SubString& /*code*/) noexcept
   {
     return true;
   }

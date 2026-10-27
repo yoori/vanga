@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -43,7 +43,7 @@ namespace Gears
    * exit(3) call or main exit.
    * Useful for singletons.
    */
-  class AtExitDestroying: private Uncopyable
+  class AtExitDestroying : private Uncopyable
   {
   public:
     enum DEFAULT_PRIORITIES
@@ -65,18 +65,16 @@ namespace Gears
     /**
      * Destructor
      */
-    virtual
-    ~AtExitDestroying() noexcept;
+    virtual ~AtExitDestroying() noexcept;
 
   private:
-    typedef StaticInitializedMutex Lock;
+    using Lock = StaticInitializedMutex;
 
   private:
     /**
      * Destroys the registered objects
      */
-    static void
-    destroy_at_exit_() noexcept;
+    static void destroy_at_exit_() noexcept;
 
     static Lock mutex_;
     static bool registered_;
@@ -92,7 +90,7 @@ namespace Gears
      * Destroys Object on exit
      */
     template <typename Object, typename Pointer, const int PRIORITY>
-    class AtExitDestroyer: public AtExitDestroying
+    class AtExitDestroyer : public AtExitDestroying
     {
     public:
       /**
@@ -105,8 +103,7 @@ namespace Gears
       /**
        * Destructor
        */
-      virtual
-      ~AtExitDestroyer() noexcept;
+      virtual ~AtExitDestroyer() noexcept;
 
     private:
       Pointer object_;
@@ -115,8 +112,7 @@ namespace Gears
     /**
      * Adapter for std::auto_ptr
      */
-    template<typename Type>
-    class AutoPtr: public std::auto_ptr<Type>
+    template <typename Type> class AutoPtr : public std::auto_ptr<Type>
     {
     public:
       AutoPtr(Type* object) noexcept;
@@ -129,8 +125,7 @@ namespace Gears
     /**
      * Adapter for simple pointer
      */
-    template<typename Type>
-    class SimplePtr
+    template <typename Type> class SimplePtr
     {
     public:
       SimplePtr(Type* object) noexcept;
@@ -155,7 +150,7 @@ namespace Gears
   class Singleton
   {
   public:
-    typedef Single InstanceType;
+    using InstanceType = Single;
 
     /**
      * Optionally creates a new Single object or returns reference to the
@@ -163,11 +158,10 @@ namespace Gears
      * It is not safe to call it after exit(3) call or main() exit.
      * @return reference to the unique object
      */
-    static Single&
-    instance() /*throw (Gears::Exception)*/;
+    static Single& instance() /*throw (Gears::Exception)*/;
 
   private:
-    typedef StaticInitializedMutex Lock;
+    using Lock = StaticInitializedMutex;
 
   private:
     static Lock mutex_;
@@ -175,14 +169,12 @@ namespace Gears
     static Single* volatile instance_;
   };
 
-
   /**
    * Template class is aimed to allow only one instance of certain type
    * to exist at the given point in time. Lifetime of each of those instances
    * are controlled manually.
    */
-  template <typename Determinator>
-  class Unique: private Uncopyable
+  template <typename Determinator> class Unique : private Uncopyable
   {
   public:
     DECLARE_GEARS_EXCEPTION(Exception, DescriptiveException);
@@ -200,20 +192,18 @@ namespace Gears
     ~Unique() noexcept;
 
   private:
-    typedef StaticInitializedMutex Lock;
+    using Lock = StaticInitializedMutex;
 
   private:
     static Lock mutex_;
     static Unique<Determinator>* volatile existing_;
   };
 
-
   /**
    * Class informs if some objects of the specified class have not been
    * destroyed on program shutdown.
    */
-  template <typename Determinator>
-  class AllDestroyer
+  template <typename Determinator> class AllDestroyer
   {
   protected:
     /**
@@ -233,9 +223,7 @@ namespace Gears
     ~AllDestroyer() noexcept;
 
   private:
-    class LoudCounter:
-      public AtomicRefCountable,
-      public AtomicCounter
+    class LoudCounter : public AtomicRefCountable, public AtomicCounter
     {
     public:
       LoudCounter() noexcept;
@@ -246,22 +234,19 @@ namespace Gears
       virtual ~LoudCounter() noexcept;
     };
 
-    typedef IntrusivePtr<LoudCounter> LoudCounter_var;
+    using LoudCounter_var = IntrusivePtr<LoudCounter>;
 
     class LoudCounterHolder
     {
     public:
-      typedef Singleton<
-        LoudCounterHolder,
-        Helper::AutoPtr<LoudCounterHolder>,
-        AtExitDestroying::DP_LOUD_COUNTER> Single;
+      using Single = Singleton<LoudCounterHolder, Helper::AutoPtr<LoudCounterHolder>,
+        AtExitDestroying::DP_LOUD_COUNTER>;
 
       LoudCounterHolder() /*throw (Gears::Exception)*/;
 
       ~LoudCounterHolder() noexcept;
 
-      LoudCounter*
-      counter() noexcept;
+      LoudCounter* counter() noexcept;
 
     private:
       LoudCounter_var counter_;
@@ -274,41 +259,38 @@ namespace Gears
 namespace Gears
 {
   // AtExitDestroying impl
-  inline
-  AtExitDestroying::~AtExitDestroying() noexcept
-  {}
+  inline AtExitDestroying::~AtExitDestroying() noexcept
+  {
+  }
 
   namespace Helper
   {
     // AtExitDestroyer impl
     template <typename Object, typename Pointer, const int PRIORITY>
-    AtExitDestroyer<Object, Pointer, PRIORITY>::AtExitDestroyer(
-      Object* object) noexcept
+    AtExitDestroyer<Object, Pointer, PRIORITY>::AtExitDestroyer(Object* object) noexcept
       : AtExitDestroying(PRIORITY), object_(object)
-    {}
+    {
+    }
 
     template <typename Object, typename Pointer, const int PRIORITY>
     AtExitDestroyer<Object, Pointer, PRIORITY>::~AtExitDestroyer() noexcept
-    {}
+    {
+    }
 
     //
     // class AutoPtr
     //
     template <typename Type>
-    AutoPtr<Type>::AutoPtr(Type* object) noexcept
-      : std::auto_ptr<Type>(object)
-    {}
+    AutoPtr<Type>::AutoPtr(Type* object) noexcept : std::auto_ptr<Type>(object)
+    {
+    }
 
-    template <typename Type>
-    Type*
-    AutoPtr<Type>::in() noexcept
+    template <typename Type> Type* AutoPtr<Type>::in() noexcept
     {
       return this->get();
     }
 
-    template <typename Type>
-    Type*
-    AutoPtr<Type>::retn() noexcept
+    template <typename Type> Type* AutoPtr<Type>::retn() noexcept
     {
       return this->release();
     }
@@ -316,21 +298,16 @@ namespace Gears
     //
     // class SimplePtr
     //
-    template <typename Type>
-    SimplePtr<Type>::SimplePtr(Type* object) noexcept
-      : ptr_(object)
-    {}
+    template <typename Type> SimplePtr<Type>::SimplePtr(Type* object) noexcept : ptr_(object)
+    {
+    }
 
-    template <typename Type>
-    Type*
-    SimplePtr<Type>::in() noexcept
+    template <typename Type> Type* SimplePtr<Type>::in() noexcept
     {
       return ptr_;
     }
 
-    template <typename Type>
-    Type*
-    SimplePtr<Type>::retn() noexcept
+    template <typename Type> Type* SimplePtr<Type>::retn() noexcept
     {
       Type* ptr(ptr_);
       ptr_ = 0;
@@ -342,26 +319,23 @@ namespace Gears
 
   // All of these are initialized statically, before instance calls
   template <typename Single, typename Pointer, const int PRIORITY>
-  typename Singleton<Single, Pointer, PRIORITY>::Lock
-  Singleton<Single, Pointer, PRIORITY>::mutex_ = STATIC_MUTEX_INITIALIZER;
+  typename Singleton<Single, Pointer, PRIORITY>::Lock Singleton<Single, Pointer, PRIORITY>::
+    mutex_ = STATIC_MUTEX_INITIALIZER;
 
   template <typename Single, typename Pointer, const int PRIORITY>
-  SigAtomicType
-  Singleton<Single, Pointer, PRIORITY>::initialized_ = 0;
+  SigAtomicType Singleton<Single, Pointer, PRIORITY>::initialized_ = 0;
 
   template <typename Single, typename Pointer, const int PRIORITY>
-  Single*
-  volatile Singleton<Single, Pointer, PRIORITY>::instance_ = 0;
+  Single* volatile Singleton<Single, Pointer, PRIORITY>::instance_ = 0;
 
   template <typename Single, typename Pointer, const int PRIORITY>
-  Single&
-  Singleton<Single, Pointer, PRIORITY>::instance() /*throw(Gears::Exception)*/
+  Single& Singleton<Single, Pointer, PRIORITY>::instance() /*throw(Gears::Exception)*/
   {
-    if(!initialized_)
+    if (!initialized_)
     {
       {
         Lock::WriteGuard guard(mutex_);
-        if(!instance_)
+        if (!instance_)
         {
           Pointer single(new Single);
           new Helper::AtExitDestroyer<Single, Pointer, PRIORITY>(single.in());
@@ -375,21 +349,19 @@ namespace Gears
 
   /* Unique impl */
   template <typename Determinator>
-  typename Unique<Determinator>::Lock
-  Unique<Determinator>::mutex_ = STATIC_MUTEX_INITIALIZER;
+  typename Unique<Determinator>::Lock Unique<Determinator>::mutex_ = STATIC_MUTEX_INITIALIZER;
 
-  template<typename Determinator>
-  Unique<Determinator>* volatile
-  Unique<Determinator>::existing_ = NULL;
+  template <typename Determinator>
+  Unique<Determinator>* volatile Unique<Determinator>::existing_ = NULL;
 
-  template<typename Determinator>
+  template <typename Determinator>
   Unique<Determinator>::Unique() /*throw(Exception, Gears::Exception)*/
   {
     static const char* FUN = "Unique<...>::Unique()";
 
     Lock::WriteGuard guard(mutex_);
 
-    if(existing_)
+    if (existing_)
     {
       ErrorStream ostr;
       ostr << FUN << ": another unique " << existing_ << " still exists";
@@ -399,8 +371,7 @@ namespace Gears
     existing_ = this;
   }
 
-  template<typename Determinator>
-  Unique<Determinator>::~Unique() noexcept
+  template <typename Determinator> Unique<Determinator>::~Unique() noexcept
   {
     Lock::WriteGuard guard(mutex_);
     assert(existing_ == this);
@@ -408,69 +379,64 @@ namespace Gears
   }
 
   /* AllDestroyer::LoudCounter impl */
-  template<typename Determinator>
-  AllDestroyer<Determinator>::LoudCounter::LoudCounter() noexcept
-    : AtomicCounter(0)
-  {}
+  template <typename Determinator>
+  AllDestroyer<Determinator>::LoudCounter::LoudCounter() noexcept : AtomicCounter(0)
+  {
+  }
 
-  template<typename Determinator>
-  AllDestroyer<Determinator>::LoudCounter::~LoudCounter() noexcept
-  {}
+  template <typename Determinator> AllDestroyer<Determinator>::LoudCounter::~LoudCounter() noexcept
+  {
+  }
 
-  template<typename Determinator>
-  void
-  AllDestroyer<Determinator>::LoudCounter::check() noexcept
+  template <typename Determinator> void AllDestroyer<Determinator>::LoudCounter::check() noexcept
   {
     int counter = *this;
-    if(counter)
+    if (counter)
     {
       ErrorStream ostr;
-      ostr << "Not been removed " << counter << " of " <<
-        Determinator::PRINTABLE_NAME << "\n",
-      ::write(STDERR_FILENO, ostr.str().data(), ostr.str().size());
+      ostr << "Not been removed " << counter << " of " << Determinator::PRINTABLE_NAME << "\n",
+        ::write(STDERR_FILENO, ostr.str().data(), ostr.str().size());
     }
   }
 
   /* AllDestroyer::LoudCounterHolder class */
-  template<typename Determinator>
+  template <typename Determinator>
   AllDestroyer<Determinator>::LoudCounterHolder::LoudCounterHolder()
     /*throw(Gears::Exception)*/
     : counter_(new LoudCounter)
-  {}
+  {
+  }
 
-  template<typename Determinator>
+  template <typename Determinator>
   AllDestroyer<Determinator>::LoudCounterHolder::~LoudCounterHolder() noexcept
   {
     counter_->check();
   }
 
-  template<typename Determinator>
-  typename AllDestroyer<Determinator>::LoudCounter*
-  AllDestroyer<Determinator>::LoudCounterHolder::counter() noexcept
+  template <typename Determinator>
+  typename AllDestroyer<Determinator>::LoudCounter* AllDestroyer<Determinator>::LoudCounterHolder::
+    counter() noexcept
   {
     return counter_;
   }
 
   /* AllDestroyer impl */
-  template<typename Determinator>
+  template <typename Determinator>
   AllDestroyer<Determinator>::AllDestroyer() noexcept
-    : counter_(Gears::add_ref(
-        AllDestroyer<Determinator>::LoudCounterHolder::Single::
-          instance().counter()))
+    : counter_(Gears::
+          add_ref(AllDestroyer<Determinator>::LoudCounterHolder::Single::instance().counter()))
   {
     counter_->add(1);
   }
 
-  template<typename Determinator>
-  AllDestroyer<Determinator>::AllDestroyer(const AllDestroyer& another)
-    noexcept
+  template <typename Determinator>
+  AllDestroyer<Determinator>::AllDestroyer(const AllDestroyer& another) noexcept
     : counter_(another.counter_)
   {
     counter_->add(1);
   }
 
-  template<typename Determinator>
-  AllDestroyer<Determinator>::~AllDestroyer() noexcept
+  template <typename Determinator> AllDestroyer<Determinator>::~AllDestroyer() noexcept
   {
     counter_->add(-1);
   }

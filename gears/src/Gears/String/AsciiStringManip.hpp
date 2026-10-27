@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -32,138 +32,122 @@
 #include <Gears/Basic/Exception.hpp>
 #include <Gears/Basic/SubString.hpp>
 
-namespace Gears
+namespace Gears::Ascii
 {
   /**
    * Contain routines that manipulate only with ASCII encoded data.
    * Bytes range in 0-127.
    */
-  namespace Ascii
-  {
-    /**
+
+  /**
      * these functions don't use stdlib codepage and
      * affect only for (0-127) chars.
      */
-    char
-    to_lower(char ch) noexcept;
+  char to_lower(char ch) noexcept;
 
-    char
-    to_upper(char ch) noexcept;
+  char to_upper(char ch) noexcept;
 
-    void
-    to_lower(std::string& dest) noexcept;
+  void to_lower(std::string& dest) noexcept;
 
-    void
-    to_upper(std::string& dest) noexcept;
+  void to_upper(std::string& dest) noexcept;
 
-    template <typename Iterator>
-    void
-    to_lower(Iterator first, Iterator last) /*throw (Gears::Exception)*/;
+  template <typename Iterator>
+  void to_lower(Iterator first, Iterator last) /*throw (Gears::Exception)*/;
 
-    template <typename Iterator>
-    void
-    to_upper(Iterator first, Iterator last) /*throw (Gears::Exception)*/;
+  template <typename Iterator>
+  void to_upper(Iterator first, Iterator last) /*throw (Gears::Exception)*/;
 
-    namespace Category
-    {
-      /**
+  namespace Category
+  {
+    /**
        * Category inherits a predicate and allows to search strings
        * for belongins/nonbelongins chars
        */
-      template <typename Predicate>
-      struct Category :
-        public std::unary_function<char, bool>,
-        public Predicate
-      {
-      public:
-        /**
+    template <typename Predicate>
+    struct Category : public std::unary_function<char, bool>, public Predicate
+    {
+    public:
+      /**
          * Constructor
          * Calls default constructor of Predicate
          */
-        Category() /*throw (Gears::Exception)*/;
+      Category() /*throw (Gears::Exception)*/;
 
-        /**
+      /**
          * Constructor
          * Calls constructor of Predicate with data
          * @param data data for constructor of Predicate
          */
-        template <typename T>
-        Category(const T& data) /*throw (Gears::Exception)*/;
+      template <typename T> Category(const T& data) /*throw (Gears::Exception)*/;
 
-        /**
+      /**
          * Constructor
          * Calls constructor of Predicate with data1 and data2
          * @param data1 data for constructor of Predicate
          * @param data2 data for constructor of Predicate
          */
-        template <typename T1, typename T2>
-        Category(const T1& data1, const T2& data2) /*throw (Gears::Exception)*/;
+      template <typename T1, typename T2>
+      Category(const T1& data1, const T2& data2) /*throw (Gears::Exception)*/;
 
-        /**
+      /**
          * Constructor
          * Calls constructor of Predicate with data1, data2 and data3
          * @param data1 data for constructor of Predicate
          * @param data2 data for constructor of Predicate
          * @param data3 data for constructor of Predicate
          */
-        template <typename T1, typename T2, typename T3>
-        Category(const T1& data1, const T2& data2, const T3& data3)
-          /*throw (Gears::Exception)*/;
+      template <typename T1, typename T2, typename T3>
+      Category(const T1& data1, const T2& data2, const T3& data3)
+        /*throw (Gears::Exception)*/;
 
-        /**
+      /**
          * Checks if character is in the set
          * @param ch character to test
          * @return Presence of the character in the set
          */
-        bool
-        is_owned(char ch) const noexcept;
+      bool is_owned(char ch) const noexcept;
 
-        /**
+      /**
          * Checks category for emptiness
          * @return true if category has no symbol inside
          */
-        bool
-        empty() const noexcept;
+      bool empty() const noexcept;
 
-        /**
+      /**
          * Finds the first character in the string which belongs to the set
          * @param str the string to search in
          * @return Pointer to found character or NULL if none
          */
-        const char*
-        find_owned(const char* str) const noexcept;
+      const char* find_owned(const char* str) const noexcept;
 
-        /**
+      /**
          * Finds the first character in the string which belongs to the set
          * @param begin beginning of the string to search in
          * @param end end of the string to search in
          * @param octets_length used for storing length of symbol in octets
          * @return Pointer to found character or end if none
          */
-        const char*
-        find_owned(const char* begin, const char* end,
-          unsigned long* octets_length = 0) const noexcept;
+      const char* find_owned(const char* begin, const char* end,
+        unsigned long* octets_length = 0) const noexcept;
 
-        /**
+      /**
          * Finds the first character in the string which doesn't belong
          * to the set
          * @param str the string to search in
          * @return Pointer to found character or NULL if none
          */
-        const char*
-        find_nonowned(const char* str) const noexcept;
+      const char* find_nonowned(const char* str) const noexcept;
 
-        /**
+      /**
          * Finds the first character in the string which does not belong
          * to the set
          * @param begin beginning of the string to search in
          * @param end end of the string to search in
          * @return Pointer to found character or end if none
          */
-        const char*
-        find_nonowned(const char* begin, const char* end) const noexcept;
+      const char* find_nonowned(const char* begin, const char* end) const noexcept;
 
-        /**
+      /**
          * Finds the last character in the string which belongs to the set
          * @param pos The pointer to char beyond the string to search in
          * @param start The pointer to begin of the string to search in.
@@ -171,10 +155,9 @@ namespace Gears
          * @return Pointer to found character or original value of pos if
          * none.
          */
-        const char*
-        rfind_owned(const char* pos, const char* start) const noexcept;
+      const char* rfind_owned(const char* pos, const char* start) const noexcept;
 
-        /**
+      /**
          * Finds the last character in the string which does not belong
          * to the set
          * @param pos The pointer to char beyond  the string to search in
@@ -183,150 +166,134 @@ namespace Gears
          * @return Pointer to found character or original value of pos if
          * none.
          */
-        const char*
-        rfind_nonowned(const char* pos, const char* start) const noexcept;
-      };
+      const char* rfind_nonowned(const char* pos, const char* start) const noexcept;
+    };
 
-      /**
+    /**
        * Predicate for Category
        * Contains a table of symbols inside
        */
-      class CharTable
-      {
-      public:
-        /**
+    class CharTable
+    {
+    public:
+      /**
          * Default constructor.
          * Does not initialize the object.
          */
-        CharTable()
-          noexcept;
+      CharTable() noexcept;
 
-        /**
+      /**
          * Constructor
          * @param str List of characters in the set. '-' may be used for
          * ranges. To specify dash character it should be the first or the
          * last in the passed string or within a range
          * @param check_zero If nul character should be included in the set
          */
-        explicit
-        CharTable(const char* str, bool check_zero = false)
-          noexcept;
+      explicit CharTable(const char* str, bool check_zero = false) noexcept;
 
-        /**
+      /**
          * Constructor
          * Created object is a union of passed ones
          * @param first first object to unite
          * @param second second object to unite
          */
-        CharTable(const CharTable& first, const CharTable& second)
-          noexcept;
+      CharTable(const CharTable& first, const CharTable& second) noexcept;
 
-        /**
+      /**
          * Constructor
          * Created object is a union of passed ones
          * @param first first object to unite
          * @param second second object to unite
          * @param third third object to unite
          */
-        CharTable(const CharTable& first, const CharTable& second,
-          const CharTable& third)
-          noexcept;
+      CharTable(const CharTable& first, const CharTable& second, const CharTable& third) noexcept;
 
-        /**
+      /**
          * Constructor
          * Created object is a predicate result
          * @param predicate predicate for initialization
          */
-        template <typename Predicate>
-        explicit
-        CharTable(Predicate predicate) noexcept;
+      template <typename Predicate> explicit CharTable(Predicate predicate) noexcept;
 
-        bool
-        operator ()(char ch) const noexcept;
+      bool operator()(char ch) const noexcept;
 
-      private:
-        bool table_[256];
-      };
+    private:
+      bool table_[256];
+    };
 
-      /**
+    /**
        * Predicate for Category
        * Checks the one symbol
        */
-      template <const char SYMBOL>
-      struct Char1
-      {
-        /**
+    template <const char SYMBOL> struct Char1
+    {
+      /**
          * Checks if ch equals to SYMBOL
          * @return if ch equals to SYMBOL
          */
-        bool
-        operator ()(char ch) const noexcept;
-      };
+      bool operator()(char ch) const noexcept;
+    };
 
-      /**
+    /**
        * Predicate for Category
        * Checks the two symbols
        */
-      template <const char SYMBOL1, const char SYMBOL2>
-      struct Char2
-      {
-        /**
+    template <const char SYMBOL1, const char SYMBOL2> struct Char2
+    {
+      /**
          * Checks if ch equals to SYMBOL1 or SYMBOL2
          * @return if ch equals to SYMBOL1 or SYMBOL2
          */
-        bool
-        operator ()(char ch) const noexcept;
-      };
+      bool operator()(char ch) const noexcept;
+    };
 
-      /**
+    /**
        * Predicate for Category
        * Checks the three symbols
        */
-      template <const char SYMBOL1, const char SYMBOL2, const char SYMBOL3>
-      struct Char3
-      {
-        /**
+    template <const char SYMBOL1, const char SYMBOL2, const char SYMBOL3> struct Char3
+    {
+      /**
          * Checks if ch equals to SYMBOL1, SYMBOL2 or SYMBOL3
          * @return if ch equals to SYMBOL1, SYMBOL2 or SYMBOL3
          */
-        bool
-        operator ()(char ch) const noexcept;
-      };
-    }
+      bool operator()(char ch) const noexcept;
+    };
+  }
 
-    // Quick access classes for different Categories
-    typedef Category::Category<Category::CharTable> CharCategory;
-    template <const char SYMBOL>
-    struct Char1Category :
-      public Category::Category<Category::Char1<SYMBOL> >
-    {};
+  // Quick access classes for different Categories
+  using CharCategory = Category::Category<Category::CharTable>;
+  template <const char SYMBOL>
+  struct Char1Category : public Category::Category<Category::Char1<SYMBOL>>
+  {
+  };
 
-    template <const char SYMBOL1, const char SYMBOL2>
-    struct Char2Category :
-      public Category::Category<Category::Char2<SYMBOL1, SYMBOL2> >
-    {};
+  template <const char SYMBOL1, const char SYMBOL2>
+  struct Char2Category : public Category::Category<Category::Char2<SYMBOL1, SYMBOL2>>
+  {
+  };
 
-    template <const char SYMBOL1, const char SYMBOL2, const char SYMBOL3>
-    struct Char3Category :
-      public Category::Category<Category::Char3<SYMBOL1, SYMBOL2, SYMBOL3> >
-    {};
+  template <const char SYMBOL1, const char SYMBOL2, const char SYMBOL3>
+  struct Char3Category : public Category::Category<Category::Char3<SYMBOL1, SYMBOL2, SYMBOL3>>
+  {
+  };
 
-    /// Small and capital Latin letters.
-    extern const CharCategory ALPHA;
-    /// Arabic numerals
-    extern const CharCategory NUMBER;
-    /// Arabic numerals and Latin letters
-    extern const CharCategory ALPHA_NUM;
-    /// Numerals used in octal notation
-    extern const CharCategory OCTAL_NUMBER;
-    /// Numerals and letters used in hexadecimal notation
-    extern const CharCategory HEX_NUMBER;
-    /// Space characters
-    extern const CharCategory SPACE;
-    /// Symbols are used in regular expressions.
-    extern const CharCategory REGEX_META;
+  /// Small and capital Latin letters.
+  extern const CharCategory ALPHA;
+  /// Arabic numerals
+  extern const CharCategory NUMBER;
+  /// Arabic numerals and Latin letters
+  extern const CharCategory ALPHA_NUM;
+  /// Numerals used in octal notation
+  extern const CharCategory OCTAL_NUMBER;
+  /// Numerals and letters used in hexadecimal notation
+  extern const CharCategory HEX_NUMBER;
+  /// Space characters
+  extern const CharCategory SPACE;
+  /// Symbols are used in regular expressions.
+  extern const CharCategory REGEX_META;
 
-    /**
+  /**
      * Finds and replaces all sequences of chars from CharCategory
      * to replace string.
      * @param dest result put here.
@@ -336,15 +303,11 @@ namespace Gears
      * @param to_replace all sequences of chars from this category, will
      * be replaced by replace.
      */
-    void
-    flatten(std::string& dest,
-      const char* str,
-      size_t size,
-      const SubString& replacement = SubString(" ", 1),
-      const CharCategory& to_replace = SPACE)
-      /*throw (Gears::Exception)*/;
+  void flatten(std::string& dest, const char* str, size_t size,
+    const SubString& replacement = SubString(" ", 1), const CharCategory& to_replace = SPACE)
+    /*throw (Gears::Exception)*/;
 
-    /**
+  /**
      * Finds and replaces all sequences of chars from CharCategory
      * to replace string.
      * @param dest result put here.
@@ -354,15 +317,11 @@ namespace Gears
      * @param to_replace all sequences of chars from this category, will
      * be replaced by replace.
      */
-    void
-    flatten(std::string& dest,
-      const char* first,
-      const char* last,
-      const SubString& replacement = SubString(" ", 1),
-      const CharCategory& to_replace = SPACE)
-      /*throw (Gears::Exception)*/;
+  void flatten(std::string& dest, const char* first, const char* last,
+    const SubString& replacement = SubString(" ", 1), const CharCategory& to_replace = SPACE)
+    /*throw (Gears::Exception)*/;
 
-    /**
+  /**
      * Compare caseless two non zero terminated string
      * (strings can contain 0 inside).
      * Check str1 ? str2 where ? may be '<', '=' and '>'
@@ -374,14 +333,10 @@ namespace Gears
      * or greater than zero, if str1 is found, respectively,
      * to be less than, to match, or be greater than str2
      */
-    int
-    compare_caseless(const char* str1,
-      std::size_t len1,
-      const char* str2,
-      std::size_t len2)
-      noexcept;
+  int compare_caseless(const char* str1, std::size_t len1, const char* str2,
+    std::size_t len2) noexcept;
 
-    /**
+  /**
      * Checks two non zero terminated strings on equality
      * (strings can contain 0 inside).
      * Check str1 == str2
@@ -392,14 +347,10 @@ namespace Gears
      * @return true if lengths of string are equal and str1 == str2
      * ignoring case, false if not.
      */
-    bool
-    equal_caseless(const char* str1,
-      std::size_t len1,
-      const char* str2,
-      std::size_t len2)
-      noexcept;
+  bool
+  equal_caseless(const char* str1, std::size_t len1, const char* str2, std::size_t len2) noexcept;
 
-    /**
+  /**
      * Checks SubString and non zero terminated string on equality
      * (strings can contain 0 inside).
      * Check str == str2
@@ -409,13 +360,9 @@ namespace Gears
      * @return true if lengths of string are equal and str == str2
      * ignoring case, false if not.
      */
-    bool
-    equal_caseless(const SubString& str,
-      const char* str2,
-      std::size_t len2)
-      noexcept;
+  bool equal_caseless(const SubString& str, const char* str2, std::size_t len2) noexcept;
 
-    /**
+  /**
      * Checks SubStrings on equality ignore possible \\0 characters
      * and ignore letters case.
      * (strings can contain 0 inside).
@@ -425,449 +372,400 @@ namespace Gears
      * @return true if lengths of string are equal and str1 == str2
      * ignoring case, false if not.
      */
-    bool
-    equal_caseless(const SubString& str1, const SubString& str2)
-      noexcept;
+  bool equal_caseless(const SubString& str1, const SubString& str2) noexcept;
 
-    /// Small and capital Latin letters.
-    extern const CharCategory ALPHA;
-    /// Arabic numerals
-    extern const CharCategory NUMBER;
-    /// Arabic numerals and Latin letters
-    extern const CharCategory ALPHA_NUM;
-    /// Numerals used in octal notation
-    extern const CharCategory OCTAL_NUMBER;
-    /// Numerals and letters used in hexadecimal notation
-    extern const CharCategory HEX_NUMBER;
-    /// Space characters
-    extern const CharCategory SPACE;
-    /// Symbols are used in regular expressions.
-    extern const CharCategory REGEX_META;
+  /// Small and capital Latin letters.
+  extern const CharCategory ALPHA;
+  /// Arabic numerals
+  extern const CharCategory NUMBER;
+  /// Arabic numerals and Latin letters
+  extern const CharCategory ALPHA_NUM;
+  /// Numerals used in octal notation
+  extern const CharCategory OCTAL_NUMBER;
+  /// Numerals and letters used in hexadecimal notation
+  extern const CharCategory HEX_NUMBER;
+  /// Space characters
+  extern const CharCategory SPACE;
+  /// Symbols are used in regular expressions.
+  extern const CharCategory REGEX_META;
 
-    typedef const Char1Category<':'> SepColon;
-    typedef const Char1Category<','> SepComma;
-    typedef const Char1Category<'.'> SepPeriod;
-    typedef const Char1Category<'-'> SepMinus;
-    typedef const Char1Category<';'> SepSemCol;
-    typedef const Char1Category<'&'> SepAmp;
-    typedef const Char1Category<' '> SepSpace;
-    typedef const Char1Category<'='> SepEq;
-    typedef const Char1Category<'/'> SepSlash;
-    typedef const Char1Category<'#'> SepHash;
-    typedef const Char1Category<'|'> SepBar;
-    typedef const Char1Category<'\n'> SepNL;
-    typedef const Char1Category<'\t'> SepTab;
-    typedef const Char1Category<'_'> SepUnderscore;
-  }
+  using SepColon = const Char1Category<':'>;
+  using SepComma = const Char1Category<','>;
+  using SepPeriod = const Char1Category<'.'>;
+  using SepMinus = const Char1Category<'-'>;
+  using SepSemCol = const Char1Category<';'>;
+  using SepAmp = const Char1Category<'&'>;
+  using SepSpace = const Char1Category<' '>;
+  using SepEq = const Char1Category<'='>;
+  using SepSlash = const Char1Category<'/'>;
+  using SepHash = const Char1Category<'#'>;
+  using SepBar = const Char1Category<'|'>;
+  using SepNL = const Char1Category<'\n'>;
+  using SepTab = const Char1Category<'\t'>;
+  using SepUnderscore = const Char1Category<'_'>;
+
 }
 
-namespace Gears
+namespace Gears::Ascii
 {
-  namespace Ascii
-  {
-    /**
+
+  /**
      * Contain names of tables, need for effective data manipulation
      */
-    namespace Tables
-    {
-      /// Table convert ASCII (0-127) data to lower latin letters
-      extern const char ASCII_TOLOWER_TABLE[256];
-      /// Table convert ASCII (0-127) data to upper latin letters
-      extern const char ASCII_TOUPPER_TABLE[256];
-    }
+  namespace Tables
+  {
+    /// Table convert ASCII (0-127) data to lower latin letters
+    extern const char ASCII_TOLOWER_TABLE[256];
+    /// Table convert ASCII (0-127) data to upper latin letters
+    extern const char ASCII_TOUPPER_TABLE[256];
+  }
 
-    inline void
-    flatten(std::string& dest, const char* first, const char* last,
-      const SubString& replacement, const CharCategory& to_replace)
-      /*throw (Gears::Exception)*/
-    {
-      const char* const REPLACEMENT_DATA = replacement.data();
-      const size_t REPLACEMENT_SIZE = replacement.size();
-      const char* const REPLACEMENT_END = REPLACEMENT_DATA + REPLACEMENT_SIZE;
-      dest.resize((last - first) *
-        (REPLACEMENT_SIZE ? REPLACEMENT_SIZE : 1));
-      char* out = &dest[0];
-      const char* current;
+  inline void flatten(std::string& dest, const char* first, const char* last,
+    const SubString& replacement, const CharCategory& to_replace)
+  /*throw (Gears::Exception)*/
+  {
+    const char* const REPLACEMENT_DATA = replacement.data();
+    const size_t REPLACEMENT_SIZE = replacement.size();
+    const char* const REPLACEMENT_END = REPLACEMENT_DATA + REPLACEMENT_SIZE;
+    dest.resize((last - first) * (REPLACEMENT_SIZE ? REPLACEMENT_SIZE : 1));
+    char* out = &dest[0];
+    const char* current;
 
-      while (first != last)
+    while (first != last)
+    {
+      current = to_replace.find_owned(first, last);
+      // last if haven't spaces
+      // copy text before space
+      out = std::copy(first, current, out);
+
+      if (current == last)
       {
-        current = to_replace.find_owned(first, last);
-        // last if haven't spaces
-        // copy text before space
-        out = std::copy(first, current, out);
-
-        if (current == last)
-        {
-          break;
-        }
-        out = std::copy(REPLACEMENT_DATA, REPLACEMENT_END, out);
-        first = to_replace.find_nonowned(current, last);
+        break;
       }
-      dest.resize(out - &dest[0]);
+      out = std::copy(REPLACEMENT_DATA, REPLACEMENT_END, out);
+      first = to_replace.find_nonowned(current, last);
     }
+    dest.resize(out - &dest[0]);
+  }
 
-    inline void
-    flatten(std::string& dest, const char* str, size_t size,
-      const SubString& replacement, const CharCategory& to_replace)
-      /*throw (Gears::Exception)*/
+  inline void flatten(std::string& dest, const char* str, size_t size, const SubString& replacement,
+    const CharCategory& to_replace)
+  /*throw (Gears::Exception)*/
+  {
+    flatten(dest, str, str + size, replacement, to_replace);
+  }
+
+  inline char to_lower(char ch) noexcept
+  {
+    return Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(ch)];
+  }
+
+  inline char to_upper(char ch) noexcept
+  {
+    return Tables::ASCII_TOUPPER_TABLE[static_cast<uint8_t>(ch)];
+  }
+
+  template <typename Iterator>
+  void to_lower(Iterator first, Iterator last) /*throw (Gears::Exception)*/
+  {
+    for (; first != last; ++first)
     {
-      flatten(dest, str, str + size, replacement, to_replace);
+      *first = Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*first)];
     }
+  }
 
-    inline char
-    to_lower(char ch) noexcept
+  template <typename Iterator>
+  void to_upper(Iterator first, Iterator last) /*throw (Gears::Exception)*/
+  {
+    for (; first != last; ++first)
     {
-      return Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(ch)];
+      *first = Tables::ASCII_TOUPPER_TABLE[static_cast<uint8_t>(*first)];
     }
+  }
 
-    inline char
-    to_upper(char ch) noexcept
-    {
-      return Tables::ASCII_TOUPPER_TABLE[static_cast<uint8_t>(ch)];
-    }
+  inline void to_lower(std::string& dest) noexcept
+  {
+    to_lower(dest.begin(), dest.end());
+  }
 
-    template <typename Iterator>
-    void
-    to_lower(Iterator first, Iterator last) /*throw (Gears::Exception)*/
-    {
-      for (; first != last; ++first)
-      {
-        *first =
-          Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*first)];
-      }
-    }
+  inline void to_upper(std::string& dest) noexcept
+  {
+    to_upper(dest.begin(), dest.end());
+  }
 
-    template <typename Iterator>
-    void
-    to_upper(Iterator first, Iterator last) /*throw (Gears::Exception)*/
-    {
-      for (; first != last; ++first)
-      {
-        *first =
-          Tables::ASCII_TOUPPER_TABLE[static_cast<uint8_t>(*first)];
-      }
-    }
-
-    inline void
-    to_lower(std::string& dest) noexcept
-    {
-      to_lower(dest.begin(), dest.end());
-    }
-
-    inline void
-    to_upper(std::string& dest) noexcept
-    {
-      to_upper(dest.begin(), dest.end());
-    }
-
-    inline int
-    compare_caseless(const char* str1, std::size_t len1,
-      const char* str2, std::size_t len2)
-      noexcept
-    {
-      std::size_t len = std::min(len1, len2);
-      if (str1 == str2 || len == 0)
-      {
-        if (len1 != len2)
-        {
-          return len1 < len2 ? -1 : 1;
-        }
-        return 0;
-      }
-
-      int result;
-      while (!(result =
-        Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str1++)] -
-        Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str2++)]))
-      {
-        if (!--len)
-        {
-          break;
-        }
-      }
-
-      if (result == 0 && len1 != len2)
-      {
-        return len1 < len2 ? -1 : 1;
-      }
-      return result;
-    }
-
-    inline bool
-    equal_caseless(const char* str1, std::size_t len1,
-      const char* str2)
-      noexcept
-    {
-      for (const char* const END = str1 + len1; str1 != END;)
-      {
-        const char CH(*str2++);
-        if (!CH || Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(CH)] !=
-          Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str1++)])
-        {
-          return false;
-        }
-      }
-
-      return !*str2;
-    }
-
-    inline bool
-    equal_caseless(const char* str1, std::size_t len1,
-      const char* str2, std::size_t len2)
-      noexcept
+  inline int
+  compare_caseless(const char* str1, std::size_t len1, const char* str2, std::size_t len2) noexcept
+  {
+    std::size_t len = std::min(len1, len2);
+    if (str1 == str2 || len == 0)
     {
       if (len1 != len2)
       {
+        return len1 < len2 ? -1 : 1;
+      }
+      return 0;
+    }
+
+    int result;
+    while (!(result = Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str1++)] -
+                      Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str2++)]))
+    {
+      if (!--len)
+      {
+        break;
+      }
+    }
+
+    if (result == 0 && len1 != len2)
+    {
+      return len1 < len2 ? -1 : 1;
+    }
+    return result;
+  }
+
+  inline bool equal_caseless(const char* str1, std::size_t len1, const char* str2) noexcept
+  {
+    for (const char* const END = str1 + len1; str1 != END;)
+    {
+      const char CH(*str2++);
+      if (!CH || Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(CH)] !=
+                   Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str1++)])
+      {
         return false;
       }
-      if (str1 == str2 || len1 == 0)
-      {
-        return true;
-      }
+    }
 
-      while (Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str1++)] ==
-        Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str2++)])
-      {
-        if (!--len1)
-        {
-          return true;
-        }
-      }
+    return !*str2;
+  }
 
+  inline bool
+  equal_caseless(const char* str1, std::size_t len1, const char* str2, std::size_t len2) noexcept
+  {
+    if (len1 != len2)
+    {
       return false;
     }
 
-    inline bool
-    equal_caseless(const SubString& str,
-      const char* str2, std::size_t len2)
-      noexcept
+    if (str1 == str2 || len1 == 0)
     {
-      return equal_caseless(str.data(), str.size(), str2, len2);
+      return true;
     }
 
-    inline bool
-    equal_caseless(const SubString& str, const char* str2)
-      noexcept
+    while (Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str1++)] ==
+           Tables::ASCII_TOLOWER_TABLE[static_cast<uint8_t>(*str2++)])
     {
-      return equal_caseless(str.data(), str.size(), str2);
-    }
-
-    inline bool
-    equal_caseless(const SubString& str1,
-      const SubString& str2)
-      noexcept
-    {
-      return equal_caseless(str1.data(), str1.size(),
-        str2.data(), str2.size());
-    }
-
-    namespace Category
-    {
-      //
-      // Category class
-      //
-      template <typename Predicate>
-      Category<Predicate>::Category() /*throw (Gears::Exception)*/
-      {}
-
-      template <typename Predicate>
-      template <typename T>
-      Category<Predicate>::Category(const T& data) /*throw (Gears::Exception)*/
-        : Predicate(data)
-      {}
-
-      template <typename Predicate>
-      template <typename T1, typename T2>
-      Category<Predicate>::Category(const T1& data1, const T2& data2)
-        /*throw (Gears::Exception)*/
-        : Predicate(data1, data2)
-      {}
-
-      template <typename Predicate>
-      template <typename T1, typename T2, typename T3>
-      Category<Predicate>::Category(const T1& data1, const T2& data2,
-        const T3& data3) /*throw (Gears::Exception)*/
-        : Predicate(data1, data2, data3)
-      {}
-
-      template <typename Predicate>
-      bool
-      Category<Predicate>::is_owned(char ch) const noexcept
+      if (!--len1)
       {
-        return Predicate::operator ()(ch);
-      }
-
-      template <typename Predicate>
-      bool
-      Category<Predicate>::empty() const noexcept
-      {
-        for (char ch = CHAR_MIN; ; ch++)
-        {
-          if (is_owned(ch))
-          {
-            return false;
-          }
-          if (ch == CHAR_MAX)
-          {
-            break;
-          }
-        }
         return true;
       }
+    }
 
-      template <typename Predicate>
-      const char*
-      Category<Predicate>::find_owned(const char* str) const noexcept
+    return false;
+  }
+
+  inline bool equal_caseless(const SubString& str, const char* str2, std::size_t len2) noexcept
+  {
+    return equal_caseless(str.data(), str.size(), str2, len2);
+  }
+
+  inline bool equal_caseless(const SubString& str, const char* str2) noexcept
+  {
+    return equal_caseless(str.data(), str.size(), str2);
+  }
+
+  inline bool equal_caseless(const SubString& str1, const SubString& str2) noexcept
+  {
+    return equal_caseless(str1.data(), str1.size(), str2.data(), str2.size());
+  }
+
+  namespace Category
+  {
+    //
+    // Category class
+    //
+    template <typename Predicate> Category<Predicate>::Category() /*throw (Gears::Exception)*/
+    {
+    }
+
+    template <typename Predicate>
+    template <typename T>
+    Category<Predicate>::Category(const T& data) /*throw (Gears::Exception)*/
+      : Predicate(data)
+    {
+    }
+
+    template <typename Predicate>
+    template <typename T1, typename T2>
+    Category<Predicate>::Category(const T1& data1, const T2& data2)
+      /*throw (Gears::Exception)*/
+      : Predicate(data1, data2)
+    {
+    }
+
+    template <typename Predicate>
+    template <typename T1, typename T2, typename T3>
+    Category<Predicate>::
+      Category(const T1& data1, const T2& data2, const T3& data3) /*throw (Gears::Exception)*/
+      : Predicate(data1, data2, data3)
+    {
+    }
+
+    template <typename Predicate> bool Category<Predicate>::is_owned(char ch) const noexcept
+    {
+      return Predicate::operator()(ch);
+    }
+
+    template <typename Predicate> bool Category<Predicate>::empty() const noexcept
+    {
+      for (char ch = CHAR_MIN;; ch++)
       {
-        for (char ch; (ch = *str) != '\0'; str++)
+        if (is_owned(ch))
         {
-          if (is_owned(ch))
+          return false;
+        }
+
+        if (ch == CHAR_MAX)
+        {
+          break;
+        }
+      }
+      return true;
+    }
+
+    template <typename Predicate>
+    const char* Category<Predicate>::find_owned(const char* str) const noexcept
+    {
+      for (char ch; (ch = *str) != '\0'; str++)
+      {
+        if (is_owned(ch))
+        {
+          return str;
+        }
+      }
+      return is_owned('\0') ? str : 0;
+    }
+
+    template <typename Predicate>
+    const char* Category<Predicate>::
+      find_owned(const char* str, const char* end, unsigned long* octets_length) const noexcept
+    {
+      for (; str != end; ++str)
+      {
+        if (is_owned(*str))
+        {
+          if (octets_length)
           {
-            return str;
+            *octets_length = 1;
           }
-        }
-        return is_owned('\0') ? str : 0;
-      }
 
-      template <typename Predicate>
-      const char*
-      Category<Predicate>::find_owned(const char* str, const char* end,
-        unsigned long* octets_length) const noexcept
+          return str;
+        }
+      }
+      return end;
+    }
+
+    template <typename Predicate>
+    const char* Category<Predicate>::find_nonowned(const char* str) const noexcept
+    {
+      for (char ch; (ch = *str) != '\0'; str++)
       {
-        for (; str != end; ++str)
+        if (!is_owned(ch))
         {
-          if (is_owned(*str))
-          {
-            if (octets_length)
-            {
-              *octets_length = 1;
-            }
-
-            return str;
-          }
+          return str;
         }
-        return end;
       }
+      return !is_owned('\0') ? str : 0;
+    }
 
-      template <typename Predicate>
-      const char*
-      Category<Predicate>::find_nonowned(const char* str) const
-        noexcept
+    template <typename Predicate>
+    const char* Category<Predicate>::find_nonowned(const char* str, const char* end) const noexcept
+    {
+      for (; str != end; ++str)
       {
-        for (char ch; (ch = *str) != '\0'; str++)
+        if (!is_owned(*str))
         {
-          if (!is_owned(ch))
-          {
-            return str;
-          }
+          return str;
         }
-        return !is_owned('\0') ? str : 0;
       }
+      return end;
+    }
 
-      template <typename Predicate>
-      const char*
-      Category<Predicate>::find_nonowned(const char* str,
-        const char* end) const
-        noexcept
+    template <typename Predicate>
+    const char* Category<Predicate>::rfind_owned(const char* pos, const char* start) const noexcept
+    {
+      const char* const NOT_FOUND = pos;
+      while (start != pos)
       {
-        for (; str != end; ++str)
+        if (is_owned(*--pos))
         {
-          if (!is_owned(*str))
-          {
-            return str;
-          }
+          return pos;
         }
-        return end;
       }
+      return NOT_FOUND;
+    }
 
-      template <typename Predicate>
-      const char*
-      Category<Predicate>::rfind_owned(const char* pos,
-        const char* start) const
-        noexcept
+    template <typename Predicate>
+    const char* Category<Predicate>::
+      rfind_nonowned(const char* pos, const char* start) const noexcept
+    {
+      const char* const NOT_FOUND = pos;
+      while (start != pos)
       {
-        const char* const NOT_FOUND = pos;
-        while (start != pos)
+        if (!is_owned(*--pos))
         {
-          if (is_owned(*--pos))
-          {
-            return pos;
-          }
-        }
-        return NOT_FOUND;
-      }
-
-      template <typename Predicate>
-      const char*
-      Category<Predicate>::rfind_nonowned(const char* pos,
-        const char* start) const
-        noexcept
-      {
-        const char* const NOT_FOUND = pos;
-        while (start != pos)
-        {
-          if (!is_owned(*--pos))
-          {
-            return pos;
-          }
-        }
-        return NOT_FOUND;
-      }
-
-      //
-      // CharTable class
-      //
-      inline
-      CharTable::CharTable() noexcept
-      {
-      }
-
-      template <typename Predicate>
-      CharTable::CharTable(Predicate predicate) noexcept
-      {
-        for (int i = 0; i < 256; i++)
-        {
-          table_[i] = predicate(i);
+          return pos;
         }
       }
+      return NOT_FOUND;
+    }
 
-      inline bool
-      CharTable::operator ()(char ch) const noexcept
-      {
-        return table_[static_cast<uint8_t>(ch)];
-      }
+    //
+    // CharTable class
+    //
+    inline CharTable::CharTable() noexcept
+    {
+    }
 
-      //
-      // Char1 class
-      //
-      template <const char SYMBOL>
-      bool
-      Char1<SYMBOL>::operator ()(char ch) const noexcept
+    template <typename Predicate> CharTable::CharTable(Predicate predicate) noexcept
+    {
+      for (int i = 0; i < 256; i++)
       {
-        return ch == SYMBOL;
-      }
-
-      //
-      // Char2 class
-      //
-      template <const char SYMBOL1, const char SYMBOL2>
-      bool
-      Char2<SYMBOL1, SYMBOL2>::operator ()(char ch) const noexcept
-      {
-        return ch == SYMBOL1 || ch == SYMBOL2;
-      }
-
-      //
-      // Char3 class
-      //
-      template <const char SYMBOL1, const char SYMBOL2, const char SYMBOL3>
-      bool
-      Char3<SYMBOL1, SYMBOL2, SYMBOL3>::operator ()(char ch) const noexcept
-      {
-        return ch == SYMBOL1 || ch == SYMBOL2 || ch == SYMBOL3;
+        table_[i] = predicate(i);
       }
     }
+
+    inline bool CharTable::operator()(char ch) const noexcept
+    {
+      return table_[static_cast<uint8_t>(ch)];
+    }
+
+    //
+    // Char1 class
+    //
+    template <const char SYMBOL> bool Char1<SYMBOL>::operator()(char ch) const noexcept
+    {
+      return ch == SYMBOL;
+    }
+
+    //
+    // Char2 class
+    //
+    template <const char SYMBOL1, const char SYMBOL2>
+    bool Char2<SYMBOL1, SYMBOL2>::operator()(char ch) const noexcept
+    {
+      return ch == SYMBOL1 || ch == SYMBOL2;
+    }
+
+    //
+    // Char3 class
+    //
+    template <const char SYMBOL1, const char SYMBOL2, const char SYMBOL3>
+    bool Char3<SYMBOL1, SYMBOL2, SYMBOL3>::operator()(char ch) const noexcept
+    {
+      return ch == SYMBOL1 || ch == SYMBOL2 || ch == SYMBOL3;
+    }
   }
+
 }
 
 #endif /*GEARS_ASCII_HPP_*/

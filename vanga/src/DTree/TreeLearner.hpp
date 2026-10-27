@@ -1,20 +1,20 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -40,20 +40,18 @@
 
 namespace Vanga
 {
-  typedef std::set<unsigned long> FeatureSet;
-  typedef std::vector<unsigned long> OrderedFeatureArray;
+  using FeatureSet = std::set<unsigned long>;
+  using OrderedFeatureArray = std::vector<unsigned long>;
 
   // TreeNodeDescr
-  struct TreeNodeDescr: public Gears::AtomicRefCountable
+  struct TreeNodeDescr : public Gears::AtomicRefCountable
   {
   public:
-    typedef std::map<double, double> AvgCoverMap;
-    typedef std::multimap<double, unsigned long> GainToFeatureMap;
+    using AvgCoverMap = std::map<double, double>;
+    using GainToFeatureMap = std::multimap<double, unsigned long>;
 
   public:
-    TreeNodeDescr()
-      : delta_prob(0.0)
-    {}
+    TreeNodeDescr();
 
     unsigned long feature_id;
     double delta_prob;
@@ -63,17 +61,12 @@ namespace Vanga
 
   public:
     // return avg => cover mapping
-    void
-    avg_covers(AvgCoverMap& avg_covers, unsigned long all_rows) const throw();
+    void avg_covers(AvgCoverMap& avg_covers, unsigned long all_rows) const throw();
 
-    void
-    gain_features(GainToFeatureMap& gain_to_features) const throw();
+    void gain_features(GainToFeatureMap& gain_to_features) const throw();
 
     Gears::IntrusivePtr<TreeNodeDescr>
-    sub_tree(
-      double min_avg,
-      unsigned long min_node_cover = 0)
-      const throw();
+    sub_tree(double min_avg, unsigned long min_node_cover = 0) const throw();
 
     /*
     std::string
@@ -91,92 +84,87 @@ namespace Vanga
       const throw();
     */
 
-    void
-    features(FeatureSet& features) const;
+    void features(FeatureSet& features) const;
 
   protected:
-    typedef std::map<unsigned long, double> FeatureToGainMap;
+    using FeatureToGainMap = std::map<unsigned long, double>;
 
   protected:
-    void
-    collect_avg_covers_(
-      AvgCoverMap& avg_covers,
-      unsigned long all_rows) const;
+    void collect_avg_covers_(AvgCoverMap& avg_covers, unsigned long all_rows) const;
 
-    void
-    collect_feature_gains_(
-      FeatureToGainMap& feature_to_gains)
-      const;
+    void collect_feature_gains_(FeatureToGainMap& feature_to_gains) const;
   };
 
-  typedef Gears::IntrusivePtr<TreeNodeDescr> TreeNodeDescr_var;
+  inline TreeNodeDescr::TreeNodeDescr() : delta_prob(0.0)
+  {
+  }
+
+  using TreeNodeDescr_var = Gears::IntrusivePtr<TreeNodeDescr>;
 
   // TreeLearner
-  template<typename LabelType>
-  class TreeLearner
+  template <typename LabelType> class TreeLearner
   {
   public:
-    typedef SVM<LabelType> SVMT;
-    typedef LabelType LabelT;
+    using SVMT = SVM<LabelType>;
+    using LabelT = LabelType;
     //typedef GainType GainT;
 
-    typedef Gears::IntrusivePtr<const SVM<LabelType> > ConstSVM_var;
+    using ConstSVM_var = Gears::IntrusivePtr<const SVM<LabelType>>;
 
-    typedef Gears::IntrusivePtr<SVM<LabelType> > SVM_var;
+    using SVM_var = Gears::IntrusivePtr<SVM<LabelType>>;
 
-    typedef std::vector<SVM_var> SVMArray;
+    using SVMArray = std::vector<SVM_var>;
 
-    typedef std::deque<Row*> RowPtrArray;
+    using RowPtrArray = std::deque<Row*>;
 
-    typedef std::vector<unsigned long> FeatureIdArray;
+    using FeatureIdArray = std::vector<unsigned long>;
 
-    typedef std::unordered_map<unsigned long, SVM_var> FeatureRowsMap;
+    using FeatureRowsMap = std::unordered_map<unsigned long, SVM_var>;
 
     class LearnTreeHolder;
-    typedef Gears::IntrusivePtr<LearnTreeHolder> LearnTreeHolder_var;
+    using LearnTreeHolder_var = Gears::IntrusivePtr<LearnTreeHolder>;
 
     struct GainTreeNodeDescrKey
     {
       GainTreeNodeDescrKey(double gain_val, TreeNodeDescr* tree_node_val);
 
-      bool
-      operator<(const GainTreeNodeDescrKey& right) const;
+      bool operator<(const GainTreeNodeDescrKey& right) const;
 
       double gain;
       TreeNodeDescr_var tree_node;
     };
 
-    typedef std::multiset<GainTreeNodeDescrKey> GainToTreeNodeDescrMap;
+    using GainToTreeNodeDescrMap = std::multiset<GainTreeNodeDescrKey>;
 
     // BagHolder
-    struct BagHolder: public Gears::AtomicRefCountable
+    struct BagHolder : public Gears::AtomicRefCountable
     {
       FeatureIdArray features;
       FeatureRowsMap feature_rows;
       SVM_var bag;
 
     protected:
-      virtual ~BagHolder() throw() {}
+      virtual ~BagHolder() throw();
     };
 
-    typedef Gears::IntrusivePtr<BagHolder> BagHolder_var;
-    typedef std::vector<BagHolder_var> BagHolderArray;
+    using BagHolder_var = Gears::IntrusivePtr<BagHolder>;
+    using BagHolderArray = std::vector<BagHolder_var>;
 
     // BagPart
-    struct BagPart: public Gears::AtomicRefCountable
+    struct BagPart : public Gears::AtomicRefCountable
     {
       BagHolder_var bag_holder;
       SVM_var svm;
 
     protected:
-      virtual ~BagPart() throw() {}
+      virtual ~BagPart() throw();
     };
 
-    typedef Gears::IntrusivePtr<BagPart> BagPart_var;
-    typedef std::vector<BagPart_var> BagPartArray;
+    using BagPart_var = Gears::IntrusivePtr<BagPart>;
+    using BagPartArray = std::vector<BagPart_var>;
 
     // LearnContext
-    class LearnContext: public Gears::AtomicRefCountable
+    class LearnContext : public Gears::AtomicRefCountable
     {
       friend class TreeLearner;
 
@@ -187,15 +175,10 @@ namespace Vanga
         FSS_TOP3_RANDOM
       };
 
-      template<typename GainType>
-      DTree_var
-      train(
-        unsigned long max_add_depth,
-        unsigned long check_depth,
-        double alpha = 1.0,
+      template <typename GainType>
+      DTree_var train(unsigned long max_add_depth, unsigned long check_depth, double alpha = 1.0,
         FeatureSelectionStrategy feature_selection_strategy = FSS_BEST,
-        bool allow_negative_gain = false,
-        unsigned long gain_check_bags = 0);
+        bool allow_negative_gain = false, unsigned long gain_check_bags = 0);
 
     protected:
       struct TreeReplace
@@ -206,10 +189,7 @@ namespace Vanga
 
       struct DigCacheKey
       {
-        DigCacheKey(unsigned long tree_id_val, unsigned long bag_id_val)
-          : tree_id(tree_id_val),
-            bag_id(bag_id_val)
-        {}
+        DigCacheKey(unsigned long tree_id_val, unsigned long bag_id_val);
 
         unsigned long tree_id;
         unsigned long bag_id;
@@ -221,44 +201,27 @@ namespace Vanga
         double best_gain;
       };
 
-      typedef std::map<DigCacheKey, DigCache> DigCacheMap;
+      using DigCacheMap = std::map<DigCacheKey, DigCache>;
 
     protected:
-      LearnContext(
-        Gears::TaskRunner* task_runner,
-        const BagPartArray& bags,
-        const DTree* tree);
+      LearnContext(Gears::TaskRunner* task_runner, const BagPartArray& bags, const DTree* tree);
 
       virtual ~LearnContext() throw();
 
-      template<typename GainType>
+      template <typename GainType>
       LearnTreeHolder_var
-      fill_learn_tree_(
-        unsigned long& max_tree_id,
-        const BagPartArray& bags,
-        const DTree* tree);
+      fill_learn_tree_(unsigned long& max_tree_id, const BagPartArray& bags, const DTree* tree);
 
-      template<typename GainType>
+      template <typename GainType>
       void
-      fetch_nodes_(
-        std::multimap<double, TreeReplace>& nodes,
-        LearnTreeHolder* tree,
-        double prob,
-        unsigned long cur_depth,
-        unsigned long max_add_depth,
-        unsigned long check_depth,
-        double alpha_coef,
-        FeatureSelectionStrategy feature_selection_strategy,
-        bool allow_negative_gain,
-        unsigned long gain_check_bags);
+      fetch_nodes_(std::multimap<double, TreeReplace>& nodes, LearnTreeHolder* tree, double prob,
+        unsigned long cur_depth, unsigned long max_add_depth, unsigned long check_depth,
+        double alpha_coef, FeatureSelectionStrategy feature_selection_strategy,
+        bool allow_negative_gain, unsigned long gain_check_bags);
 
-      DTree_var
-      fill_dtree_(LearnTreeHolder* learn_tree_holder);
+      DTree_var fill_dtree_(LearnTreeHolder* learn_tree_holder);
 
-      void
-      adapt_learn_tree_holder_(
-        LearnTreeHolder* tree,
-        const BagPartArray& bags);
+      void adapt_learn_tree_holder_(LearnTreeHolder* tree, const BagPartArray& bags);
 
     protected:
       Gears::TaskRunner_var task_runner_;
@@ -275,19 +238,15 @@ namespace Vanga
       DigCacheMap dig_cache_;
     };
 
-    typedef Gears::IntrusivePtr<LearnContext>
-      LearnContext_var;
+    using LearnContext_var = Gears::IntrusivePtr<LearnContext>;
 
     // Context
-    class Context: public Gears::AtomicRefCountable
+    class Context : public Gears::AtomicRefCountable
     {
       friend class TreeLearner;
 
     public:
-      LearnContext_var
-      create_learner(
-        const DTree* base_tree,
-        Gears::TaskRunner* task_runner = 0);
+      LearnContext_var create_learner(const DTree* base_tree, Gears::TaskRunner* task_runner = 0);
 
     protected:
       Context(const BagPartArray& bag_parts);
@@ -298,70 +257,39 @@ namespace Vanga
       BagPartArray bag_parts_;
     };
 
-    typedef Gears::IntrusivePtr<Context> Context_var;
+    using Context_var = Gears::IntrusivePtr<Context>;
 
   public:
-    static Context_var
-    create_context(const SVMArray& svm_array);
+    static Context_var create_context(const SVMArray& svm_array);
 
-    static double
-    eval_gain(
-      unsigned long yes_value_labeled,
-      unsigned long yes_value_unlabeled,
-      unsigned long labeled,
-      unsigned long unlabeled);
+    static double eval_gain(unsigned long yes_value_labeled, unsigned long yes_value_unlabeled,
+      unsigned long labeled, unsigned long unlabeled);
 
     /*
     static double
     delta_prob(const BagPartArray& bags);
     */
 
-    static void
-    revert_bags_pred_(
-      BagPartArray& res_bag_parts,
-      const BagPartArray& bag_parts,
+    static void revert_bags_pred_(BagPartArray& res_bag_parts, const BagPartArray& bag_parts,
       const typename LearnTreeHolder::Branch& branch);
 
-    static void
-    div_bags_(
-      BagPartArray& yes_bag_parts,
-      BagPartArray& no_bag_parts,
-      const BagPartArray& bag_parts,
-      unsigned long feature_id);
+    static void div_bags_(BagPartArray& yes_bag_parts, BagPartArray& no_bag_parts,
+      const BagPartArray& bag_parts, unsigned long feature_id);
 
-    static void
-    div_rows_(
-      SVM_var& yes_svm,
-      SVM_var& no_svm,
-      unsigned long feature_id,
-      const SVM<LabelType>* svm,
-      const FeatureRowsMap& feature_rows);
+    static void div_rows_(SVM_var& yes_svm, SVM_var& no_svm, unsigned long feature_id,
+      const SVM<LabelType>* svm, const FeatureRowsMap& feature_rows);
 
-    static void
-    fill_feature_rows(
-      FeatureIdArray& features,
-      FeatureRowsMap& feature_rows,
-      const SVM<LabelType>& svm)
-      throw();
+    static void fill_feature_rows(FeatureIdArray& features, FeatureRowsMap& feature_rows,
+      const SVM<LabelType>& svm) throw();
 
-    template<typename GainType>
-    static void
-    check_feature_(
-      double& res_gain,
-      LearnTreeHolder_var& new_tree,
-      PredCollector& pred_collector,
-      GainType& gain_calc,
-      double top_pred,
-      unsigned long feature_id,
+    template <typename GainType>
+    static void check_feature_(double& res_gain, LearnTreeHolder_var& new_tree,
+      PredCollector& pred_collector, GainType& gain_calc, double top_pred, unsigned long feature_id,
       //const FeatureRowsMap& feature_rows,
       //const SVM<LabelType>* feature_svm,
-      const BagPartArray& bags,
-      unsigned long gain_check_bags,
-      LearnTreeHolder* cur_tree,
+      const BagPartArray& bags, unsigned long gain_check_bags, LearnTreeHolder* cur_tree,
       //const SVM<LabelType>* node_svm,
-      unsigned long check_depth,
-      double alpha_coef)
-      throw();
+      unsigned long check_depth, double alpha_coef) throw();
 
   protected:
     // ProcessorType
@@ -370,142 +298,97 @@ namespace Vanga
     //   aggregate(const ResultType& yes_res, const ResultType& no_res)
     //   null_result()
     //
-    template<typename ProcessorType>
+    template <typename ProcessorType>
     static typename ProcessorType::ResultType
-    best_dig_(
-      Gears::TaskRunner* task_runner,
-      const typename ProcessorType::ContextType& context,
-      const ProcessorType& processor,
-      double base_pred,
-      double cur_delta,
-      const FeatureSet& skip_null_features,
-      const BagPartArray& bags,
-      unsigned long gain_check_bags,
-      LearnTreeHolder* cur_tree,
-      unsigned long max_depth,
-      unsigned long check_depth,
-      double alpha_coef,
-      bool allow_negative_gain)
-      throw();
+    best_dig_(Gears::TaskRunner* task_runner, const typename ProcessorType::ContextType& context,
+      const ProcessorType& processor, double base_pred, double cur_delta,
+      const FeatureSet& skip_null_features, const BagPartArray& bags, unsigned long gain_check_bags,
+      LearnTreeHolder* cur_tree, unsigned long max_depth, unsigned long check_depth,
+      double alpha_coef, bool allow_negative_gain) throw();
 
-    template<typename GainType>
-    static bool
-    get_best_feature_(
+    template <typename GainType>
+    static bool get_best_feature_(
       //unsigned long& best_feature_id,
-      double& best_gain,
-      LearnTreeHolder_var& new_tree,
+      double& best_gain, LearnTreeHolder_var& new_tree,
       /*
       double& best_no_delta,
       double& best_yes_delta,
       */
-      Gears::TaskRunner* task_runner,
-      double top_pred,
+      Gears::TaskRunner* task_runner, double top_pred,
       //const FeatureRowsMap& feature_rows,
-      const FeatureSet& skip_features,
-      const BagPartArray& bags,
-      unsigned long gain_check_bags,
+      const FeatureSet& skip_features, const BagPartArray& bags, unsigned long gain_check_bags,
       LearnTreeHolder* cur_tree,
       //const SVM<LabelType>* node_svm,
-      unsigned long check_depth,
-      bool top_eval,
-      double alpha_coef,
-      bool allow_negative_gain)
-      throw();
+      unsigned long check_depth, bool top_eval, double alpha_coef,
+      bool allow_negative_gain) throw();
 
-    template<typename GainType>
-    static double
-    eval_feature_gain_(
-      LearnTreeHolder_var& new_tree,
-      PredCollector& pred_collector,
-      GainType& gain_calc,
-      double add_delta,
-      const LearnTreeHolder* cur_tree,
+    template <typename GainType>
+    static double eval_feature_gain_(LearnTreeHolder_var& new_tree, PredCollector& pred_collector,
+      GainType& gain_calc, double add_delta, const LearnTreeHolder* cur_tree,
       unsigned long add_feature_id,
       //const OrderedFeatureArray& features,
-      const FeatureRowsMap& feature_rows,
-      const SVM<LabelType>* node_svm)
-      throw();
+      const FeatureRowsMap& feature_rows, const SVM<LabelType>* node_svm) throw();
 
-    template<typename GainType>
+    template <typename GainType>
+    static double eval_remove_gain_on_bags_(double& delta, PredCollector& pred_collector,
+      GainType& gain_calc, double add_delta, const BagPartArray& bags,
+      const typename LearnTreeHolder::Branch& branch) throw();
+
+    template <typename GainType>
     static double
-    eval_remove_gain_on_bags_(
-      double& delta,
-      PredCollector& pred_collector,
-      GainType& gain_calc,
-      double add_delta,
-      const BagPartArray& bags,
-      const typename LearnTreeHolder::Branch& branch)
-      throw();
+    eval_feature_gain_on_bags_(LearnTreeHolder_var& new_tree, PredCollector& pred_collector,
+      GainType& gain_calc, double add_delta, unsigned long feature_id, const BagPartArray& bags,
+      LearnTreeHolder* cur_tree, unsigned long gain_check_bags) throw();
 
-    template<typename GainType>
+    template <typename GainType>
+    static double eval_init_delta_(double& delta, PredCollector& pred_collector,
+      GainType& gain_calc, double top_pred, const SVM<LabelType>* node_svm,
+      const LabelType& add_label, bool eval_delta) throw();
+
+    template <typename GainType>
     static double
-    eval_feature_gain_on_bags_(
-      LearnTreeHolder_var& new_tree,
-      PredCollector& pred_collector,
-      GainType& gain_calc,
-      double add_delta,
-      unsigned long feature_id,
-      const BagPartArray& bags,
-      LearnTreeHolder* cur_tree,
-      unsigned long gain_check_bags)
-      throw();
+    eval_feature_gain_by_delta_(GainType& gain_calc, double add_delta, LearnTreeHolder* new_tree,
+      SVM<LabelType>* node_svm, const FeatureRowsMap& feature_rows) throw();
 
-    template<typename GainType>
-    static double
-    eval_init_delta_(
-      double& delta,
-      PredCollector& pred_collector,
-      GainType& gain_calc,
-      double top_pred,
-      const SVM<LabelType>* node_svm,
-      const LabelType& add_label,
-      bool eval_delta)
-      throw();
+    static void div_by_tree_(std::vector<std::pair<SVM_var, double>>& svms, LearnTreeHolder* tree,
+      const FeatureRowsMap& feature_rows) throw();
 
-    template<typename GainType>
-    static double
-    eval_feature_gain_by_delta_(
-      GainType& gain_calc,
-      double add_delta,
-      LearnTreeHolder* new_tree,
-      SVM<LabelType>* node_svm,
-      const FeatureRowsMap& feature_rows)
-      throw();
-
-    static void
-    div_by_tree_(
-      std::vector<std::pair<SVM_var, double> >& svms,
-      LearnTreeHolder* tree,
-      const FeatureRowsMap& feature_rows)
-      throw();
-
-    static void
-    div_group_(
-      typename SVM<LabelType>::PredictGroup_var& yes_group,
-      typename SVM<LabelType>::PredictGroup_var& no_group,
-      unsigned long feature_id,
-      const PredictGroup<LabelType>* div_group,
-      const FeatureRowsMap& feature_rows);
+    static void div_group_(typename SVM<LabelType>::PredictGroup_var& yes_group,
+      typename SVM<LabelType>::PredictGroup_var& no_group, unsigned long feature_id,
+      const PredictGroup<LabelType>* div_group, const FeatureRowsMap& feature_rows);
   };
+
+  template <typename LabelType>
+  TreeLearner<LabelType>::LearnContext::DigCacheKey::
+    DigCacheKey(unsigned long tree_id_val, unsigned long bag_id_val)
+    : tree_id(tree_id_val), bag_id(bag_id_val)
+  {
+  }
+
+  template <typename LabelType> TreeLearner<LabelType>::BagHolder::~BagHolder() throw()
+  {
+  }
+
+  template <typename LabelType> TreeLearner<LabelType>::BagPart::~BagPart() throw()
+  {
+  }
+
 }
 
 namespace Vanga
 {
-  template<typename LabelType>
-  TreeLearner<LabelType>::GainTreeNodeDescrKey::GainTreeNodeDescrKey(
-    double gain_val,
-    TreeNodeDescr* tree_node_val)
-    : gain(gain_val),
-      tree_node(Gears::add_ref(tree_node_val))
-  {}
-
-  template<typename LabelType>
-  bool
-  TreeLearner<LabelType>::GainTreeNodeDescrKey::operator<(
-    const GainTreeNodeDescrKey& right) const
+  template <typename LabelType>
+  TreeLearner<LabelType>::GainTreeNodeDescrKey::
+    GainTreeNodeDescrKey(double gain_val, TreeNodeDescr* tree_node_val)
+    : gain(gain_val), tree_node(Gears::add_ref(tree_node_val))
   {
-    return gain < right.gain ||
-      (gain == right.gain && tree_node < right.tree_node);
+  }
+
+  template <typename LabelType>
+  bool TreeLearner<LabelType>::GainTreeNodeDescrKey::
+  operator<(const GainTreeNodeDescrKey& right) const
+  {
+    return gain < right.gain || (gain == right.gain && tree_node < right.tree_node);
   }
 }
 

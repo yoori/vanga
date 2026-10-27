@@ -1,24 +1,26 @@
-/* 
+/*
  * This file is part of the Vanga distribution (https://github.com/yoori/vanga).
  * Vanga is library that implement multinode decision tree constructing algorithm
  * for regression prediction
  *
  * Copyright (c) 2014 Yuri Kuznecov <yuri.kuznecov@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <sstream>
+#include <limits>
+#include <cmath>
 
 //#include <LogCommons/LogCommons.hpp>
 //#include <LogCommons/LogCommons.ipp>
@@ -29,6 +31,7 @@
 namespace Vanga
 {
   const char PredictorLoader::DTREE_MODEL_HEAD[] = "dtree";
+  const char PredictorLoader::NUMERIC_DTREE_MODEL_HEAD[] = "dtree-float";
   const char PredictorLoader::UNION_MODEL_AVG_HEAD[] = "union-avg";
   const char PredictorLoader::UNION_MODEL_SUM_HEAD[] = "union-sum";
   const char PredictorLoader::UNION_MODEL_SUM_HEAD_2[] = "union";
@@ -40,6 +43,9 @@ namespace Vanga
       unsigned long feature_id;
       unsigned long yes_tree_id;
       unsigned long no_tree_id;
+      bool numeric = false;
+      float border = 0;
+      bool nan_go_right = false;
     };
 
     double delta_prob;
@@ -51,71 +57,95 @@ namespace Vanga
   class FastDTreeReindexFun
   {
   public:
-    FastDTreeReindexFun(unsigned long table_size)
-      : table_size_(table_size)
-    {}
+    FastDTreeReindexFun(unsigned long table_size);
 
-    unsigned long
-    operator()(unsigned long feature_id) const throw()
-    {
-      return feature_id % table_size_;
-    }
+    unsigned long operator()(unsigned long feature_id) const throw();
 
   protected:
     const unsigned long table_size_;
   };
 
-  // DTree impl
-  void
-  DTree::save(std::ostream& ostr) const
+  FastDTreeReindexFun::FastDTreeReindexFun(unsigned long table_size) : table_size_(table_size)
   {
-    ostr << PredictorLoader::DTREE_MODEL_HEAD << std::endl;
+  }
+
+  unsigned long FastDTreeReindexFun::operator()(unsigned long feature_id) const throw()
+  {
+    return feature_id % table_size_;
+  }
+
+  // DTree impl
+  DTree::DTree() : tree_id(0), delta_prob(0)
+  {
+  }
+
+  DTree::~DTree() throw()
+  {
+  }
+
+  void DTree::save(std::ostream& ostr) const
+  {
+    const bool numeric_format = uses_numeric_features();
+    ostr << (numeric_format ? PredictorLoader::NUMERIC_DTREE_MODEL_HEAD
+                            : PredictorLoader::DTREE_MODEL_HEAD)
+         << std::endl;
 
     ostr.setf(std::ios::fixed, std::ios::floatfield);
-    ostr.precision(7);
+    if (numeric_format)
+    {
+      ostr.unsetf(std::ios::floatfield);
+    }
+    ostr.precision(numeric_format ? std::numeric_limits<double>::max_digits10 : 7);
 
     this->save_node_(ostr);
   }
 
-  void
-  DTree::save_node_(std::ostream& ostr) const
+  void DTree::save_node_(std::ostream& ostr) const
   {
     ostr << tree_id << '\t' << delta_prob << '\t';
-    for(auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
+    for (auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
     {
-      ostr << (branch_it != branches_.begin() ? "|" : "") <<
-        branch_it->feature_id << ":" <<
-        (branch_it->yes_tree ? branch_it->yes_tree->tree_id : 0) << ":" <<
-        (branch_it->no_tree ? branch_it->no_tree->tree_id : 0);
+      ostr << (branch_it != branches_.begin() ? "|" : "") << branch_it->feature_id << ":"
+           << (branch_it->yes_tree ? branch_it->yes_tree->tree_id : 0) << ":"
+           << (branch_it->no_tree ? branch_it->no_tree->tree_id : 0);
+      if (branch_it->numeric)
+      {
+        ostr << ':' << branch_it->border << ':' << (branch_it->nan_go_right ? 1 : 0);
+      }
     }
     ostr << std::endl;
 
-    for(auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
+    for (auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
     {
-      if(branch_it->yes_tree)
+      if (branch_it->yes_tree)
       {
         branch_it->yes_tree->save_node_(ostr);
       }
 
-      if(branch_it->no_tree)
+      if (branch_it->no_tree)
       {
         branch_it->no_tree->save_node_(ostr);
       }
     }
   }
 
-  Gears::IntrusivePtr<DTree>
-  DTree::load(std::istream& istr, bool with_head)
+  Gears::IntrusivePtr<DTree> DTree::load(std::istream& istr, bool with_head, bool numeric_format)
   {
     unsigned long root_tree_id = 0;
     std::map<unsigned long, DTreeLoadHelper> trees;
     unsigned long line_i = 0;
 
-    if(with_head)
+    if (with_head)
     {
+      istr >> std::ws;
+      if (istr.peek() == '{')
+      {
+        return new DTree(istr);
+      }
       std::string line;
       std::getline(istr, line);
-      if(line != PredictorLoader::DTREE_MODEL_HEAD)
+      numeric_format = line == PredictorLoader::NUMERIC_DTREE_MODEL_HEAD;
+      if (line != PredictorLoader::DTREE_MODEL_HEAD && !numeric_format)
       {
         std::ostringstream ostr;
         ostr << "DTree::load(): invalid model type: '" << line << "'(" << line.size() << ")";
@@ -123,7 +153,7 @@ namespace Vanga
       }
     }
 
-    while(!istr.eof())
+    while (!istr.eof())
     {
       std::string line;
 
@@ -131,25 +161,25 @@ namespace Vanga
       {
         std::getline(istr, line);
 
-        if(line.empty())
+        if (line.empty())
         {
           break;
         }
 
-        if(istr.fail())
+        if (istr.fail())
         {
           throw Exception("read failed or empty line");
         }
 
         Gears::CategoryTokenizer<Gears::Ascii::SepTab> tokenizer(line);
         Gears::SubString tree_id_str;
-        if(!tokenizer.get_token(tree_id_str))
+        if (!tokenizer.get_token(tree_id_str))
         {
           throw Exception("no id");
         }
 
         Gears::SubString delta_prob_str;
-        if(!tokenizer.get_token(delta_prob_str))
+        if (!tokenizer.get_token(delta_prob_str))
         {
           throw Exception("no 'delta prob'");
         }
@@ -161,7 +191,7 @@ namespace Vanga
         unsigned long tree_id;
         DTreeLoadHelper dtree_load_helper;
 
-        if(!Gears::StringManip::str_to_int(tree_id_str, tree_id))
+        if (!Gears::StringManip::str_to_int(tree_id_str, tree_id))
         {
           std::ostringstream ostr;
           ostr << "invalid tree id value: '" << tree_id_str << "'";
@@ -172,7 +202,7 @@ namespace Vanga
           std::istringstream istr(delta_prob_str.str().c_str());
           istr >> dtree_load_helper.delta_prob;
 
-          if(!istr.eof() || istr.fail())
+          if (!istr.eof() || istr.fail())
           {
             std::ostringstream ostr;
             ostr << "invalid delta prob value: '" << delta_prob_str << "'";
@@ -180,71 +210,94 @@ namespace Vanga
           }
         }
 
-        Gears::CategoryTokenizer<
-          Gears::Ascii::SepBar> branches_tokenizer(branches_str);
+        Gears::CategoryTokenizer<Gears::Ascii::SepBar> branches_tokenizer(branches_str);
 
         Gears::SubString branch_str;
-        while(branches_tokenizer.get_token(branch_str))
+        while (branches_tokenizer.get_token(branch_str))
         {
           // parse branch
           Gears::CategoryTokenizer<Gears::Ascii::SepColon> branch_tokenizer(branch_str);
 
           Gears::SubString feature_id_str;
-          if(!branch_tokenizer.get_token(feature_id_str))
+          if (!branch_tokenizer.get_token(feature_id_str))
           {
             throw Exception("no 'feature id' in branch");
           }
 
           Gears::SubString yes_tree_id_str;
-          if(!branch_tokenizer.get_token(yes_tree_id_str))
+          if (!branch_tokenizer.get_token(yes_tree_id_str))
           {
             throw Exception("no 'yes tree id' in branch");
           }
 
           Gears::SubString no_tree_id_str;
-          if(!branch_tokenizer.get_token(no_tree_id_str))
+          if (!branch_tokenizer.get_token(no_tree_id_str))
           {
             throw Exception("no 'no tree id' in branch");
           }
 
           DTreeLoadHelper::Branch branch;
 
-          if(!Gears::StringManip::str_to_int(feature_id_str, branch.feature_id))
+          if (!Gears::StringManip::str_to_int(feature_id_str, branch.feature_id))
           {
             std::ostringstream ostr;
             ostr << "invalid 'feature id' value: '" << feature_id_str << "'";
             throw Exception(ostr.str());
           }
 
-          if(!Gears::StringManip::str_to_int(yes_tree_id_str, branch.yes_tree_id))
+          if (!Gears::StringManip::str_to_int(yes_tree_id_str, branch.yes_tree_id))
           {
             std::ostringstream ostr;
             ostr << "invalid 'yes tree id' value: '" << yes_tree_id_str << "'";
             throw Exception(ostr.str());
           }
 
-          if(!Gears::StringManip::str_to_int(no_tree_id_str, branch.no_tree_id))
+          if (!Gears::StringManip::str_to_int(no_tree_id_str, branch.no_tree_id))
           {
             std::ostringstream ostr;
             ostr << "invalid 'no tree id' value: '" << no_tree_id_str << "'";
             throw Exception(ostr.str());
           }
 
+          Gears::SubString border_str;
+          if (branch_tokenizer.get_token(border_str))
+          {
+            if (!numeric_format)
+            {
+              throw Exception("numeric branch requires dtree-float header");
+            }
+            std::istringstream border_stream(border_str.str());
+            border_stream >> branch.border;
+            Gears::SubString nan_str;
+            if (border_stream.fail() || !border_stream.eof() || !std::isfinite(branch.border) ||
+                !branch_tokenizer.get_token(nan_str) || (nan_str != "0" && nan_str != "1"))
+            {
+              throw Exception("invalid numeric branch border or NaN direction");
+            }
+            branch.numeric = true;
+            branch.nan_go_right = nan_str == "1";
+            Gears::SubString extra;
+            if (branch_tokenizer.get_token(extra))
+            {
+              throw Exception("unexpected numeric branch field");
+            }
+          }
+
           dtree_load_helper.branches.push_back(branch);
         }
 
-        if(root_tree_id == 0)
+        if (root_tree_id == 0)
         {
           root_tree_id = tree_id;
         }
 
         trees.insert(std::make_pair(tree_id, dtree_load_helper));
       }
-      catch(const Gears::Exception& ex)
+      catch (const Gears::Exception& ex)
       {
         std::ostringstream ostr;
-        ostr << "Can't load tree (line #" << line_i << "): " << ex.what() <<
-          ", line='" << line << "'";
+        ostr << "Can't load tree (line #" << line_i << "): " << ex.what() << ", line='" << line
+             << "'";
         throw Exception(ostr.str());
       }
 
@@ -252,31 +305,35 @@ namespace Vanga
     }
 
     // create stub trees
-    for(auto tree_it = trees.begin(); tree_it != trees.end(); ++tree_it)
+    for (auto tree_it = trees.begin(); tree_it != trees.end(); ++tree_it)
     {
       DTree_var dtree = new DTree();
       dtree->tree_id = tree_it->first;
       dtree->delta_prob = tree_it->second.delta_prob;
+      dtree->numeric_model_ = numeric_format;
       //dtree->feature_id = tree_it->second.feature_id;
       tree_it->second.resolved_tree = dtree;
     }
 
     // link trees
-    for(auto tree_it = trees.begin(); tree_it != trees.end(); ++tree_it)
+    for (auto tree_it = trees.begin(); tree_it != trees.end(); ++tree_it)
     {
       assert(tree_it->second.resolved_tree.in());
 
       // link branches
-      for(auto branch_it = tree_it->second.branches.begin();
+      for (auto branch_it = tree_it->second.branches.begin();
         branch_it != tree_it->second.branches.end(); ++branch_it)
       {
         DTree::Branch resolved_branch;
         resolved_branch.feature_id = branch_it->feature_id;
+        resolved_branch.numeric = branch_it->numeric;
+        resolved_branch.border = branch_it->border;
+        resolved_branch.nan_go_right = branch_it->nan_go_right;
 
-        if(branch_it->yes_tree_id)
+        if (branch_it->yes_tree_id)
         {
           auto yes_tree_it = trees.find(branch_it->yes_tree_id);
-          if(yes_tree_it == trees.end())
+          if (yes_tree_it == trees.end())
           {
             std::ostringstream ostr;
             ostr << "can't resolve branch yes tree id: " << branch_it->yes_tree_id;
@@ -286,10 +343,10 @@ namespace Vanga
           resolved_branch.yes_tree = yes_tree_it->second.resolved_tree;
         }
 
-        if(branch_it->no_tree_id)
+        if (branch_it->no_tree_id)
         {
           auto no_tree_it = trees.find(branch_it->no_tree_id);
-          if(no_tree_it == trees.end())
+          if (no_tree_it == trees.end())
           {
             std::ostringstream ostr;
             ostr << "can't resolve branch no tree id: " << branch_it->no_tree_id;
@@ -337,28 +394,28 @@ namespace Vanga
   }
   */
 
-  std::string
-  DTree::to_string(
-    const char* prefix,
-    const FeatureDictionary* dict,
-    double base) const
-    throw()
+  std::string DTree::
+    to_string(const char* prefix, const FeatureDictionary* dict, double base) const throw()
   {
     std::ostringstream ostr;
     ostr << prefix << "" << "{" << tree_id << "}";
 
-    ostr << ": " << (delta_prob > 0 ? "+" : "") << delta_prob <<
-      " = " << (base + delta_prob) <<
-      "(p = " << (1.0 / (1.0 + std::exp(-(base + delta_prob)))) << ")" <<
-      std::endl;
+    ostr << ": " << (delta_prob > 0 ? "+" : "") << delta_prob << " = " << (base + delta_prob)
+         << "(p = " << (1.0 / (1.0 + std::exp(-(base + delta_prob)))) << ")" << std::endl;
 
-    for(auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
+    for (auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
     {
       ostr << prefix << "+   feature #" << branch_it->feature_id;
-      if(dict)
+      if (branch_it->numeric)
+      {
+        ostr << " > " << branch_it->border << " (NaN: " << (branch_it->nan_go_right ? "yes" : "no")
+             << ")";
+      }
+
+      if (dict)
       {
         auto dict_it = dict->find(branch_it->feature_id);
-        if(dict_it != dict->end())
+        if (dict_it != dict->end())
         {
           ostr << " [" << dict_it->second << "]";
         }
@@ -366,38 +423,33 @@ namespace Vanga
 
       ostr << std::endl;
 
-      if(branch_it->yes_tree)
+      if (branch_it->yes_tree)
       {
-        ostr << prefix << "  yes =>" << std::endl <<
-          branch_it->yes_tree->to_string(
-            (std::string(prefix) + "+   >   ").c_str(),
-            dict,
-            base);
+        ostr << prefix << "  yes =>" << std::endl
+             << branch_it->yes_tree->to_string((std::string(prefix) + "+   >   ").c_str(), dict,
+                  base);
       }
 
-      if(branch_it->no_tree)
+      if (branch_it->no_tree)
       {
-        ostr << prefix << "  no =>" << std::endl <<
-          branch_it->no_tree->to_string(
-            (std::string(prefix) + "+   >   ").c_str(),
-            dict,
-            base);
+        ostr << prefix << "  no =>" << std::endl
+             << branch_it->no_tree->to_string((std::string(prefix) + "+   >   ").c_str(), dict,
+                  base);
       }
     }
 
     return ostr.str();
   }
 
-  DTree_var
-  DTree::copy() const throw()
+  DTree_var DTree::copy() const throw()
   {
     DTree_var res = new DTree();
     res->tree_id = tree_id;
     res->delta_prob = delta_prob;
-    for(auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
+    res->numeric_model_ = numeric_model_;
+    for (auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
     {
-      Branch branch;
-      branch.feature_id = branch_it->feature_id;
+      Branch branch(*branch_it);
       branch.yes_tree = branch_it->yes_tree ? branch_it->yes_tree->copy() : DTree_var();
       branch.no_tree = branch_it->no_tree ? branch_it->no_tree->copy() : DTree_var();
       res->branches_.push_back(branch);
@@ -406,16 +458,32 @@ namespace Vanga
     return res;
   }
 
-  unsigned long
-  DTree::node_count() const throw()
+  bool DTree::uses_numeric_features() const throw()
+  {
+    if (numeric_model_)
+    {
+      return true;
+    }
+    for (const auto& branch : branches_)
+    {
+      if (branch.numeric || (branch.yes_tree && branch.yes_tree->uses_numeric_features()) ||
+          (branch.no_tree && branch.no_tree->uses_numeric_features()))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  unsigned long DTree::node_count() const throw()
   {
     unsigned long res = 1;
-    for(auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
+    for (auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
     {
       res += (branch_it->yes_tree ? branch_it->yes_tree->node_count() : 0) +
-        (branch_it->no_tree ? branch_it->no_tree->node_count() : 0);
+             (branch_it->no_tree ? branch_it->no_tree->node_count() : 0);
     }
-    
+
     return res;
   }
 
@@ -495,17 +563,20 @@ namespace Vanga
   */
 
   // PredictorLoader
-  PredictorType
-  PredictorLoader::load_type(std::istream& istr)
+  PredictorType PredictorLoader::load_type(std::istream& istr)
   {
     std::string line;
     std::getline(istr, line);
 
-    if(line == DTREE_MODEL_HEAD)
+    if (line == DTREE_MODEL_HEAD)
     {
       return PT_DTREE;
     }
-    else if(line == UNION_MODEL_SUM_HEAD || line == UNION_MODEL_SUM_HEAD_2)
+    else if (line == NUMERIC_DTREE_MODEL_HEAD)
+    {
+      return PT_NUMERIC_DTREE;
+    }
+    else if (line == UNION_MODEL_SUM_HEAD || line == UNION_MODEL_SUM_HEAD_2)
     {
       return PT_SET;
     }
@@ -518,7 +589,7 @@ namespace Vanga
   PredictorLoader::load_dtree(std::istream& istr)
   {
   }
-  
+
   Predictor_var
   PredictorLoader::load(std::istream& istr)
   {
