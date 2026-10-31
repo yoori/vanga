@@ -24,6 +24,8 @@
 #include <cstddef>
 #include <vector>
 
+#include "FloatFeatures.hpp"
+
 namespace Vanga
 {
   class FastFeatureSet
@@ -49,13 +51,17 @@ namespace Vanga
 
     void rollback(const FeatureArray& features);
 
-    std::pair<bool, uint32_t> get(uint32_t feature_id) const;
+    void set(const FloatFeatureArray& features);
+
+    void rollback(const FloatFeatureArray& features);
+
+    std::pair<bool, float> get(uint32_t feature_id) const;
 
   protected:
-    std::vector<uint32_t> eval_feature_indexes_;
+    std::vector<float> eval_feature_indexes_;
   };
 
-  inline FastFeatureSet::FastFeatureSet() : eval_feature_indexes_(SIZE + 1, 0)
+  inline FastFeatureSet::FastFeatureSet() : eval_feature_indexes_(SIZE + 1, 0.0f)
   {
   }
 
@@ -75,14 +81,15 @@ namespace Vanga
 
   inline void FastFeatureSet::set(unsigned long feature_id, uint32_t value)
   {
-    eval_feature_indexes_[feature_id & SIZE] = value;
+    eval_feature_indexes_[feature_id & SIZE] = static_cast<float>(value);
   }
 
   inline void FastFeatureSet::set(const FeatureArray& features)
   {
     for (auto feature_it = features.begin(); feature_it != features.end(); ++feature_it)
     {
-      eval_feature_indexes_[feature_it->first & SIZE] = (feature_it->second != 0);
+      eval_feature_indexes_[feature_it->first & SIZE] =
+        static_cast<float>(feature_it->second != 0);
     }
   }
 
@@ -91,7 +98,8 @@ namespace Vanga
   {
     for (auto feature_it = begin_it; feature_it != end_it; ++feature_it)
     {
-      eval_feature_indexes_[feature_it->first & SIZE] = (feature_it->second != 0);
+      eval_feature_indexes_[feature_it->first & SIZE] =
+        static_cast<float>(feature_it->second != 0);
     }
   }
 
@@ -117,16 +125,26 @@ namespace Vanga
     }
   }
 
-  inline std::pair<bool, uint32_t> FastFeatureSet::get(uint32_t feature_id) const
+  inline void FastFeatureSet::set(const FloatFeatureArray& features)
   {
-    if (eval_feature_indexes_[feature_id & SIZE])
+    for (const auto& feature : features)
     {
-      return std::make_pair(true, 1);
+      eval_feature_indexes_[feature.first & SIZE] = feature.second;
     }
-    else
+  }
+
+  inline void FastFeatureSet::rollback(const FloatFeatureArray& features)
+  {
+    for (const auto& feature : features)
     {
-      return std::make_pair(false, 0);
+      eval_feature_indexes_[feature.first & SIZE] = 0.0f;
     }
+  }
+
+  inline std::pair<bool, float> FastFeatureSet::get(uint32_t feature_id) const
+  {
+    const float value = eval_feature_indexes_[feature_id & SIZE];
+    return std::make_pair(value > 0.0000001f, value);
   }
 
 }

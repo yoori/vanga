@@ -65,13 +65,15 @@ namespace
   const char USAGE[] =
     "\nUsage: \n"
     "DTreeTrainer "
-    "[train|train-add|train-trees|print|predict|predict-raw|import-catboost|ensemble]\n"
+    "[train|train-add|train-trees|print|predict|predict-raw|predict-perf|"
+    "predict-perf-fastset|import-catboost|ensemble]\n"
     "  train <MODEL> <TRAIN> [TEST ...]: train a new model\n"
     "  train-add <MODEL> <TRAIN> [TEST ...]: continue an existing model\n"
     "  train-trees <MODEL> <TRAIN> [TEST ...]: continue if MODEL exists, otherwise train anew\n"
     "  import-catboost <JSON> <MODEL>: import scalar float-feature oblivious trees\n"
     "  predict[-raw] <MODEL> <LIBSVM>: probabilities or raw scores; JSON is detected "
-    "automatically\n";
+    "automatically\n"
+    "  predict-perf[-fastset] <MODEL> <LIBSVM>: benchmark the in-memory prediction loop\n";
 
   class Callback : public Gears::ActiveObjectCallback
   {
@@ -542,7 +544,8 @@ void Application_::main(int& argc, char** argv)
       cover_svm);
     */
   }
-  else if (command == "predict" || command == "predict-raw" || command == "predict-perf")
+  else if (command == "predict" || command == "predict-raw" ||
+    command == "predict-perf" || command == "predict-perf-fastset")
   {
     if (command_it == commands.end())
     {
@@ -577,21 +580,38 @@ void Application_::main(int& argc, char** argv)
       std::cout.unsetf(std::ios::floatfield);
       std::cout.precision(17);
       FloatFeatureArray features;
-      if (command == "predict-perf")
+      if (command == "predict-perf" || command == "predict-perf-fastset")
       {
         std::vector<FloatFeatureArray> rows;
         while (load_float_features(svm_file, features))
         {
           rows.push_back(features);
         }
-        const auto start = Gears::Time::get_time_of_day();
-        volatile double result = 0;
-        for (const auto& row : rows)
+        if (command == "predict-perf-fastset")
         {
-          result = tree->fpredict(row);
+          FastFeatureSet fast_feature_set;
+          const auto start = Gears::Time::get_time_of_day();
+          volatile double result = 0;
+          for (const auto& row : rows)
+          {
+            fast_feature_set.set(row);
+            result = tree->fpredict(fast_feature_set);
+            fast_feature_set.rollback(row);
+          }
+          (void)result;
+          std::cout << (Gears::Time::get_time_of_day() - start) << std::endl;
         }
-        (void)result;
-        std::cout << (Gears::Time::get_time_of_day() - start) << std::endl;
+        else
+        {
+          const auto start = Gears::Time::get_time_of_day();
+          volatile double result = 0;
+          for (const auto& row : rows)
+          {
+            result = tree->fpredict(row);
+          }
+          (void)result;
+          std::cout << (Gears::Time::get_time_of_day() - start) << std::endl;
+        }
       }
       else
       {
