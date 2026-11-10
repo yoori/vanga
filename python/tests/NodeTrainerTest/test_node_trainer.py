@@ -13,7 +13,7 @@ import sys
 import tempfile
 import unittest
 
-SOURCE = Path(__file__).resolve().parents[2] / 'utils' / 'NodeTrainer'
+SOURCE = Path(__file__).resolve().parents[2] / 'vanga' / 'utils' / 'NodeTrainer'
 sys.path.insert(0, str(SOURCE.parents[2]))
 
 import joblib
@@ -43,8 +43,8 @@ def test_labels_and_cli():
   with tempfile.TemporaryDirectory() as directory:
     root = Path(directory)
     data = root / 'data.libsvm'
-    data.write_text('0.5 1:1\n1 2:3\n')
-    with unittest.TestCase().assertRaisesRegex(ValueError, '0/1'):
+    data.write_text('1.5 1:1\n1 2:3\n')
+    with unittest.TestCase().assertRaisesRegex(ValueError, r'\[0, 1\]'):
       trainer.load_libsvm(data, 13)
     data.write_text('0 1:1\n1 2:3\n')
     base = ['--train', str(data), '--validation', str(data), '--output-dir', str(root / 'run')]
@@ -214,11 +214,9 @@ def test_multibranch_native_export():
       probes = np.concatenate(probes)
       features = sparse.vstack((features, sparse.csr_matrix(probes)), format='csr')
       labels = np.concatenate((labels, np.zeros(len(probes), dtype=np.int64)))
-      result = export_vanga(model, scale, (features, labels), (features, labels), root, 17)
-      expected = verify_vanga_predictions(model, scale, features, labels,
-                                          root / 'node_hardened.vanga', root)
-      loss = np.mean(np.logaddexp(0, expected) - labels * expected)
-      assert abs(loss - result['datasets']['validation']['logloss']) < 1e-12
+      result = export_vanga(model, scale, root)
+      verify_vanga_predictions(model, scale, features, labels,
+                               root / 'node_hardened.vanga', root)
       assert result['feature_mode'] == 'vanga' and result['features_per_node'] == branches
       assert result['input_space'] == 'raw_libsvm' and result['projection_transform'] is None
       assert not list(root.glob('*.npz'))
@@ -284,10 +282,8 @@ def training_export_and_vanga(feature_mode):
     if feature_mode == 'vanga':
       assert result['model']['features_per_node'] == 2
       assert result['train_logloss'] < 0.69
-      raw = verify_vanga_predictions(model, scale, val_x, val_y,
-                                     output / 'node_hardened.vanga', root)
-      loss = np.mean(np.logaddexp(0, raw) - val_y * raw)
-      assert abs(loss - result['export']['datasets']['validation']['logloss']) < 1e-12
+      verify_vanga_predictions(model, scale, val_x, val_y,
+                               output / 'node_hardened.vanga', root)
       assert not (output / 'node_projection_transform.npz').exists()
       old_metrics = (output / 'metrics.json').read_bytes()
       repeated = subprocess.run(command, text=True, capture_output=True, timeout=30)
@@ -371,7 +367,7 @@ def test_python_api_validation():
     model.predict_proba(np.zeros((1, 13), dtype=np.float32))
   with tempfile.TemporaryDirectory() as directory:
     root = Path(directory)
-    for features, labels in ((np.zeros((1, 12)), [1]), (np.zeros((1, 13)), [0.5]),
+    for features, labels in ((np.zeros((1, 12)), [1]), (np.zeros((1, 13)), [1.5]),
                               (np.zeros((2, 13)), [0]), (np.full((1, 13), np.nan), [1])):
       output = root / str(len(list(root.iterdir())))
       with unittest.TestCase().assertRaises(ValueError):

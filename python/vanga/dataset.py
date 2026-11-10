@@ -1,7 +1,8 @@
 """Incremental data sources. Each batch is (X, y); None alone marks end of input.
 
 X is a two-dimensional NumPy or SciPy matrix with zero-based columns. Column 0
-corresponds to LibSVM feature ID 1. y contains one binary 0/1 label per row.
+corresponds to LibSVM feature ID 1. y contains one finite float target in [0, 1]
+per row; binary labels are included in this contract.
 get_rows(count) returns 1..count rows, or None. After returning None, the next
 call starts the same selection from its beginning. Sources need not implement
 length, indexing, iteration or a separate reset method. No full dataset is cached.
@@ -42,16 +43,21 @@ def normalize_features(values, n_features, allow_empty=False):
   return features
 
 
+def normalize_targets(values, rows):
+  targets = np.asarray(values)
+  if (targets.shape != (rows,) or targets.dtype.kind not in 'buif' or
+      not np.isfinite(targets).all() or (targets < 0).any() or (targets > 1).any()):
+    raise ValueError('expected one finite target in [0, 1] per row')
+  return targets.astype(np.float32, copy=False)
+
+
 def validate_rows(rows, n_features, count):
   if not isinstance(rows, tuple) or len(rows) != 2:
     raise ValueError('get_rows must return an (X, y) pair or None')
   features = normalize_features(rows[0], n_features)
   if features.shape[0] > count:
     raise ValueError('get_rows returned more rows than requested')
-  labels = np.asarray(rows[1])
-  if labels.shape != (features.shape[0],) or not np.isin(labels, (0, 1)).all():
-    raise ValueError('expected one binary 0/1 label per row')
-  return features, labels.astype(np.int64)
+  return features, normalize_targets(rows[1], features.shape[0])
 
 
 def _get_rows(self, count):
@@ -126,7 +132,7 @@ def _file_exit(self, exc_type, exc_value, traceback):
 class LibSvmFileDataset(Dataset):
   """Read a one-based LibSVM file (optionally .gz) incrementally; close at EOF.
 
-  get_rows(count) returns a float32 CSR matrix and int64 labels. Blank lines and
+  get_rows(count) returns a float32 CSR matrix and float32 targets. Blank lines and
   comments are skipped. Supports close() and the with statement.
   get_rows() after None starts a new traversal. No separate reset is needed.
   """
@@ -142,11 +148,10 @@ class LibSvmFileDataset(Dataset):
 def _array_initialize(self, features, labels):
   if getattr(features, 'ndim', None) != 2:
     raise ValueError('features must be a two-dimensional NumPy or SciPy matrix')
-  self._features, self._labels = features, np.asarray(labels)
+  self._features = features
+  self._labels = normalize_targets(labels, features.shape[0])
   self.n_features = features.shape[1]
   self._position = 0
-  if self._labels.shape != (features.shape[0],):
-    raise ValueError('expected one binary 0/1 label per row')
 
 
 def _array_get_rows(self, count):
@@ -165,7 +170,7 @@ def _array_get_rows(self, count):
 
 
 class ArrayDataset(Dataset):
-  """Supply batches from existing NumPy/SciPy features and binary labels."""
+  """Supply batches from existing NumPy/SciPy features and float targets in [0, 1]."""
 
   __init__ = _array_initialize
   get_rows = _array_get_rows

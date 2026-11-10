@@ -138,11 +138,12 @@ def evaluate_hard_vanga(model, dataset, scale, batch_size, n_features):
   return {'logloss': total / rows, 'rows': rows}
 
 
-def prune_vanga(model, dataset, scale, target_nodes, batch_size, n_features):
-  """Greedily remove the split with the smallest loss delta until target is met."""
+def prune_vanga(model, dataset, scale, target_nodes, batch_size, n_features, epsilon=1e-6):
+  """Greedily prune within the node budget while loss increase stays within epsilon."""
   remaining = int(target_nodes)
   removed = 0
   history = []
+  next_delta = None
   while remaining > 0 and model.branch_count():
     paths = [path for path, _ in model.iter_splits()]
     losses = np.zeros(len(paths), dtype=np.float64)
@@ -160,14 +161,19 @@ def prune_vanga(model, dataset, scale, target_nodes, batch_size, n_features):
       raise ValueError('empty pruning dataset')
     deltas = losses / rows - baseline / rows
     selected_index = int(np.argmin(deltas))
+    selected_delta = float(deltas[selected_index])
+    if selected_delta > epsilon:
+      next_delta = selected_delta
+      break
     selected_path = paths[selected_index]
     _, split = next(item for item in model.iter_splits() if item[0] == selected_path)
     removed_subtree = model.subtree_split_count(split)
-    selected_delta = float(deltas[selected_index])
     model.remove_split(selected_path)
     remaining -= removed_subtree
     removed += removed_subtree
     history.append({'path': list(selected_path), 'removed_nodes': removed_subtree,
                     'delta_logloss': selected_delta, 'remaining_target': remaining})
   return {'requested_nodes': int(target_nodes), 'removed_nodes': removed,
-          'overshoot_nodes': max(0, removed - int(target_nodes)), 'history': history}
+          'overshoot_nodes': max(0, removed - int(target_nodes)), 'epsilon': float(epsilon),
+          'stopped_early': next_delta is not None,
+          'next_best_delta_logloss': next_delta, 'history': history}

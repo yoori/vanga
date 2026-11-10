@@ -59,7 +59,7 @@ def initialize_vanga(model, inputs, labels):
     spread = sorted_values[3 * (rows - 1) // 4] - sorted_values[(rows - 1) // 4]
     model.feature_thresholds.copy_(thresholds)
     model.log_temperatures.copy_(spread.clamp_min(0.1).log())
-    prior = (float(np.sum(labels)) + 0.5) / (len(labels) + 1)
+    prior = (float(np.sum(labels, dtype=np.float64)) + 0.5) / (len(labels) + 1)
     model.bias.fill_(math.log(prior / (1 - prior)))
 
 

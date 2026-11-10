@@ -129,7 +129,8 @@ class VangaTrainer:
   """Adaptive one-tree Vanga topology search using NodeTrainer for each step."""
 
   def __init__(self, *, n_features=16384, mutation_nodes=15, extend_extra_nodes=5,
-               epochs=10, node_patience=3, topology_patience=5, min_improvement=0.05,
+               prune_epsilon=1e-6, epochs=10, node_patience=3, topology_patience=5,
+               min_improvement=0.05,
                batch_size=1024, eval_batch_size=None, init_rows=1000,
                learning_rate=1e-3, seed=0, cpu_threads=4, device='cuda',
                input_mode='sparse', log_every_batches=1000, verbose=True):
@@ -138,11 +139,14 @@ class VangaTrainer:
       raise ValueError('node counts, epochs, patience, batch size and n_features must be positive')
     if not 0 <= min_improvement < 1:
       raise ValueError('min_improvement must be in [0, 1)')
+    if not math.isfinite(prune_epsilon) or prune_epsilon < 0:
+      raise ValueError('prune_epsilon must be finite and nonnegative')
     if input_mode not in ('sparse', 'dense'):
       raise ValueError('input_mode must be sparse or dense')
     self.settings = dict(
       n_features=n_features, mutation_nodes=mutation_nodes,
-      extend_extra_nodes=extend_extra_nodes, epochs=epochs, node_patience=node_patience,
+      extend_extra_nodes=extend_extra_nodes, prune_epsilon=prune_epsilon,
+      epochs=epochs, node_patience=node_patience,
       topology_patience=topology_patience, min_improvement=min_improvement,
       batch_size=batch_size, eval_batch_size=eval_batch_size or batch_size,
       init_rows=init_rows, learning_rate=learning_rate, seed=seed,
@@ -195,7 +199,7 @@ class VangaTrainer:
       joblib.dump(scaler, output / 'feature_scaler.joblib')
 
       model = AdaptiveVangaModel(args['n_features'], device=device)
-      prior = (float(np.sum(initial_y)) + 0.5) / (len(initial_y) + 1)
+      prior = (float(np.sum(initial_y, dtype=np.float64)) + 0.5) / (len(initial_y) + 1)
       with torch.no_grad():
         model.root.value.fill_(math.log(prior / (1.0 - prior)))
       initial_x_scaled = initial_x.copy().tocsr()
@@ -231,7 +235,8 @@ class VangaTrainer:
         step_dir = output / 'steps' / ('step-{:04d}'.format(step))
         step_dir.mkdir()
         prune = prune_vanga(model, secondary, scale, args['mutation_nodes'],
-                            args['eval_batch_size'], args['n_features'])
+                            args['eval_batch_size'], args['n_features'],
+                            epsilon=args['prune_epsilon'])
         exported = export_adaptive_vanga(model, scale, step_dir)
         val_metrics = evaluate_hard_vanga(model, val, scale, args['eval_batch_size'],
                                           args['n_features'])

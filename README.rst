@@ -1,9 +1,31 @@
 Vanga Python package
 ====================
 
-Install from the repository root with ``python -m pip install .`` (or ``-e .``
+The Python package lives in ``python/``. Install it with
+``python -m pip install ./python`` (or ``python -m pip install -e ./python``
 for development). Python 3.10+ is required. Install the PyTorch build appropriate
 for your CUDA driver before installing Vanga if training on a GPU.
+
+Python RPM
+----------
+
+``PYTHON=/path/to/python3.12 bash RPM/build-python.sh`` builds the independent
+``python3-vanga`` noarch RPM and SRPM. The RPM spec uses ``pyproject-rpm-macros``
+to build and install the wheel from a Python-only source archive; it does not
+compile the native C++ project or download dependencies. The spec declares
+``python3.12-rpm-macros``, ``python3.12-devel`` and ``pyproject-rpm-macros`` as
+build requirements; Python package build requirements are generated from
+``python/pyproject.toml``.
+``OUTPUT_DIR`` defaults to ``build/RPMS``. The existing C++ RPM builder is separate.
+
+The RPM installs only Vanga modules/metadata under Python 3.12's standard
+``/usr/lib/python3.12/site-packages``, documentation/license and the three CLI
+entry points with an explicit Python 3.12 interpreter. Dependencies are ordinary
+RPM requirements; no Torch/CUDA, private environment, model weights or C++
+predictor are bundled. It provides ``python3.12dist(vanga)`` for consumers.
+Application launchers still choose their Torch runtime. Verify that runtime's
+actual imports satisfy the dependencies, especially when an isolated vLLM
+directory precedes system site-packages.
 
 Training from LibSVM
 -------------------
@@ -45,6 +67,12 @@ uniformly selected container. Artifacts for every step are written under
 ``steps/``; ``best_node_model.pt`` and ``best_vanga_model.vanga`` point to the
 best validation step.
 
+``IndependentVangaTrainer`` runs several adaptive searches sequentially with
+seeds ``seed + try_index``, averages their tree functions into one topology,
+warm-starts NODE on that topology, then prunes on secondary train while pruning
+does not increase its logloss beyond ``prune_epsilon``. The CLI option
+``--independent-tries`` selects the number of searches (default 1).
+
 ``fit`` returns the trainer. The output directory must be new. The default
 Python mode is ``vanga``: each node adds contributions from several independent
 feature checks, with shared checks for nodes on the same tree level.
@@ -64,12 +92,18 @@ method. Each call returns either:
 The call after ``None`` must start the same selection from the beginning.
 Short batches do not terminate a traversal. Empty batches are invalid: use
 ``None``. Each traversal must return the same rows and labels; batch boundaries
-may differ. The trainer checks row and positive-label counts across passes.
+may differ. The trainer checks row counts and target sums across passes, allowing
+float64 summation tolerance when batch boundaries differ.
 Provide separate Dataset instances when independent cursors are needed.
 
 ``X`` is a two-dimensional NumPy array or SciPy sparse matrix with
 ``n_features`` columns and finite values. Column zero corresponds to LibSVM
-feature ID 1. ``y`` is a one-dimensional array of binary labels (0 or 1).
+feature ID 1. ``y`` is a one-dimensional array of finite targets in ``[0, 1]``.
+All sources normalize targets to float32 without binarization or clipping. Binary
+labels ``0`` and ``1`` use this same contract; no target-mode setting is needed.
+Training uses binary cross-entropy with these targets. For the two-logit model,
+the scalar logit is ``logit_1 - logit_0``; on binary labels this is mathematically
+equivalent to the previous two-class cross-entropy.
 Missing sparse values are zero. A fresh Dataset starts at its first row.
 
 ``LibSvmFileDataset(path, n_features=16384)`` reads plain or gzip LibSVM files
@@ -111,7 +145,7 @@ open a streamed ClickHouse query using the application's existing client.
       self.iterator = None
       return None
     features, labels = zip(*rows)
-    return np.asarray(features, dtype=np.float32), np.asarray(labels, dtype=np.int64)
+    return np.asarray(features, dtype=np.float32), np.asarray(labels, dtype=np.float32)
 
   class QueryDataset(Dataset):
     __init__ = source_init
@@ -152,3 +186,9 @@ mode exports read raw feature IDs. Projection mode additionally writes
 logloss, separate hardened-export metrics, initialization settings and peak RSS
 (plus GPU memory for CUDA). ``load`` restores the soft checkpoint and scaler
 from a completed run.
+
+Fixed-topology metrics use ``train_target_sum``/``validation_target_sum`` and
+``train_mean_target``/``validation_mean_target`` under ``metrics_["rows"]``.
+These replace ``train_positives``/``validation_positives``: for binary data the
+sum and mean are clicks and CTR, while for probabilities they are expected clicks
+and mean target. Saved model structure and prediction APIs are unchanged.

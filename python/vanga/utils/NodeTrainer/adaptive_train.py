@@ -22,11 +22,15 @@ def parse_args(argv=None):
   parser.add_argument('--validation', type=Path, required=True,
                       help='LibSVM input for step selection and outer stopping')
   parser.add_argument('--output-dir', type=Path, required=True)
+  parser.add_argument('--independent-tries', type=positive_int, default=1,
+                      help='number of sequential adaptive runs with different seeds')
   parser.add_argument('--n-features', type=positive_int, default=16384)
   parser.add_argument('--mutation-nodes', type=positive_int, default=15,
                       help='X: nodes added by inplace; extend adds X + Y')
   parser.add_argument('--extend-extra-nodes', type=positive_int, default=5,
                       help='Y: extra nodes added by extend')
+  parser.add_argument('--prune-epsilon', type=float, default=1e-6,
+                      help='maximum allowed secondary logloss increase when pruning')
   parser.add_argument('--epochs', type=positive_int, default=10)
   parser.add_argument('--node-patience', type=positive_int, default=3)
   parser.add_argument('--topology-patience', type=positive_int, default=5)
@@ -45,6 +49,8 @@ def parse_args(argv=None):
   args = parser.parse_args(argv)
   if not math.isfinite(args.min_improvement) or not 0 <= args.min_improvement < 1:
     parser.error('--min-improvement must be in [0, 1)')
+  if not math.isfinite(args.prune_epsilon) or args.prune_epsilon < 0:
+    parser.error('--prune-epsilon must be finite and nonnegative')
   if args.seed < 0 or args.log_every_batches < 0:
     parser.error('--seed and --log-every-batches must be nonnegative')
   for path in (args.primary_train, args.secondary_train, args.validation):
@@ -57,11 +63,13 @@ def parse_args(argv=None):
 
 def main(argv=None):
   args = parse_args(argv)
-  from .adaptive_trainer import VangaTrainer
-  trainer = VangaTrainer(
+  from .independent_trainer import IndependentVangaTrainer
+  trainer = IndependentVangaTrainer(
+    independent_tries=args.independent_tries,
     n_features=args.n_features,
     mutation_nodes=args.mutation_nodes,
     extend_extra_nodes=args.extend_extra_nodes,
+    prune_epsilon=args.prune_epsilon,
     epochs=args.epochs,
     node_patience=args.node_patience,
     topology_patience=args.topology_patience,

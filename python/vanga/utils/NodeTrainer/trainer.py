@@ -40,7 +40,7 @@ import torch.nn.functional as functional
 from pytorch_tabular.models.common.layers import ODST, activations
 
 from ...dataset import (Dataset, LibSvmFileDataset, as_dataset, close_dataset, iter_batches,
-                        normalize_features, validate_count, validate_rows)
+                        normalize_features, normalize_targets, validate_count, validate_rows)
 from .config import validate_settings
 from .export import export_catboost
 from .multibranch import initialize_vanga, make_vanga_model, vanga_logits
@@ -73,14 +73,13 @@ def load_libsvm(path, n_features):
     raise ValueError('input changed while loading: ' + str(path))
   if not len(labels):
     raise ValueError('empty dataset: ' + str(path))
-  if not np.isin(labels, (0, 1)).all():
-    raise ValueError('expected binary 0/1 labels: ' + str(path))
+  labels = normalize_targets(labels, len(labels))
   if not np.isfinite(features.data).all():
     raise ValueError('non-finite feature values: ' + str(path))
   features = sparse.csr_matrix(features, dtype=np.float32)
   features.sum_duplicates()
   features.eliminate_zeros()
-  return features, labels.astype(np.int64), digest
+  return features, labels, digest
 
 
 def load_training_data(data, n_features):
@@ -89,10 +88,7 @@ def load_training_data(data, n_features):
   if not isinstance(data, tuple) or len(data) != 2:
     raise ValueError('training data must be a LibSVM path or an (X, y) pair')
   features = normalize_features(data[0], n_features)
-  labels = np.asarray(data[1])
-  if labels.shape != (features.shape[0],) or not np.isin(labels, (0, 1)).all():
-    raise ValueError('expected one binary 0/1 label per row')
-  return features, labels.astype(np.int64), None
+  return features, normalize_targets(data[1], features.shape[0]), None
 
 
 def describe_input(data):
@@ -171,6 +167,12 @@ def logits(model, inputs):
   return torch.einsum('bnd,ncd->bnc', weights, model.response).mean(dim=1)
 
 
+def binary_loss(model_logits, labels, reduction='mean'):
+  targets = torch.as_tensor(labels, dtype=model_logits.dtype, device=model_logits.device)
+  return functional.binary_cross_entropy_with_logits(
+    model_logits[:, 1] - model_logits[:, 0], targets, reduction=reduction)
+
+
 def evaluate(model, features, labels, batch_size, device, mode, inverse_scale=None):
   model.eval()
   total = 0.0
@@ -178,8 +180,7 @@ def evaluate(model, features, labels, batch_size, device, mode, inverse_scale=No
     for start in range(0, len(labels), batch_size):
       end = min(start + batch_size, len(labels))
       batch = make_batch(features, slice(start, end), device, mode, inverse_scale)
-      targets = torch.as_tensor(labels[start:end], dtype=torch.long, device=device)
-      total += functional.cross_entropy(logits(model, batch), targets, reduction='sum').item()
+      total += binary_loss(logits(model, batch), labels[start:end], reduction='sum').item()
   loss = total / len(labels)
   if not math.isfinite(loss):
     raise ValueError('non-finite evaluation loss')
@@ -188,20 +189,20 @@ def evaluate(model, features, labels, batch_size, device, mode, inverse_scale=No
 
 def evaluate_dataset(model, dataset, batch_size, device, mode, inverse_scale):
   model.eval()
-  total, rows, positives = 0.0, 0, 0
+  total, rows, target_sum = 0.0, 0, 0.0
   with torch.no_grad():
     for features, labels in iter_batches(dataset, batch_size, len(inverse_scale)):
       batch = make_batch(features, slice(None), device, mode, inverse_scale)
-      targets = torch.as_tensor(labels, dtype=torch.long, device=device)
-      total += functional.cross_entropy(logits(model, batch), targets, reduction='sum').item()
+      total += binary_loss(logits(model, batch), labels, reduction='sum').item()
       rows += len(labels)
-      positives += int(labels.sum())
+      target_sum += float(labels.sum(dtype=np.float64))
   if not rows:
     raise ValueError('empty Dataset; get_rows() after None must restart the selection')
   loss = total / rows
   if not math.isfinite(loss):
     raise ValueError('non-finite evaluation loss')
-  return {'logloss': loss, 'rows': rows, 'positives': positives}
+  return {'logloss': loss, 'rows': rows, 'target_sum': target_sum,
+          'mean_target': target_sum / rows}
 
 
 def collect_initial(dataset, count, batch_size, n_features):
@@ -228,7 +229,8 @@ def array_batches(features, labels, batch_size):
 
 
 def check_pass(current, previous, name):
-  if previous is not None and any(current[k] != previous[k] for k in ('rows', 'positives')):
+  if previous is not None and (current['rows'] != previous['rows'] or not math.isclose(
+      current['target_sum'], previous['target_sum'], rel_tol=1e-12, abs_tol=1e-12)):
     raise ValueError(name + ' Dataset changed between passes; return the same selection after None')
 
 
@@ -342,13 +344,12 @@ def _fit(self, train, validation, output_dir):
         if epoch == 1:
           remaining = () if initial_exhausted else batches
           batches = chain(array_batches(initial_x, initial_y, args.batch_size), remaining)
-        running_loss, seen, positives = 0.0, 0, 0
+        running_loss, seen, target_sum = 0.0, 0, 0.0
         for batch_number, (features, labels) in enumerate(batches, 1):
           order = rng.permutation(len(labels))
           inputs = make_batch(features, order, device, args.input_mode, inverse_scale)
-          targets = torch.as_tensor(labels[order], dtype=torch.long, device=device)
           optimizer.zero_grad(set_to_none=True)
-          loss = functional.cross_entropy(logits(model, inputs), targets)
+          loss = binary_loss(logits(model, inputs), labels[order])
           value = loss.item()
           if not math.isfinite(value):
             raise ValueError('non-finite training loss')
@@ -356,13 +357,13 @@ def _fit(self, train, validation, output_dir):
           optimizer.step()
           running_loss += value * len(labels)
           seen += len(labels)
-          positives += int(labels.sum())
+          target_sum += float(labels.sum(dtype=np.float64))
           if args.log_every_batches and batch_number % args.log_every_batches == 0:
             _report(self, {'event': 'batch', 'epoch': epoch, 'rows': seen,
                            'train_batch_logloss': running_loss / seen})
         if not seen:
           raise ValueError('training Dataset did not restart after None')
-        current_train = {'rows': seen, 'positives': positives}
+        current_train = {'rows': seen, 'target_sum': target_sum}
         check_pass(current_train, train_stats, 'training')
         train_stats = current_train
         current_val = evaluate_dataset(
@@ -371,8 +372,10 @@ def _fit(self, train, validation, output_dir):
         val_stats = current_val
         val_loss = val_stats['logloss']
         result['rows'] = {'train': seen, 'validation': val_stats['rows'],
-                          'train_positives': positives,
-                          'validation_positives': val_stats['positives']}
+                          'train_target_sum': target_sum,
+                          'validation_target_sum': val_stats['target_sum'],
+                          'train_mean_target': target_sum / seen,
+                          'validation_mean_target': val_stats['mean_target']}
         entry = {'epoch': epoch, 'train_batch_logloss': running_loss / seen,
                  'validation_logloss': val_loss, 'seconds': time.monotonic() - epoch_started}
         if val_loss < best_loss:

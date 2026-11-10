@@ -20,7 +20,7 @@ def query_get_rows(self, count):
   rows = np.arange(position, position + count)
   values = np.column_stack((rows % 2, rows % 3, rows % 7, rows * 0)).astype(np.float32)
   self.position = position + count
-  return values, (rows % 2).astype(np.int64)
+  return values, (0.0042 + 0.8 * (rows % 2)).astype(np.float32)
 
 
 class QueryDataset(Dataset):
@@ -40,6 +40,8 @@ if __name__ == '__main__':
                          epochs=2, patience=0, batch_size=11, device='cpu', cpu_threads=1)
     model.fit(train, validation, root / 'run')
     assert model.metrics_['rows']['train'] == model.metrics_['rows']['validation'] == 37
+    targets = (0.0042 + 0.8 * (np.arange(37) % 2)).astype(np.float32)
+    assert model.metrics_['rows']['train_target_sum'] == targets.sum(dtype=np.float64)
     assert model.predict_proba(validation).shape == (37, 2)
     restored = VangaTrainer.load(root / 'run')
     np.testing.assert_array_equal(model.predict_raw(validation), restored.predict_raw(validation))

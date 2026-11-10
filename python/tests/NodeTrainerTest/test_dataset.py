@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 import numpy as np
@@ -88,7 +88,7 @@ def test_libsvm_restart():
           assert source._file is None
           assert all(0 < len(y) <= count for _, y in chunks)
       assert source._file is None
-    for text in ('0.5 1:1\n', '1 5:1\n', '1 1:nan\n'):
+    for text in ('1.5 1:1\n', '1 5:1\n', '1 1:nan\n'):
       path = root / 'bad.libsvm'
       path.write_text(text)
       with LibSvmFileDataset(path, 4) as source:
@@ -117,10 +117,13 @@ def streaming_training(mode):
       trainer.fit(train, validation, output)
     assert trainer.metrics_['status'] == 'complete'
     assert trainer.metrics_['rows'] == {'train': 53, 'validation': 23,
-                                       'train_positives': 26, 'validation_positives': 11}
+                                       'train_target_sum': 26.0, 'validation_target_sum': 11.0,
+                                       'train_mean_target': 26 / 53,
+                                       'validation_mean_target': 11 / 23}
     assert trainer.metrics_['preprocessing']['scaler_fit_rows'] == 7
     assert trainer.metrics_['preprocessing']['dataset_cache'] is False
-    assert train.eofs == validation.eofs == 4
+    # Native Vanga export reads model parameters only; ODST export also scores data.
+    assert train.eofs == validation.eofs == (3 if mode == 'vanga' else 4)
     assert train.position == validation.position == 0
     assert max(count for count, _, _ in train.requests) <= 13
     # Only the initialization prefix is fetched before the first optimizer update.
