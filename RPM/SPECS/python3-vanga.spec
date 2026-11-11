@@ -10,6 +10,8 @@ BuildArch: noarch
 AutoReqProv: no
 BuildRequires: python%{python3_pkgversion}-rpm-macros
 BuildRequires: python%{python3_pkgversion}-devel
+BuildRequires: python%{python3_pkgversion}-setuptools >= 68
+BuildRequires: python%{python3_pkgversion}-wheel
 BuildRequires: pyproject-rpm-macros
 Requires: python3.12
 Requires: python3.12dist(torch) >= 2.2
@@ -33,9 +35,6 @@ PyTorch/CUDA libraries, model weights or private Python environment.
 
 %prep
 %setup -q -n vanga-%{version}
-
-%generate_buildrequires
-%pyproject_buildrequires -R
 
 %build
 %pyproject_wheel

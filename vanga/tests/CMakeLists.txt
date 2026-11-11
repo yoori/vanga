@@ -1,1 +1,2 @@
 add_subdirectory(DTreeUtilsTest)
+add_subdirectory(InstalledPackageTest)

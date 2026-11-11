@@ -1,3 +1,33 @@
+C++ CMake package
+=================
+
+Build and install the native library with CMake 3.20+ and a C++20 compiler:
+
+.. code-block:: sh
+
+  cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/opt/foros/vanga -DBUILD_SHARED_LIBS=ON
+  cmake --build build/native -j2
+  cmake --install build/native
+
+The installation provides headers, libraries and a relocatable CMake package
+under ``<libdir>/cmake/Vanga``. Static builds are also supported. Consumers need
+only the exported target; it supplies include directories, C++20 and transitive
+Gears/Threads dependencies:
+
+.. code-block:: cmake
+
+  find_package(Vanga CONFIG REQUIRED)
+  target_link_libraries(my_app PRIVATE Vanga::DTree)
+
+Pass ``-DCMAKE_PREFIX_PATH=/opt/foros/vanga`` when configuring the consumer if
+the prefix is outside CMake's normal search paths, or set ``Vanga_DIR`` to the
+directory containing ``VangaConfig.cmake``. Public headers use ``<DTree/DTree.hpp>``.
+The native ``vanga-devel`` RPM includes this CMake configuration and headers;
+the runtime ``vanga`` RPM provides the shared libraries. ``CMAKE_INSTALL_PREFIX``,
+``CMAKE_INSTALL_LIBDIR`` and ``CMAKE_INSTALL_INCLUDEDIR`` are honored. The native version is
+independent of the Python package version; set it with ``-DVANGA_VERSION=1.0.0.1``.
+
 Vanga Python package
 ====================
 
@@ -14,8 +44,8 @@ Python RPM
 to build and install the wheel from a Python-only source archive; it does not
 compile the native C++ project or download dependencies. The spec declares
 ``python3.12-rpm-macros``, ``python3.12-devel`` and ``pyproject-rpm-macros`` as
-build requirements; Python package build requirements are generated from
-``python/pyproject.toml``.
+build requirements, with ``python3.12-setuptools`` and ``python3.12-wheel`` for
+the wheel build.
 ``OUTPUT_DIR`` defaults to ``build/RPMS``. The existing C++ RPM builder is separate.
 
 The RPM installs only Vanga modules/metadata under Python 3.12's standard

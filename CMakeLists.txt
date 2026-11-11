@@ -3,7 +3,13 @@ cmake_minimum_required(VERSION 3.20)
 #set(CMAKE_CXX_COMPILER /opt/rh/gcc-toolset-10/root/usr/bin/g++)
 #set(CMAKE_C_COMPILER /opt/rh/gcc-toolset-10/root/usr/bin/gcc)
 
-project(Vanga)
+set(VANGA_VERSION "1.0.0.1" CACHE STRING "Vanga native library version")
+project(Vanga VERSION ${VANGA_VERSION})
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+find_package(Threads REQUIRED)
+set(VANGA_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 
 enable_testing()
 
@@ -104,8 +110,6 @@ IF (${GCC_ROOT})
     set(GCC_INCLUDE_DIR ${GCC_ROOT}/include ${GCC_ROOT}/include/c++/${GCC_VER})
 ENDIF()
 
-SET(CMAKE_INSTALL_PREFIX /)
-
 #set (CMAKE_CXX_STANDARD 17)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gears/src)
@@ -116,8 +120,23 @@ add_subdirectory(vanga)
 #add_dependencies(VangaDTree Gears)
 #add_dependencies(VangaDTreeTrainer Gears)
 
-install(DIRECTORY etc/ DESTINATION etc/
-  FILES_MATCHING
-  PATTERN "*.template"
-  PATTERN ".*" EXCLUDE)
+install(DIRECTORY gears/src/Gears vanga/src/DTree
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING PATTERN "*.hpp" PATTERN "*.tpp")
+
+set(VANGA_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/Vanga")
+configure_package_config_file(cmake/VangaConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/VangaConfig.cmake"
+  INSTALL_DESTINATION ${VANGA_INSTALL_CMAKEDIR})
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/VangaConfigVersion.cmake"
+  VERSION ${Vanga_VERSION} COMPATIBILITY SameMajorVersion)
+install(EXPORT VangaTargets NAMESPACE Vanga:: DESTINATION ${VANGA_INSTALL_CMAKEDIR})
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/VangaConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/VangaConfigVersion.cmake"
+  DESTINATION ${VANGA_INSTALL_CMAKEDIR})
+
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/etc")
+  install(DIRECTORY etc/ DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}
+    FILES_MATCHING PATTERN "*.template" PATTERN ".*" EXCLUDE)
+endif()
 

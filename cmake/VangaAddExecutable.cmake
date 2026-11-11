@@ -15,4 +15,8 @@ function(vanga_add_executable NAME)
   target_link_libraries(${NAME}
     ${VANGA_ADD_EXECUTABLE_LINK_LIBRARIES})
 
+  if (UNIX AND NOT APPLE)
+    set_property(TARGET ${NAME} PROPERTY INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+  endif()
+
 endfunction()

@@ -36,7 +36,9 @@ Requires: %{name} = %{version}
 %build
 mkdir build
 pushd build
-cmake -DBUILD_SHARED_LIBS=ON ..
+cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DCMAKE_INSTALL_PREFIX=%{__inst_root} -DCMAKE_INSTALL_LIBDIR=lib \
+  -DVANGA_VERSION=%{version} ..
 %{__make} %{_smp_mflags}
 popd
 
@@ -44,7 +46,7 @@ popd
 mkdir -p %{buildroot}%{__inst_root}
 
 pushd build
-make install DESTDIR=%{buildroot}%{__inst_root}
+make install DESTDIR=%{buildroot}
 popd
 
 %{__ln_s} -f -T %{__inst_root}/lib/libVangaDTree.so %{buildroot}%{__inst_root}/lib/libDTree.so
@@ -59,6 +61,7 @@ popd
 %defattr(-,root,root)
 %{__inst_root}/include/DTree
 %{__inst_root}/include/Gears
+%{__inst_root}/lib/cmake/Vanga
 
 %clean
 rm -rf %{buildroot}

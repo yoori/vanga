@@ -30,4 +30,18 @@ function(vanga_add_library NAME)
       )
   endif()
 
+  target_compile_features(${NAME} PUBLIC cxx_std_20)
+  target_include_directories(${NAME} PUBLIC
+    $<BUILD_INTERFACE:${VANGA_SOURCE_ROOT}/gears/src>
+    $<BUILD_INTERFACE:${VANGA_SOURCE_ROOT}/vanga/src>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+  if (UNIX AND NOT APPLE)
+    set_property(TARGET ${NAME} PROPERTY INSTALL_RPATH "$ORIGIN")
+  endif()
+
+  install(TARGETS ${NAME} EXPORT VangaTargets
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
 endfunction()
