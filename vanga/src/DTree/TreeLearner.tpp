@@ -76,11 +76,11 @@ namespace Vanga
     unsigned long tasks_in_progress;
 
   protected:
-    virtual ~GetBestFeatureResult() throw();
+    virtual ~GetBestFeatureResult() noexcept;
   };
 
   template <typename LearnerType>
-  GetBestFeatureResult<LearnerType>::~GetBestFeatureResult() throw() = default;
+  GetBestFeatureResult<LearnerType>::~GetBestFeatureResult() noexcept = default;
   template <typename LearnerType>
   GetBestFeatureResult<LearnerType>::BestChoose::BestChoose() : gain(0.0)
   {
@@ -191,12 +191,12 @@ namespace Vanga
 
     GetBestFeatureTask(GetBestFeatureResult<LearnerType>* result,
       GetBestFeatureParams<LearnerType>* params, unsigned long feature_id,
-      typename LearnerType::SVMT* feature_svm) throw();
+      typename LearnerType::SVMT* feature_svm) noexcept;
 
-    virtual void execute() throw();
+    virtual void execute() noexcept;
 
   protected:
-    virtual ~GetBestFeatureTask() throw();
+    virtual ~GetBestFeatureTask() noexcept;
 
   private:
     const GetBestFeatureResult_var result_;
@@ -206,13 +206,13 @@ namespace Vanga
   };
 
   template <typename LearnerType, typename GainType>
-  GetBestFeatureTask<LearnerType, GainType>::~GetBestFeatureTask() throw() = default;
+  GetBestFeatureTask<LearnerType, GainType>::~GetBestFeatureTask() noexcept = default;
   // GetBestFeatureTask impl
   template <typename LearnerType, typename GainType>
   GetBestFeatureTask<LearnerType, GainType>::
     GetBestFeatureTask(GetBestFeatureResult<LearnerType>* result,
       GetBestFeatureParams<LearnerType>* params, unsigned long feature_id,
-      typename LearnerType::SVMT* feature_svm) throw()
+      typename LearnerType::SVMT* feature_svm) noexcept
     : result_(Gears::add_ref(result)), params_(Gears::add_ref(params)), feature_id_(feature_id),
       feature_svm_(feature_svm)
   {
@@ -220,7 +220,7 @@ namespace Vanga
   }
 
   template <typename LearnerType, typename GainType>
-  void GetBestFeatureTask<LearnerType, GainType>::execute() throw()
+  void GetBestFeatureTask<LearnerType, GainType>::execute() noexcept
   {
     double gain;
     typename LearnerType::LearnTreeHolder_var new_tree;
@@ -270,13 +270,13 @@ namespace Vanga
 
     void print(std::ostream& ostr, const char* prefix) const;
 
-    double predict(const FeatureArray& features) const throw();
+    double predict(const FeatureArray& features) const noexcept;
 
   public:
     void add_branch(const Branch& branch);
 
   protected:
-    virtual ~LearnTreeHolder() throw();
+    virtual ~LearnTreeHolder() noexcept;
   };
 
   template <typename LabelType>
@@ -325,7 +325,7 @@ namespace Vanga
 
   template <typename LabelType>
   double TreeLearner<LabelType>::LearnTreeHolder::
-    predict(const FeatureArray& features) const throw()
+    predict(const FeatureArray& features) const noexcept
   {
     double res = delta_prob;
 
@@ -379,7 +379,7 @@ namespace Vanga
     branches.push_back(branch);
   }
 
-  template <typename LabelType> TreeLearner<LabelType>::LearnTreeHolder::~LearnTreeHolder() throw()
+  template <typename LabelType> TreeLearner<LabelType>::LearnTreeHolder::~LearnTreeHolder() noexcept
   {
   }
 
@@ -391,7 +391,7 @@ namespace Vanga
     LearnRevertPredictor(const typename LearnerType::LearnTreeHolder::Branch& branch);
 
     typename LearnerType::LabelT
-    operator()(const Row* row, const typename LearnerType::LabelT& label) const throw();
+    operator()(const Row* row, const typename LearnerType::LabelT& label) const noexcept;
 
   private:
     typename LearnerType::LearnTreeHolder::Branch branch_;
@@ -406,7 +406,7 @@ namespace Vanga
 
   template <typename LearnerType, typename GainType>
   typename LearnerType::LabelT LearnRevertPredictor<LearnerType, GainType>::
-  operator()(const Row* row, const typename LearnerType::LabelT& label) const throw()
+  operator()(const Row* row, const typename LearnerType::LabelT& label) const noexcept
   {
     if (std::binary_search(row->features.begin(), row->features.end(), branch_.feature_id,
           FeatureLess()))
@@ -428,7 +428,7 @@ namespace Vanga
     {
       ContextType(double base_prob_val, const FeatureSet& skip_null_features_val,
         double depth_pinalty_val, unsigned long top_element_limit_val,
-        unsigned long depth_limit_val) throw();
+        unsigned long depth_limit_val) noexcept;
 
       const double base_prob;
       const FeatureSet& skip_null_features;
@@ -462,7 +462,7 @@ namespace Vanga
   GetBestLearnTreeHolderProcessor<LabelType, GainType>::ContextType::
     ContextType(double base_prob_val, const FeatureSet& skip_null_features_val,
       double depth_pinalty_val, unsigned long top_element_limit_val,
-      unsigned long depth_limit_val) throw()
+      unsigned long depth_limit_val) noexcept
     : base_prob(base_prob_val), skip_null_features(skip_null_features_val),
       depth_pinalty(depth_pinalty_val), top_element_limit(top_element_limit_val),
       depth_limit(depth_limit_val)
@@ -542,7 +542,7 @@ namespace Vanga
     }
   }
 
-  void TreeNodeDescr::gain_features(GainToFeatureMap& gain_to_features) const throw()
+  void TreeNodeDescr::gain_features(GainToFeatureMap& gain_to_features) const noexcept
   {
     FeatureToGainMap feature_to_gains;
     collect_feature_gains_(feature_to_gains);
@@ -574,7 +574,7 @@ namespace Vanga
   {
   }
 
-  template <typename LabelType> TreeLearner<LabelType>::Context::~Context() throw()
+  template <typename LabelType> TreeLearner<LabelType>::Context::~Context() noexcept
   {
   }
 
@@ -594,7 +594,7 @@ namespace Vanga
   {
   }
 
-  template <typename LabelType> TreeLearner<LabelType>::LearnContext::~LearnContext() throw()
+  template <typename LabelType> TreeLearner<LabelType>::LearnContext::~LearnContext() noexcept
   {
   }
 
@@ -931,7 +931,7 @@ namespace Vanga
 
   template <typename LabelType>
   void TreeLearner<LabelType>::div_by_tree_(std::vector<std::pair<SVM_var, double>>& svms,
-    LearnTreeHolder* tree, const FeatureRowsMap& feature_rows) throw()
+    LearnTreeHolder* tree, const FeatureRowsMap& feature_rows) noexcept
   {
     if (tree)
     {
@@ -987,7 +987,8 @@ namespace Vanga
   template <typename LabelType>
   template <typename GainType>
   double TreeLearner<LabelType>::eval_feature_gain_by_delta_(GainType& gain_calc, double add_delta,
-    LearnTreeHolder* new_tree, SVM<LabelType>* node_svm, const FeatureRowsMap& feature_rows) throw()
+    LearnTreeHolder* new_tree, SVM<LabelType>* node_svm, const FeatureRowsMap& feature_rows)
+      noexcept
   {
     double old_metric;
 
@@ -1112,7 +1113,7 @@ namespace Vanga
   template <typename GainType>
   double TreeLearner<LabelType>::eval_init_delta_(double& delta, PredCollector& pred_collector,
     GainType& gain_calc, double top_pred, const SVM<LabelType>* node_svm,
-    const LabelType& /*add_label*/, bool /*eval_delta*/) throw()
+    const LabelType& /*add_label*/, bool /*eval_delta*/) noexcept
   {
     pred_collector.start_delta_eval(1, top_pred);
 
@@ -1154,7 +1155,7 @@ namespace Vanga
       double cur_delta, // current check delta
       const FeatureSet& skip_null_features, const BagPartArray& bags, unsigned long gain_check_bags,
       LearnTreeHolder* cur_tree, unsigned long max_depth, unsigned long check_depth,
-      double alpha_coef, bool allow_negative_gain) throw()
+      double alpha_coef, bool allow_negative_gain) noexcept
   {
     // select bag randomly
     //unsigned long best_feature_id = 0;
@@ -1229,7 +1230,7 @@ namespace Vanga
   bool TreeLearner<LabelType>::get_best_feature_(double& best_gain, LearnTreeHolder_var& new_tree,
     Gears::TaskRunner* task_runner, double top_pred, const FeatureSet& skip_null_features,
     const BagPartArray& bags, unsigned long gain_check_bags, LearnTreeHolder* cur_tree,
-    unsigned long check_depth, bool top_eval, double alpha_coef, bool allow_negative_gain) throw()
+    unsigned long check_depth, bool top_eval, double alpha_coef, bool allow_negative_gain) noexcept
   {
     // process sub tree
     unsigned long bag_i = Gears::safe_rand(bags.size());
@@ -1392,7 +1393,7 @@ namespace Vanga
     //const SVM<LabelType>* feature_svm,
     const BagPartArray& bags, unsigned long gain_check_bags, LearnTreeHolder* cur_tree,
     //const SVM<LabelType>* node_svm,
-    unsigned long /*check_depth*/, double /*alpha_coef*/) throw()
+    unsigned long /*check_depth*/, double /*alpha_coef*/) noexcept
   {
     double sub_gain = eval_feature_gain_on_bags_(new_tree, pred_collector, gain_calc, top_pred,
       feature_id, bags, cur_tree, gain_check_bags);
@@ -1458,7 +1459,7 @@ namespace Vanga
     PredCollector& pred_collector, GainType& gain_calc, double add_delta,
     const LearnTreeHolder* cur_tree, unsigned long add_feature_id,
     //const OrderedFeatureArray& features,
-    const FeatureRowsMap& feature_rows, const SVM<LabelType>* node_svm) throw()
+    const FeatureRowsMap& feature_rows, const SVM<LabelType>* node_svm) noexcept
   {
     assert(!std::isnan(add_delta));
 
@@ -1898,7 +1899,7 @@ namespace Vanga
   template <typename GainType>
   double TreeLearner<LabelType>::eval_remove_gain_on_bags_(double& delta,
     PredCollector& pred_collector, GainType& gain_calc, double add_delta, const BagPartArray& bags,
-    const typename LearnTreeHolder::Branch& branch) throw()
+    const typename LearnTreeHolder::Branch& branch) noexcept
   {
     unsigned long base_bag_i = Gears::safe_rand(bags.size());
     const BagPart& base_bag_part = *bags[base_bag_i];
@@ -1943,7 +1944,7 @@ namespace Vanga
   double TreeLearner<LabelType>::eval_feature_gain_on_bags_(LearnTreeHolder_var& new_tree,
     PredCollector& pred_collector, GainType& gain_calc, double add_delta, unsigned long feature_id,
     const BagPartArray& bags, // bags already labeled by cur_tree ?
-    LearnTreeHolder* cur_tree, unsigned long gain_check_bags) throw()
+    LearnTreeHolder* cur_tree, unsigned long gain_check_bags) noexcept
   {
     // eval feature gain for optimal node direct childs delta search
     // if new node with feature_id added
@@ -2040,7 +2041,7 @@ namespace Vanga
 
   template <typename LabelType>
   void TreeLearner<LabelType>::fill_feature_rows(FeatureIdArray& features,
-    FeatureRowsMap& feature_rows, const SVM<LabelType>& svm) throw()
+    FeatureRowsMap& feature_rows, const SVM<LabelType>& svm) noexcept
   {
     std::deque<unsigned long> features_queue;
 

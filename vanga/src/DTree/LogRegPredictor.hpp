@@ -30,25 +30,25 @@ namespace Vanga
   class LogRegPredictor : public virtual Gears::AtomicRefCountable
   {
   public:
-    LogRegPredictor(NextPredictorType* predictor) throw();
+    LogRegPredictor(NextPredictorType* predictor) noexcept;
 
     template <typename FeatureResolveFunType>
-    double fpredict(const FeatureResolveFunType& fun) const throw();
+    double fpredict(const FeatureResolveFunType& fun) const noexcept;
 
     virtual void save(std::ostream& ostr) const;
 
     virtual std::string to_string(const char* prefix, const FeatureDictionary* dict = 0,
-      double base = 0.0) const throw();
+      double base = 0.0) const noexcept;
 
   protected:
-    virtual ~LogRegPredictor() throw();
+    virtual ~LogRegPredictor() noexcept;
 
   protected:
     Gears::IntrusivePtr<NextPredictorType> predictor_;
   };
 
   template <typename NextPredictorType>
-  LogRegPredictor<NextPredictorType>::~LogRegPredictor() throw()
+  LogRegPredictor<NextPredictorType>::~LogRegPredictor() noexcept
   {
   }
 

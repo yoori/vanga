@@ -26,7 +26,7 @@ namespace Vanga
   // Predictor
   /*
   PredArrayHolder_var
-  Predictor::predict(const RowArray& rows) const throw()
+  Predictor::predict(const RowArray& rows) const noexcept
   {
     PredArrayHolder_var res = new PredArrayHolder();
     res->values.resize(rows.size());

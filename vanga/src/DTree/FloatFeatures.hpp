@@ -12,11 +12,14 @@ namespace Vanga
   // The boolean follows the native Vanga positive-feature presence convention.
   struct FloatFeatureArray : public std::vector<std::pair<uint32_t, float>>
   {
-    std::pair<bool, float> get(uint32_t id) const throw();
+    std::pair<bool, float> get(uint32_t id) const noexcept;
   };
 
   // One-based LibSVM IDs. Missing values are zero; explicit NaN/Inf are retained.
   bool load_float_features(std::istream& input, FloatFeatureArray& features);
+
+  bool load_float_features(std::istream& input, FloatFeatureArray& features, double& label,
+    double* prior_prediction = nullptr);
 }
 
 #endif

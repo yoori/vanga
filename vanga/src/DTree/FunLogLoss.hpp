@@ -33,7 +33,7 @@ namespace Vanga
     FunLogLoss(const std::vector<VarGroup<IteratorType>>& preds);
 
     // d_vars[0] is free arg (included for all groups with plus)
-    double eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const throw();
+    double eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const noexcept;
 
   protected:
     const std::vector<VarGroup<IteratorType>>& preds_;
@@ -49,12 +49,12 @@ namespace Vanga
   class FunDiscLogLoss : protected FunSum<FunLogLoss<IteratorType>, FunPostQuad>
   {
   public:
-    FunDiscLogLoss(const std::vector<VarGroup<IteratorType>>& preds, double grow_after) throw();
+    FunDiscLogLoss(const std::vector<VarGroup<IteratorType>>& preds, double grow_after) noexcept;
   };
 
   template <typename IteratorType>
   FunDiscLogLoss<IteratorType>::
-    FunDiscLogLoss(const std::vector<VarGroup<IteratorType>>& preds, double grow_after) throw()
+    FunDiscLogLoss(const std::vector<VarGroup<IteratorType>>& preds, double grow_after) noexcept
     : FunSum<FunLogLoss<IteratorType>, FunPostQuad>(FunLogLoss<IteratorType>(preds),
         FunPostQuad(grow_after))
   {
@@ -78,7 +78,7 @@ namespace Vanga
 {
   template <typename IteratorType>
   double FunLogLoss<IteratorType>::
-    eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const throw()
+    eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const noexcept
   {
     const int var_number = d_vars.size() - 1;
     double fun_val = 0.0;

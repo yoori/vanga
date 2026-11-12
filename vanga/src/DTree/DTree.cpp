@@ -59,7 +59,7 @@ namespace Vanga
   public:
     FastDTreeReindexFun(unsigned long table_size);
 
-    unsigned long operator()(unsigned long feature_id) const throw();
+    unsigned long operator()(unsigned long feature_id) const noexcept;
 
   protected:
     const unsigned long table_size_;
@@ -69,7 +69,7 @@ namespace Vanga
   {
   }
 
-  unsigned long FastDTreeReindexFun::operator()(unsigned long feature_id) const throw()
+  unsigned long FastDTreeReindexFun::operator()(unsigned long feature_id) const noexcept
   {
     return feature_id % table_size_;
   }
@@ -79,7 +79,7 @@ namespace Vanga
   {
   }
 
-  DTree::~DTree() throw()
+  DTree::~DTree() noexcept
   {
   }
 
@@ -368,7 +368,7 @@ namespace Vanga
 
   /*
   double
-  DTree::predict(const FeatureArray& features) const throw()
+  DTree::predict(const FeatureArray& features) const noexcept
   {
     double res = delta_prob;
 
@@ -395,7 +395,7 @@ namespace Vanga
   */
 
   std::string DTree::
-    to_string(const char* prefix, const FeatureDictionary* dict, double base) const throw()
+    to_string(const char* prefix, const FeatureDictionary* dict, double base) const noexcept
   {
     std::ostringstream ostr;
     ostr << prefix << "" << "{" << tree_id << "}";
@@ -441,7 +441,7 @@ namespace Vanga
     return ostr.str();
   }
 
-  DTree_var DTree::copy() const throw()
+  DTree_var DTree::copy() const noexcept
   {
     DTree_var res = new DTree();
     res->tree_id = tree_id;
@@ -458,7 +458,7 @@ namespace Vanga
     return res;
   }
 
-  bool DTree::uses_numeric_features() const throw()
+  bool DTree::uses_numeric_features() const noexcept
   {
     if (numeric_model_)
     {
@@ -475,7 +475,7 @@ namespace Vanga
     return false;
   }
 
-  unsigned long DTree::node_count() const throw()
+  unsigned long DTree::node_count() const noexcept
   {
     unsigned long res = 1;
     for (auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
@@ -490,7 +490,7 @@ namespace Vanga
   /*
   FastDTree::FastFeatureResolveFun::FastFeatureResolveFun(
     const FeatureIndexTable& eval_feature_indexes)
-    throw()
+    noexcept
     : eval_feature_indexes_(eval_feature_indexes)
   {}
 
@@ -502,7 +502,7 @@ namespace Vanga
   }
 
   FastDTree::FastDTree(DTree* tree, unsigned long table_size)
-    throw()
+    noexcept
   {
     eval_feature_indexes_.resize(table_size, 0);
     reindexed_dtree_ = tree->copy();
@@ -510,11 +510,11 @@ namespace Vanga
     reindexed_dtree_->reindex(reindex_fun);
   }
 
-  FastDTree::FastDTree() throw()
+  FastDTree::FastDTree() noexcept
   {}
 
   double
-  FastDTree::predict(const FeatureArray& features) const throw()
+  FastDTree::predict(const FeatureArray& features) const noexcept
   {
     // set features in table
     //uint32_t eval_feature_indexes_size = eval_feature_indexes_.size();
@@ -537,7 +537,7 @@ namespace Vanga
   }
 
   FastDTree_var
-  FastDTree::copy() const throw()
+  FastDTree::copy() const noexcept
   {
     FastDTree_var res = new FastDTree();
     res->eval_feature_indexes_ = eval_feature_indexes_;
@@ -556,7 +556,7 @@ namespace Vanga
     const char* prefix,
     const FeatureDictionary* dict,
     double base)
-    const throw()
+    const noexcept
   {
     return reindexed_dtree_->to_string(prefix, dict, base);
   }

@@ -38,11 +38,11 @@ namespace Vanga
     const double* xp,  // start point
     const double* gp,  // start point gradient
     const FunType& fun // function evaluator
-    ) throw();
+    ) noexcept;
 
   template <typename IteratorType>
   void lbfsg_logloss_min(FloatArray& yes_res, FloatArray& no_res,
-    const std::vector<VarGroup<IteratorType>>& preds) throw();
+    const std::vector<VarGroup<IteratorType>>& preds) noexcept;
 }
 
 #include "LBFGS.tpp"

@@ -55,41 +55,41 @@ namespace Vanga
   {
     template <typename LabelType>
     bool operator()(const PredictGroup<LabelType>* left, const PredictGroup<LabelType>* right) const
-      throw();
+      noexcept;
 
     template <typename LabelType>
-    bool operator()(const PredictGroup<LabelType>* left, const LabelType& right) const throw();
+    bool operator()(const PredictGroup<LabelType>* left, const LabelType& right) const noexcept;
 
     template <typename LabelType>
-    bool operator()(const LabelType& left, const PredictGroup<LabelType>* right) const throw();
+    bool operator()(const LabelType& left, const PredictGroup<LabelType>* right) const noexcept;
 
     template <typename LabelType>
     bool operator()(const Gears::IntrusivePtr<PredictGroup<LabelType>>& left,
-      const LabelType& right) const throw();
+      const LabelType& right) const noexcept;
 
     template <typename LabelType>
     bool operator()(const LabelType& left,
-      const Gears::IntrusivePtr<PredictGroup<LabelType>>& right) const throw();
+      const Gears::IntrusivePtr<PredictGroup<LabelType>>& right) const noexcept;
   };
 
   template <typename LabelType>
   bool PredictGroupLess::
   operator()(const PredictGroup<LabelType>* left, const PredictGroup<LabelType>* right) const
-    throw()
+    noexcept
   {
     return left->label < right->label;
   }
 
   template <typename LabelType>
   bool PredictGroupLess::
-  operator()(const PredictGroup<LabelType>* left, const LabelType& right) const throw()
+  operator()(const PredictGroup<LabelType>* left, const LabelType& right) const noexcept
   {
     return left->label < right;
   }
 
   template <typename LabelType>
   bool PredictGroupLess::
-  operator()(const LabelType& left, const PredictGroup<LabelType>* right) const throw()
+  operator()(const LabelType& left, const PredictGroup<LabelType>* right) const noexcept
   {
     return left < right->label;
   }
@@ -97,7 +97,7 @@ namespace Vanga
   template <typename LabelType>
   bool PredictGroupLess::
   operator()(const Gears::IntrusivePtr<PredictGroup<LabelType>>& left, const LabelType& right) const
-    throw()
+    noexcept
   {
     return left->label < right;
   }
@@ -105,7 +105,7 @@ namespace Vanga
   template <typename LabelType>
   bool PredictGroupLess::
   operator()(const LabelType& left, const Gears::IntrusivePtr<PredictGroup<LabelType>>& right) const
-    throw()
+    noexcept
   {
     return left < right->label;
   }
@@ -267,7 +267,7 @@ namespace Vanga
   }
 
   template <typename LabelType>
-  Gears::IntrusivePtr<SVM<LabelType>> SVM<LabelType>::copy() const throw()
+  Gears::IntrusivePtr<SVM<LabelType>> SVM<LabelType>::copy() const noexcept
   {
     Gears::IntrusivePtr<SVM<LabelType>> res = new SVM<LabelType>();
 
@@ -282,7 +282,7 @@ namespace Vanga
   template <typename LabelType>
   template <typename LabelAdapterType>
   Gears::IntrusivePtr<SVM<typename LabelAdapterType::ResultType>> SVM<LabelType>::
-    copy_pred(const LabelAdapterType& label_adapter) const throw()
+    copy_pred(const LabelAdapterType& label_adapter) const noexcept
   {
     Gears::IntrusivePtr<SVM<typename LabelAdapterType::ResultType>> res =
       new SVM<typename LabelAdapterType::ResultType>();
@@ -303,7 +303,7 @@ namespace Vanga
   template <typename LabelType>
   template <typename LabelAdapterType>
   Gears::IntrusivePtr<SVM<typename LabelAdapterType::ResultType>> SVM<LabelType>::
-    copy(const LabelAdapterType& label_adapter) const throw()
+    copy(const LabelAdapterType& label_adapter) const noexcept
   {
     return this->copy_pred(label_adapter);
   }
@@ -311,7 +311,7 @@ namespace Vanga
   template <typename LabelType>
   void SVM<LabelType>::cross(Gears::IntrusivePtr<SVM<LabelType>>& cross_svm,
     Gears::IntrusivePtr<SVM<LabelType>>& diff_svm, const SVM<LabelType>* left_svm,
-    const SVM<LabelType>* right_svm) throw()
+    const SVM<LabelType>* right_svm) noexcept
   {
     cross_svm = new SVM<LabelType>();
     diff_svm = new SVM<LabelType>();
@@ -401,7 +401,7 @@ namespace Vanga
   template <typename LabelType>
   void SVM<LabelType>::cross_count(unsigned long& cross_count, unsigned long& left_diff_count,
     unsigned long& right_diff_count, const SVM<LabelType>* left_svm,
-    const SVM<LabelType>* right_svm) throw()
+    const SVM<LabelType>* right_svm) noexcept
   {
     cross_count = 0;
     left_diff_count = 0;
@@ -473,7 +473,7 @@ namespace Vanga
   }
 
   template <typename LabelType>
-  Gears::IntrusivePtr<SVM<LabelType>> SVM<LabelType>::part(unsigned long res_size) const throw()
+  Gears::IntrusivePtr<SVM<LabelType>> SVM<LabelType>::part(unsigned long res_size) const noexcept
   {
     Gears::IntrusivePtr<SVM<LabelType>> res = new SVM<LabelType>();
     const unsigned long cur_size = size();
@@ -496,7 +496,7 @@ namespace Vanga
 
   template <typename LabelType>
   void SVM<LabelType>::portions_div(std::vector<Gears::IntrusivePtr<SVM<LabelType>>>& res,
-    unsigned long portions_num) const throw()
+    unsigned long portions_num) const noexcept
   {
     for (unsigned long i = 0; i < portions_num; ++i)
     {
@@ -515,7 +515,7 @@ namespace Vanga
 
   template <typename LabelType>
   std::pair<Gears::IntrusivePtr<SVM<LabelType>>, Gears::IntrusivePtr<SVM<LabelType>>>
-  SVM<LabelType>::div(unsigned long res_size) const throw()
+  SVM<LabelType>::div(unsigned long res_size) const noexcept
   {
     Gears::IntrusivePtr<SVM<LabelType>> res_first = new SVM<LabelType>();
     Gears::IntrusivePtr<SVM<LabelType>> res_second = new SVM<LabelType>();
@@ -573,7 +573,7 @@ namespace Vanga
     return res;
   }
 
-  template <typename LabelType> double SVM<LabelType>::label_float_sum() const throw()
+  template <typename LabelType> double SVM<LabelType>::label_float_sum() const noexcept
   {
     double res = 0.0;
 
@@ -585,7 +585,7 @@ namespace Vanga
     return res;
   }
 
-  template <typename LabelType> unsigned long SVM<LabelType>::size() const throw()
+  template <typename LabelType> unsigned long SVM<LabelType>::size() const noexcept
   {
     unsigned long res_size = 0;
     for (auto group_it = grouped_rows.begin(); group_it != grouped_rows.end(); ++group_it)
@@ -637,7 +637,7 @@ namespace Vanga
 
   template <typename LabelType>
   typename SVM<LabelType>::PredictGroup_var SVM<LabelType>::
-    add_row(Row* row, const LabelType& label) throw()
+    add_row(Row* row, const LabelType& label) noexcept
   {
     // find group
     auto found_it = std::
@@ -655,7 +655,7 @@ namespace Vanga
     return *found_it;
   }
 
-  template <typename LabelType> void SVM<LabelType>::print_labels(std::ostream& ostr) throw()
+  template <typename LabelType> void SVM<LabelType>::print_labels(std::ostream& ostr) noexcept
   {
     for (auto row_it = grouped_rows.begin(); row_it != grouped_rows.end(); ++row_it)
     {
@@ -854,7 +854,7 @@ namespace Vanga
   }
 
   template <typename LabelType>
-  Row_var SVM<LabelType>::get_row_(LabelType& label, unsigned long pos) const throw()
+  Row_var SVM<LabelType>::get_row_(LabelType& label, unsigned long pos) const noexcept
   {
     for (auto group_it = grouped_rows.begin(); group_it != grouped_rows.end(); ++group_it)
     {
@@ -870,7 +870,7 @@ namespace Vanga
     return Row_var();
   }
 
-  template <typename LabelType> void SVM<LabelType>::sort_() throw()
+  template <typename LabelType> void SVM<LabelType>::sort_() noexcept
   {
     for (auto group_it = grouped_rows.begin(); group_it != grouped_rows.end(); ++group_it)
     {

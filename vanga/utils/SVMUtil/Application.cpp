@@ -75,7 +75,7 @@ public:
 
 protected:
   virtual
-  ~FeatureRowIndexes() throw()
+  ~FeatureRowIndexes() noexcept
   {
     size_holder_->size -= this->size();
   }
@@ -160,11 +160,11 @@ Counter::Counter() : count(0)
 }
 
 // Application
-Application_::Application_() throw()
+Application_::Application_() noexcept
 {
 }
 
-Application_::~Application_() throw()
+Application_::~Application_() noexcept
 {
 }
 

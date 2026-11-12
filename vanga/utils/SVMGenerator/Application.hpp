@@ -34,9 +34,9 @@ class Application_
 public:
   DECLARE_GEARS_EXCEPTION(Exception, Gears::DescriptiveException);
 
-  Application_() throw();
+  Application_() noexcept;
 
-  virtual ~Application_() throw();
+  virtual ~Application_() noexcept;
 
   void main(int& argc, char** argv) throw(Gears::Exception);
 

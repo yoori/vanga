@@ -30,7 +30,7 @@ namespace Vanga
   public:
     FunPostQuad(double grow_after);
 
-    double eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const throw();
+    double eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const noexcept;
 
   protected:
     const double grow_after_;
@@ -47,7 +47,7 @@ namespace Vanga
 namespace Vanga
 {
   inline double FunPostQuad::
-    eval_fun_and_grad(FloatArray& grads, const FloatArray& point) const throw()
+    eval_fun_and_grad(FloatArray& grads, const FloatArray& point) const noexcept
   {
     double norm = 0.0;
     for (auto var_it = point.begin(); var_it != point.end(); ++var_it)

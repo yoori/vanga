@@ -266,7 +266,7 @@ namespace Vanga
     const double* s,   // direction
     const double* xp,  // start point
     const FunType& fun // function evaluator
-    ) throw()
+    ) noexcept
   {
     static const double LINE_SEARCH_XTOL = 1.0e-16;
     static const double LINE_SEARCH_FTOL = 1e-4;
@@ -517,7 +517,7 @@ namespace Vanga
 
   template <typename IteratorType, typename FunType>
   void lbfsg_logloss_min(std::vector<double>& yes_res, std::vector<double>& no_res,
-    const std::vector<VarGroup<IteratorType>>& preds, const FunType& fun) throw()
+    const std::vector<VarGroup<IteratorType>>& preds, const FunType& fun) noexcept
   {
     static const double LBFGS_EPSILON = 1e-5;
     static const int LBFGS_M = 6;

@@ -61,12 +61,12 @@ namespace Vanga
 
   public:
     // return avg => cover mapping
-    void avg_covers(AvgCoverMap& avg_covers, unsigned long all_rows) const throw();
+    void avg_covers(AvgCoverMap& avg_covers, unsigned long all_rows) const noexcept;
 
-    void gain_features(GainToFeatureMap& gain_to_features) const throw();
+    void gain_features(GainToFeatureMap& gain_to_features) const noexcept;
 
     Gears::IntrusivePtr<TreeNodeDescr>
-    sub_tree(double min_avg, unsigned long min_node_cover = 0) const throw();
+    sub_tree(double min_avg, unsigned long min_node_cover = 0) const noexcept;
 
     /*
     std::string
@@ -74,14 +74,14 @@ namespace Vanga
       const char* prefix,
       const FeatureDictionary* dict = 0,
       const unsigned long* all_rows = 0)
-      const throw();
+      const noexcept;
 
     std::string
     to_xml(
       const char* prefix,
       const FeatureDictionary* dict = 0,
       const unsigned long* all_rows = 0)
-      const throw();
+      const noexcept;
     */
 
     void features(FeatureSet& features) const;
@@ -144,7 +144,7 @@ namespace Vanga
       SVM_var bag;
 
     protected:
-      virtual ~BagHolder() throw();
+      virtual ~BagHolder() noexcept;
     };
 
     using BagHolder_var = Gears::IntrusivePtr<BagHolder>;
@@ -157,7 +157,7 @@ namespace Vanga
       SVM_var svm;
 
     protected:
-      virtual ~BagPart() throw();
+      virtual ~BagPart() noexcept;
     };
 
     using BagPart_var = Gears::IntrusivePtr<BagPart>;
@@ -206,7 +206,7 @@ namespace Vanga
     protected:
       LearnContext(Gears::TaskRunner* task_runner, const BagPartArray& bags, const DTree* tree);
 
-      virtual ~LearnContext() throw();
+      virtual ~LearnContext() noexcept;
 
       template <typename GainType>
       LearnTreeHolder_var
@@ -251,7 +251,7 @@ namespace Vanga
     protected:
       Context(const BagPartArray& bag_parts);
 
-      virtual ~Context() throw();
+      virtual ~Context() noexcept;
 
     protected:
       BagPartArray bag_parts_;
@@ -280,7 +280,7 @@ namespace Vanga
       const SVM<LabelType>* svm, const FeatureRowsMap& feature_rows);
 
     static void fill_feature_rows(FeatureIdArray& features, FeatureRowsMap& feature_rows,
-      const SVM<LabelType>& svm) throw();
+      const SVM<LabelType>& svm) noexcept;
 
     template <typename GainType>
     static void check_feature_(double& res_gain, LearnTreeHolder_var& new_tree,
@@ -289,7 +289,7 @@ namespace Vanga
       //const SVM<LabelType>* feature_svm,
       const BagPartArray& bags, unsigned long gain_check_bags, LearnTreeHolder* cur_tree,
       //const SVM<LabelType>* node_svm,
-      unsigned long check_depth, double alpha_coef) throw();
+      unsigned long check_depth, double alpha_coef) noexcept;
 
   protected:
     // ProcessorType
@@ -304,7 +304,7 @@ namespace Vanga
       const ProcessorType& processor, double base_pred, double cur_delta,
       const FeatureSet& skip_null_features, const BagPartArray& bags, unsigned long gain_check_bags,
       LearnTreeHolder* cur_tree, unsigned long max_depth, unsigned long check_depth,
-      double alpha_coef, bool allow_negative_gain) throw();
+      double alpha_coef, bool allow_negative_gain) noexcept;
 
     template <typename GainType>
     static bool get_best_feature_(
@@ -320,38 +320,38 @@ namespace Vanga
       LearnTreeHolder* cur_tree,
       //const SVM<LabelType>* node_svm,
       unsigned long check_depth, bool top_eval, double alpha_coef,
-      bool allow_negative_gain) throw();
+      bool allow_negative_gain) noexcept;
 
     template <typename GainType>
     static double eval_feature_gain_(LearnTreeHolder_var& new_tree, PredCollector& pred_collector,
       GainType& gain_calc, double add_delta, const LearnTreeHolder* cur_tree,
       unsigned long add_feature_id,
       //const OrderedFeatureArray& features,
-      const FeatureRowsMap& feature_rows, const SVM<LabelType>* node_svm) throw();
+      const FeatureRowsMap& feature_rows, const SVM<LabelType>* node_svm) noexcept;
 
     template <typename GainType>
     static double eval_remove_gain_on_bags_(double& delta, PredCollector& pred_collector,
       GainType& gain_calc, double add_delta, const BagPartArray& bags,
-      const typename LearnTreeHolder::Branch& branch) throw();
+      const typename LearnTreeHolder::Branch& branch) noexcept;
 
     template <typename GainType>
     static double
     eval_feature_gain_on_bags_(LearnTreeHolder_var& new_tree, PredCollector& pred_collector,
       GainType& gain_calc, double add_delta, unsigned long feature_id, const BagPartArray& bags,
-      LearnTreeHolder* cur_tree, unsigned long gain_check_bags) throw();
+      LearnTreeHolder* cur_tree, unsigned long gain_check_bags) noexcept;
 
     template <typename GainType>
     static double eval_init_delta_(double& delta, PredCollector& pred_collector,
       GainType& gain_calc, double top_pred, const SVM<LabelType>* node_svm,
-      const LabelType& add_label, bool eval_delta) throw();
+      const LabelType& add_label, bool eval_delta) noexcept;
 
     template <typename GainType>
     static double
     eval_feature_gain_by_delta_(GainType& gain_calc, double add_delta, LearnTreeHolder* new_tree,
-      SVM<LabelType>* node_svm, const FeatureRowsMap& feature_rows) throw();
+      SVM<LabelType>* node_svm, const FeatureRowsMap& feature_rows) noexcept;
 
     static void div_by_tree_(std::vector<std::pair<SVM_var, double>>& svms, LearnTreeHolder* tree,
-      const FeatureRowsMap& feature_rows) throw();
+      const FeatureRowsMap& feature_rows) noexcept;
 
     static void div_group_(typename SVM<LabelType>::PredictGroup_var& yes_group,
       typename SVM<LabelType>::PredictGroup_var& no_group, unsigned long feature_id,
@@ -365,11 +365,11 @@ namespace Vanga
   {
   }
 
-  template <typename LabelType> TreeLearner<LabelType>::BagHolder::~BagHolder() throw()
+  template <typename LabelType> TreeLearner<LabelType>::BagHolder::~BagHolder() noexcept
   {
   }
 
-  template <typename LabelType> TreeLearner<LabelType>::BagPart::~BagPart() throw()
+  template <typename LabelType> TreeLearner<LabelType>::BagPart::~BagPart() noexcept
   {
   }
 

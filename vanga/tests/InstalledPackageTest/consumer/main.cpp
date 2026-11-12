@@ -3,6 +3,7 @@
 
 #include <DTree/DTree.hpp>
 #include <DTree/FloatFeatures.hpp>
+#include <DTree/NumericTreeLearner.hpp>
 
 static_assert(__cplusplus > 201703L, "Vanga::DTree must enable the project's C++20 standard");
 
@@ -21,6 +22,16 @@ int main()
     {
       return 1;
     }
+  }
+  std::istringstream training("0 7:0.1\n1 7:0.9\n0 7:0.1\n1 7:0.9\n");
+  auto data = Vanga::NumericDataset::load(training);
+  Vanga::NumericTreeLearner::Options options;
+  options.steps = 3;
+  auto result = Vanga::NumericTreeLearner(options).fit(data);
+  if (!result.model->uses_numeric_features() ||
+      result.model->fpredict(data.rows[0]) >= result.model->fpredict(data.rows[1]))
+  {
+    return 2;
   }
   return 0;
 }

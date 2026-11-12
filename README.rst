@@ -28,6 +28,53 @@ the runtime ``vanga`` RPM provides the shared libraries. ``CMAKE_INSTALL_PREFIX`
 ``CMAKE_INSTALL_LIBDIR`` and ``CMAKE_INSTALL_INCLUDEDIR`` are honored. The native version is
 independent of the Python package version; set it with ``-DVANGA_VERSION=1.0.0.1``.
 
+C++ numeric feature training
+----------------------------
+
+``DTreeTrainer train``, ``train-add`` and ``train-trees`` accept numeric LibSVM
+features. ``--feature-type=auto`` (default) retains the original binary learner
+for 0/1 data and selects the numeric learner for other values or an existing
+numeric model. ``--feature-type=float`` forces numeric training, including on
+0/1 data. ``--feature-type=binary`` explicitly retains the legacy positive-feature
+presence convention; it cannot resume a numeric model.
+
+.. code-block:: sh
+
+  DTreeTrainer train model.vanga train.libsvm validation.libsvm \
+    --feature-type=float --steps=100 --depth=6 --border-count=32 \
+    --alpha=0.5 --numeric-l2=1 --min-leaf-size=20 --threads=4 \
+    --save-best-model=best.vanga
+  DTreeTrainer train-add model.vanga train.libsvm validation.libsvm --steps=20
+
+The numeric learner minimizes logloss on the full in-memory training set. It
+uses Newton updates with backtracking, adding independent threshold branches
+inside native additive DTree containers and updating existing container values.
+Different thresholds for the same feature remain separate branches. Thresholds
+use midpoints between deterministically sampled training values (up to 4096 finite
+observations per feature, plus extremes); histograms account for implicit sparse
+zeros and learn which side receives NaNs. Infinite training values are rejected.
+Targets may be binary or finite probabilities in [0, 1].
+
+``--depth`` bounds new split depth; ``--steps`` bounds update count;
+``--border-count`` is 1..1024, with an additional NaN-separation threshold when
+needed. Existing deeper topologies are retained on resume. The first validation
+set selects the best checkpoint; the main output remains the last model, and
+``--save-best-model`` writes the best model separately. Binary-only options for
+bagging, squared-error gain, multi-level lookahead, annealing and negative-gain
+search are rejected when explicitly requested in numeric mode.
+
+The C++ API is available in ``<DTree/NumericTreeLearner.hpp>`` through
+``Vanga::NumericDataset::load`` and ``Vanga::NumericTreeLearner::fit``. Training
+keeps sparse float rows and histogram statistics; it does not expand floats into
+binary feature columns. ``print``, ``filter`` and ``ensemble`` also evaluate
+numeric models using their original values. Saved ``dtree-float`` models use
+original feature IDs and require no quantization file at prediction time.
+
+For C++ prediction use ``FloatFeatureArray`` (sorted by full feature ID) or
+``FastFeatureSet``. Its float iterator overload preserves values, including
+negative values and NaNs. Full 32-bit IDs are supported without masked-index
+collisions; high IDs use a sparse overflow table.
+
 Vanga Python package
 ====================
 

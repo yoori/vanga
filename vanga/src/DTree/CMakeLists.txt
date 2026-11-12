@@ -8,6 +8,7 @@ set(
     DTree.cpp
     CatBoost.cpp
     FloatFeatures.cpp
+    NumericTreeLearner.cpp
     Predictor.cpp
     SVM.cpp
     Utils.cpp

@@ -33,10 +33,10 @@ namespace Vanga
   struct Buffer : public std::vector<ValueType>, public Gears::AtomicRefCountable
   {
   protected:
-    virtual ~Buffer() throw();
+    virtual ~Buffer() noexcept;
   };
 
-  template <typename ValueType> Buffer<ValueType>::~Buffer() throw()
+  template <typename ValueType> Buffer<ValueType>::~Buffer() noexcept
   {
   }
 
@@ -51,7 +51,7 @@ namespace Vanga
     Buffer<ValueType>& buf();
 
   protected:
-    virtual ~BufferPtr() throw();
+    virtual ~BufferPtr() noexcept;
 
   protected:
     Gears::IntrusivePtr<BufferProviderImpl<ValueType>> provider_;
@@ -76,7 +76,7 @@ namespace Vanga
     friend class BufferPtr<ValueType>;
 
   public:
-    BufferProviderImpl() throw();
+    BufferProviderImpl() noexcept;
 
     Gears::IntrusivePtr<BufferPtr<ValueType>> get();
 
@@ -84,7 +84,7 @@ namespace Vanga
     using SyncPolicy = Gears::SpinLock;
 
   protected:
-    virtual ~BufferProviderImpl() throw();
+    virtual ~BufferProviderImpl() noexcept;
 
     void release_(Gears::IntrusivePtr<Buffer<ValueType>>& buffer);
 
@@ -93,7 +93,7 @@ namespace Vanga
     std::vector<Gears::IntrusivePtr<Buffer<ValueType>>> pred_buffers_;
   };
 
-  template <typename ValueType> BufferProviderImpl<ValueType>::~BufferProviderImpl() throw(){};
+  template <typename ValueType> BufferProviderImpl<ValueType>::~BufferProviderImpl() noexcept{};
 
   template <typename ValueType>
   class BufferProvider
@@ -105,7 +105,7 @@ namespace Vanga
 
 namespace Vanga
 {
-  template <typename ValueType> BufferProviderImpl<ValueType>::BufferProviderImpl() throw()
+  template <typename ValueType> BufferProviderImpl<ValueType>::BufferProviderImpl() noexcept
   {
     pred_buffers_.reserve(128);
   }
@@ -143,7 +143,7 @@ namespace Vanga
     pred_buffers_.back().swap(buffer);
   }
 
-  template <typename ValueType> BufferPtr<ValueType>::~BufferPtr() throw()
+  template <typename ValueType> BufferPtr<ValueType>::~BufferPtr() noexcept
   {
     provider_->release_(buffer_);
   }

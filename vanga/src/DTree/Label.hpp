@@ -44,9 +44,9 @@ namespace Vanga
 
     bool operator<(const BoolLabel& right) const;
 
-    BoolLabel operator+(const BoolLabel& right) const throw();
+    BoolLabel operator+(const BoolLabel& right) const noexcept;
 
-    void print(std::ostream& ostr) const throw();
+    void print(std::ostream& ostr) const noexcept;
   };
 
   struct PredictedBoolLabel : public BoolLabel
@@ -59,11 +59,11 @@ namespace Vanga
 
     void load(const Gears::SubString& str);
 
-    PredictedBoolLabel operator+(const PredictedBoolLabel& right) const throw();
+    PredictedBoolLabel operator+(const PredictedBoolLabel& right) const noexcept;
 
     bool operator<(const PredictedBoolLabel& right) const;
 
-    void print(std::ostream& ostr) const throw();
+    void print(std::ostream& ostr) const noexcept;
   };
 
   inline PredictedBoolLabel::PredictedBoolLabel(bool v, double pred_val) : pred(pred_val)
@@ -85,11 +85,11 @@ namespace Vanga
 
     void load(const Gears::SubString& str);
 
-    PredictedFloatLabel operator+(const PredictedFloatLabel& right) const throw();
+    PredictedFloatLabel operator+(const PredictedFloatLabel& right) const noexcept;
 
     bool operator<(const PredictedFloatLabel& right) const;
 
-    void print(std::ostream& ostr) const throw();
+    void print(std::ostream& ostr) const noexcept;
   };
 
   inline PredictedFloatLabel::PredictedFloatLabel(double v, double pred_val)
@@ -272,14 +272,14 @@ namespace Vanga
     return !this->value && right.value;
   }
 
-  inline BoolLabel BoolLabel::operator+(const BoolLabel& right) const throw()
+  inline BoolLabel BoolLabel::operator+(const BoolLabel& right) const noexcept
   {
     BoolLabel res;
     res.value = value || right.value;
     return res;
   }
 
-  inline void BoolLabel::print(std::ostream& ostr) const throw()
+  inline void BoolLabel::print(std::ostream& ostr) const noexcept
   {
     ostr << orig();
   }
@@ -315,7 +315,7 @@ namespace Vanga
   }
 
   inline PredictedBoolLabel PredictedBoolLabel::
-  operator+(const PredictedBoolLabel& right) const throw()
+  operator+(const PredictedBoolLabel& right) const noexcept
   {
     PredictedBoolLabel res;
     res.value = value || right.value;
@@ -333,7 +333,7 @@ namespace Vanga
     return right.value && pred < right.pred;
   }
 
-  inline void PredictedBoolLabel::print(std::ostream& ostr) const throw()
+  inline void PredictedBoolLabel::print(std::ostream& ostr) const noexcept
   {
     ostr << "label = " << orig() << ", pred = " << pred;
   }
@@ -355,7 +355,7 @@ namespace Vanga
   }
 
   inline PredictedFloatLabel PredictedFloatLabel::
-  operator+(const PredictedFloatLabel& right) const throw()
+  operator+(const PredictedFloatLabel& right) const noexcept
   {
     PredictedFloatLabel res(*this);
     res.value += right.value;
@@ -368,7 +368,7 @@ namespace Vanga
     return value < right.value || (value == right.value && pred < right.pred);
   }
 
-  inline void PredictedFloatLabel::print(std::ostream& ostr) const throw()
+  inline void PredictedFloatLabel::print(std::ostream& ostr) const noexcept
   {
     ostr << "label = " << orig() << ", pred = " << pred;
   }

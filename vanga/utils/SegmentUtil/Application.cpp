@@ -159,11 +159,11 @@ Profiles::SegmentMatchesWriter SegmentMatchesConverter::operator()(unsigned long
   return res;
 }
 
-Application_::Application_() throw()
+Application_::Application_() noexcept
 {
 }
 
-Application_::~Application_() throw()
+Application_::~Application_() noexcept
 {
 }
 
@@ -760,7 +760,7 @@ void Application_::print_profile_(const char* user_id, const char* filename)
   activator->wait_object();
 }
 
-void Application_::print_profile_from_buf_(const char* user_id, const Gears::MemBuf& buf) throw()
+void Application_::print_profile_from_buf_(const char* user_id, const Gears::MemBuf& buf) noexcept
 {
   try
   {

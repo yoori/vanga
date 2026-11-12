@@ -87,9 +87,11 @@ def main():
 
         options = ['--steps=1', '--train-bags=0',
                    '--metric-sqd=0', '--metric-logloss=1']
-        unsupported_resume = run('DTreeTrainer', 'train-add', numeric_native,
-                                 data, *options, success=False)
-        assert 'do not support numeric models' in unsupported_resume.stderr
+        resumed_numeric = run('DTreeTrainer', 'train-add', numeric_native, data, *options)
+        assert 'loaded model: numeric' in resumed_numeric.stdout
+        assert numeric_native.read_text().startswith('dtree-float\n')
+        run('DTreeTrainer', 'train-add', numeric_native, data, '--feature-type=binary',
+            *options, success=False)
         model = root / 'train.model'
         # Fresh training must ignore the contents of an existing output file.
         model.write_text('obsolete model')

@@ -62,6 +62,7 @@ namespace Vanga
     DECLARE_GEARS_EXCEPTION(Exception, Predictor::Exception);
 
     friend class DTreeBranch;
+    friend class NumericTreeLearner;
 
     struct Branch
     {
@@ -84,7 +85,7 @@ namespace Vanga
     explicit DTree(std::istream& catboost_json);
     explicit DTree(const std::string& catboost_json);
 
-    bool uses_numeric_features() const throw();
+    bool uses_numeric_features() const noexcept;
 
     void save(std::ostream& ostr) const;
 
@@ -94,37 +95,37 @@ namespace Vanga
     // features should be sorted
     /*
     double
-    predict(const FeatureArray& features) const throw();
+    predict(const FeatureArray& features) const noexcept;
     */
 
     template <typename FeatureResolveFunType>
-    double fpredict(const FeatureResolveFunType& fun) const throw();
+    double fpredict(const FeatureResolveFunType& fun) const noexcept;
 
     const BranchArray& branches() const;
 
-    template <typename FunType> void reindex(const FunType& fun) throw();
+    template <typename FunType> void reindex(const FunType& fun) noexcept;
 
-    DTree_var copy() const throw();
+    DTree_var copy() const noexcept;
 
-    unsigned long node_count() const throw();
+    unsigned long node_count() const noexcept;
 
     template <typename LabelType>
-    DTree_var filter(double min_cover, const SVM<LabelType>* svm) throw();
+    DTree_var filter(double min_cover, const SVM<LabelType>* svm) noexcept;
 
     std::string to_string(const char* prefix, const FeatureDictionary* dict = 0,
-      double base = 0.0) const throw();
+      double base = 0.0) const noexcept;
 
     template <typename LabelType>
     std::string to_string_ext(const char* prefix, const FeatureDictionary* dict, double base,
-      const SVM<LabelType>* svm, const FeatureNameDictionary* name_dict = 0) const throw();
+      const SVM<LabelType>* svm, const FeatureNameDictionary* name_dict = 0) const noexcept;
 
     template <typename LabelType>
     std::string to_string_ext(const char* prefix, const FeatureDictionary* dict, double base,
       const SVM<LabelType>* svm, const MetricPrinter<LabelType>* metric_printer,
-      const FeatureNameDictionary* name_dict = 0) const throw();
+      const FeatureNameDictionary* name_dict = 0) const noexcept;
 
   protected:
-    virtual ~DTree() throw();
+    virtual ~DTree() noexcept;
 
     void save_node_(std::ostream& ostr) const;
 
@@ -133,13 +134,14 @@ namespace Vanga
     bool numeric_model_ = false;
 
     template <typename LabelType>
-    DTree_var filter_(double min_cover, const SVM<LabelType>* svm, unsigned long full_size) throw();
+    DTree_var filter_(double min_cover, const SVM<LabelType>* svm, unsigned long full_size)
+      noexcept;
 
     template <typename LabelType>
     std::string to_string_ext_(const char* prefix, const FeatureDictionary* dict, double base,
       const SVM<LabelType>* svm, unsigned long full_size,
       const MetricPrinter<LabelType>* metric_printer, const FeatureNameDictionary* name_dict) const
-      throw();
+      noexcept;
 
   public:
     unsigned long tree_id;
@@ -161,14 +163,14 @@ namespace Vanga
   {
   public:
     FastDTree(DTree* tree, unsigned long table_size = 0xFFFF)
-      throw();
+      noexcept;
 
     // features should be sorted
     double
-    predict(const FeatureArray& features) const throw();
+    predict(const FeatureArray& features) const noexcept;
 
     Gears::IntrusivePtr<FastDTree>
-    copy() const throw();
+    copy() const noexcept;
 
     void
     save(std::ostream& ostr) const;
@@ -178,7 +180,7 @@ namespace Vanga
       const char* prefix,
       const FeatureDictionary* dict = 0,
       double base = 0.0)
-      const throw();
+      const noexcept;
 
     static Gears::IntrusivePtr<FastDTree>
     load(std::istream& istr, bool with_head = true);
@@ -191,7 +193,7 @@ namespace Vanga
     public:
       FastFeatureResolveFun(
         const FeatureIndexTable& eval_feature_indexes)
-        throw();
+        noexcept;
 
       std::pair<bool, uint32_t>
       get(uint32_t) const;
@@ -201,10 +203,10 @@ namespace Vanga
     };
 
   protected:
-    FastDTree() throw();
+    FastDTree() noexcept;
 
     virtual
-    ~FastDTree() throw() = default;
+    ~FastDTree() noexcept = default;
 
   protected:
     mutable FeatureIndexTable eval_feature_indexes_;

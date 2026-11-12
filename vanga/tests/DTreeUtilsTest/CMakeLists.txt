@@ -35,8 +35,17 @@ vanga_add_executable(CatBoostImportTest
 target_compile_definitions(CatBoostImportTest PRIVATE _GLIBCXX_ASSERTIONS)
 add_test(NAME CatBoostImportTest COMMAND CatBoostImportTest)
 
+vanga_add_executable(NumericTrainingTest
+  SOURCES NumericTrainingTest.cpp
+  LINK_LIBRARIES VangaDTree)
+target_compile_definitions(NumericTrainingTest PRIVATE _GLIBCXX_ASSERTIONS)
+add_test(NAME NumericTrainingTest COMMAND NumericTrainingTest)
+
 find_package(Python3 COMPONENTS Interpreter QUIET)
 if(Python3_Interpreter_FOUND)
+  add_test(NAME NumericCliRegression
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/numeric_cli.py
+      $<TARGET_FILE:DTreeTrainer>)
   add_test(NAME VangaCliRegression
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/cli_regression.py
       $<TARGET_FILE_DIR:DTreeTrainer>)

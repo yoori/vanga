@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 
@@ -56,6 +57,35 @@ namespace
     Vanga::SVM<Vanga::BoolLabel>::nocheck_load_line_(unchecked_input, label, features);
     require(features.size() == 1 && features[0].first == 43,
       "unchecked SVM loader retained inactive features");
+
+    Vanga::FloatFeatureArray numeric;
+    numeric.emplace_back(7, 0.1f);
+    numeric.emplace_back(7 + Vanga::FastFeatureSet::SIZE + 1, 0.9f);
+    numeric.emplace_back(std::numeric_limits<uint32_t>::max(), -1.5f);
+    fast.set(numeric.begin(), numeric.end());
+    for (const auto& feature : numeric)
+    {
+      require(fast.get(feature.first).second == feature.second,
+        "numeric fast iterator lost a value or aliased an ID");
+    }
+    fast.rollback(7);
+    require(fast.get(numeric[1].first).second == 0.9f, "rollback aliased another feature ID");
+    fast.rollback(numeric.begin(), numeric.end());
+    require(fast.check(0), "numeric iterator rollback failed");
+    fast.set(numeric);
+    require(fast.get(7).second == 0.1f && fast.get(numeric[1].first).second == 0.9f,
+      "typed numeric setter aliased IDs");
+    fast.rollback(numeric);
+    fast.set(7UL, -2.5f);
+    require(fast.get(7).second == -2.5f, "single numeric setter truncated a float");
+    fast.rollback(7);
+    fast.set(uint32_t(7), uint32_t(2));
+    require(fast.get(7).second == 2, "scalar setter resolved to an iterator overload");
+    fast.rollback(7);
+    fast.set(numeric[2].first, std::numeric_limits<float>::quiet_NaN());
+    require(std::isnan(fast.get(numeric[2].first).second), "fast setter lost NaN");
+    fast.rollback(numeric[2].first);
+    require(fast.check(0), "overflow feature rollback failed");
 
     std::istringstream failed;
     failed.setstate(std::ios::failbit);

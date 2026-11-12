@@ -33,7 +33,7 @@ namespace Vanga
     FunSquareDiviationLoss(const std::vector<VarGroup<IteratorType>>& preds);
 
     // d_vars[0] is free arg (included for all groups with plus)
-    double eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const throw();
+    double eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const noexcept;
 
   protected:
     const std::vector<VarGroup<IteratorType>>& preds_;
@@ -58,7 +58,7 @@ namespace Vanga
 {
   template <typename IteratorType>
   double FunSquareDiviationLoss<IteratorType>::
-    eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const throw()
+    eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const noexcept
   {
     const int var_number = d_vars.size() - 1;
     double fun_val = 0.0;

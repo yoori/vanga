@@ -39,9 +39,9 @@ using namespace Vanga;
 class Application_
 {
 public:
-  Application_() throw();
+  Application_() noexcept;
 
-  virtual ~Application_() throw();
+  virtual ~Application_() noexcept;
 
   void main(int& argc, char** argv) /*throw(Gears::Exception)*/;
 

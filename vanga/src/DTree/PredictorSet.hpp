@@ -39,12 +39,12 @@ namespace Vanga
     template <typename PredictorType> void add(PredictorType* tree, double coef = 1.0);
 
     template <typename FeatureSetType>
-    double fpredict(const FeatureSetType& features) const throw();
+    double fpredict(const FeatureSetType& features) const noexcept;
 
     void save(std::ostream& ostr) const;
 
     std::string to_string(const char* prefix, const FeatureDictionary* dict = 0,
-      double base = 0.0) const throw();
+      double base = 0.0) const noexcept;
 
     static Gears::IntrusivePtr<PredictorSet> load(std::istream& istr, bool with_head = true);
 
@@ -55,14 +55,14 @@ namespace Vanga
   protected:
     struct PredictorDelegate : public Gears::AtomicRefCountable
     {
-      virtual double predict(const FeatureArray&) throw() = 0;
+      virtual double predict(const FeatureArray&) noexcept = 0;
 
-      virtual double predict(const FloatFeatureArray&) throw() = 0;
+      virtual double predict(const FloatFeatureArray&) noexcept = 0;
 
       virtual void save(std::ostream& ostr) const = 0;
 
       virtual std::string
-      to_string(const char* prefix, const FeatureDictionary* dict, double base) const throw() = 0;
+      to_string(const char* prefix, const FeatureDictionary* dict, double base) const noexcept = 0;
     };
 
     using PredictorDelegate_var = Gears::IntrusivePtr<PredictorDelegate>;
@@ -72,21 +72,21 @@ namespace Vanga
     public:
       PredictorHolder(PredictorType* predictor);
 
-      virtual double predict(const FeatureArray& features) throw();
+      virtual double predict(const FeatureArray& features) noexcept;
 
-      virtual double predict(const FloatFeatureArray& features) throw();
+      virtual double predict(const FloatFeatureArray& features) noexcept;
 
       void save(std::ostream& ostr) const;
 
       std::string
-      to_string(const char* prefix, const FeatureDictionary* dict, double base) const throw();
+      to_string(const char* prefix, const FeatureDictionary* dict, double base) const noexcept;
 
     protected:
       Gears::IntrusivePtr<PredictorType> predictor_;
     };
 
   protected:
-    virtual ~PredictorSet() throw();
+    virtual ~PredictorSet() noexcept;
 
   protected:
     std::vector<std::pair<PredictorDelegate_var, double>> predictors_;

@@ -53,10 +53,10 @@ namespace Vanga
     PredArray values;
 
   protected:
-    virtual ~PredArrayHolder() throw();
+    virtual ~PredArrayHolder() noexcept;
   };
 
-  inline PredArrayHolder::~PredArrayHolder() throw()
+  inline PredArrayHolder::~PredArrayHolder() noexcept
   {
   }
 
@@ -76,14 +76,14 @@ namespace Vanga
 
   public:
     virtual double
-    predict(const FeatureArray& features) const throw() = 0;
+    predict(const FeatureArray& features) const noexcept = 0;
 
     PredArrayHolder_var
-    predict(const RowArray& rows) const throw();
+    predict(const RowArray& rows) const noexcept;
 
     template<typename LabelType>
     PredArrayHolder_var
-    predict(const SVM<LabelType>* svm) const throw();
+    predict(const SVM<LabelType>* svm) const noexcept;
 
     virtual void
     save(std::ostream& ostr) const = 0;
@@ -93,10 +93,10 @@ namespace Vanga
       const char* prefix,
       const FeatureDictionary* dict = 0,
       double base = 0.0)
-      const throw() = 0;
+      const noexcept = 0;
 
   protected:
-    virtual ~Predictor() throw() {}
+    virtual ~Predictor() noexcept {}
   };
 
   typedef Gears::IntrusivePtr<Predictor> Predictor_var;

@@ -32,9 +32,9 @@ struct Murmur32v3Adapter : public Gears::Murmur32v3Hasher
 {
   Murmur32v3Adapter(std::size_t hash_seed);
 
-  template <typename Value> void add(const Value& value) throw();
+  template <typename Value> void add(const Value& value) noexcept;
 
-  void add(const std::string& value) throw();
+  void add(const std::string& value) noexcept;
 };
 
 inline Murmur32v3Adapter::Murmur32v3Adapter(std::size_t hash_seed)
@@ -42,12 +42,12 @@ inline Murmur32v3Adapter::Murmur32v3Adapter(std::size_t hash_seed)
 {
 }
 
-template <typename Value> void Murmur32v3Adapter::add(const Value& value) throw()
+template <typename Value> void Murmur32v3Adapter::add(const Value& value) noexcept
 {
   Gears::Murmur32v3Hasher::add(&value, sizeof(value));
 }
 
-inline void Murmur32v3Adapter::add(const std::string& value) throw()
+inline void Murmur32v3Adapter::add(const std::string& value) noexcept
 {
   Gears::Murmur32v3Hasher::add(value.data(), value.size());
 }
@@ -68,13 +68,13 @@ public:
   HashCalculator(unsigned long shifter, const char* name);
 
   virtual void eval_hashes(HashArray& result_hashes, Murmur32v3Adapter& hash_adapter,
-    const HashCalculateParams& params) throw() = 0;
+    const HashCalculateParams& params) noexcept = 0;
 
   virtual void fill_dictionary(HashDictionary& dictionary, Murmur32v3Adapter& hash_adapter,
-    const HashCalculateParams& params, std::vector<String::SubString>& value_path) throw() = 0;
+    const HashCalculateParams& params, std::vector<String::SubString>& value_path) noexcept = 0;
 
 protected:
-  virtual ~HashCalculator() throw();
+  virtual ~HashCalculator() noexcept;
 
   bool hash_index_(uint32_t& index, uint32_t hash) const;
 
@@ -86,7 +86,7 @@ protected:
   const std::string name_;
 };
 
-inline HashCalculator::~HashCalculator() throw() = default;
+inline HashCalculator::~HashCalculator() noexcept = default;
 inline HashCalculator::HashCalculator(unsigned long shifter, const char* name)
   : shifter_(shifter), name_(name)
 {
@@ -137,30 +137,30 @@ class HashCalculatorFinalImpl : public HashCalculator
 {
 public:
   HashCalculatorFinalImpl(unsigned long shifter, const char* name,
-    unsigned long feature_index) throw();
+    unsigned long feature_index) noexcept;
 
   virtual void eval_hashes(HashArray& result_hashes, Murmur32v3Adapter& hash_adapter,
-    const HashCalculateParams& params) throw();
+    const HashCalculateParams& params) noexcept;
 
   void fill_dictionary(HashDictionary& dictionary, Murmur32v3Adapter& hash_adapter,
-    const HashCalculateParams& params, std::vector<String::SubString>& value_path) throw();
+    const HashCalculateParams& params, std::vector<String::SubString>& value_path) noexcept;
 
 protected:
-  virtual ~HashCalculatorFinalImpl() throw();
+  virtual ~HashCalculatorFinalImpl() noexcept;
 
 protected:
   const unsigned long feature_index_;
 };
 
-inline HashCalculatorFinalImpl::~HashCalculatorFinalImpl() throw() = default;
+inline HashCalculatorFinalImpl::~HashCalculatorFinalImpl() noexcept = default;
 inline HashCalculatorFinalImpl::HashCalculatorFinalImpl(unsigned long shifter, const char* name,
-  unsigned long feature_index) throw()
+  unsigned long feature_index) noexcept
   : HashCalculator(shifter, name), feature_index_(feature_index)
 {
 }
 
 inline void HashCalculatorFinalImpl::eval_hashes(HashArray& result_hashes,
-  Murmur32v3Adapter& hash_adapter, const HashCalculateParams& params) throw()
+  Murmur32v3Adapter& hash_adapter, const HashCalculateParams& params) noexcept
 {
   const HashCalculateParams::Value& value = params.values[feature_index_];
 
@@ -193,7 +193,7 @@ inline void HashCalculatorFinalImpl::eval_hashes(HashArray& result_hashes,
 
 inline void HashCalculatorFinalImpl::
   fill_dictionary(HashDictionary& dictionary, Murmur32v3Adapter& hash_adapter,
-    const HashCalculateParams& params, std::vector<String::SubString>& value_path) throw()
+    const HashCalculateParams& params, std::vector<String::SubString>& value_path) noexcept
 {
   const HashCalculateParams::Value& value = params.values[feature_index_];
 
@@ -232,32 +232,32 @@ class HashCalculatorDelegateImpl : public HashCalculator
 {
 public:
   HashCalculatorDelegateImpl(unsigned long shifter, HashCalculator* next_calculator,
-    unsigned long feature_index) throw();
+    unsigned long feature_index) noexcept;
 
   virtual void eval_hashes(HashArray& result_hashes, Murmur32v3Adapter& hash_adapter,
-    const HashCalculateParams& params) throw();
+    const HashCalculateParams& params) noexcept;
 
   void fill_dictionary(HashDictionary& dictionary, Murmur32v3Adapter& hash_adapter,
-    const HashCalculateParams& params, std::vector<String::SubString>& value_path) throw();
+    const HashCalculateParams& params, std::vector<String::SubString>& value_path) noexcept;
 
 protected:
-  virtual ~HashCalculatorDelegateImpl() throw();
+  virtual ~HashCalculatorDelegateImpl() noexcept;
 
 protected:
   const HashCalculator_var next_calculator_;
   const unsigned long feature_index_;
 };
 
-inline HashCalculatorDelegateImpl::~HashCalculatorDelegateImpl() throw() = default;
+inline HashCalculatorDelegateImpl::~HashCalculatorDelegateImpl() noexcept = default;
 inline HashCalculatorDelegateImpl::HashCalculatorDelegateImpl(unsigned long shifter,
-  HashCalculator* next_calculator, unsigned long feature_index) throw()
+  HashCalculator* next_calculator, unsigned long feature_index) noexcept
   : HashCalculator(shifter, ""), next_calculator_(ReferenceCounting::add_ref(next_calculator)),
     feature_index_(feature_index)
 {
 }
 
 inline void HashCalculatorDelegateImpl::eval_hashes(HashArray& result_hashes,
-  Murmur32v3Adapter& hash_adapter, const HashCalculateParams& params) throw()
+  Murmur32v3Adapter& hash_adapter, const HashCalculateParams& params) noexcept
 {
   const HashCalculateParams::Value& value = params.values[feature_index_];
 
@@ -279,7 +279,7 @@ inline void HashCalculatorDelegateImpl::eval_hashes(HashArray& result_hashes,
 
 inline void HashCalculatorDelegateImpl::
   fill_dictionary(HashDictionary& dictionary, Murmur32v3Adapter& hash_adapter,
-    const HashCalculateParams& params, std::vector<String::SubString>& value_path) throw()
+    const HashCalculateParams& params, std::vector<String::SubString>& value_path) noexcept
 {
   const HashCalculateParams::Value& value = params.values[feature_index_];
 

@@ -24,7 +24,7 @@ namespace Vanga
 {
   // LogRegPredictor
   template <typename NextPredictorType>
-  LogRegPredictor<NextPredictorType>::LogRegPredictor(NextPredictorType* predictor) throw()
+  LogRegPredictor<NextPredictorType>::LogRegPredictor(NextPredictorType* predictor) noexcept
     : predictor_(Gears::add_ref(predictor))
   {
   }
@@ -32,7 +32,7 @@ namespace Vanga
   template <typename NextPredictorType>
   template <typename FeatureResolveFunType>
   double LogRegPredictor<NextPredictorType>::
-    fpredict(const FeatureResolveFunType& features) const throw()
+    fpredict(const FeatureResolveFunType& features) const noexcept
   {
     const double DOUBLE_ONE = 1.0;
     return DOUBLE_ONE / (DOUBLE_ONE + std::exp(predictor_ ? -predictor_->fpredict(features) : 0.0));
@@ -46,7 +46,7 @@ namespace Vanga
 
   template <typename NextPredictorType>
   std::string LogRegPredictor<NextPredictorType>::
-    to_string(const char* prefix, const FeatureDictionary* dict, double base) const throw()
+    to_string(const char* prefix, const FeatureDictionary* dict, double base) const noexcept
   {
     return predictor_->to_string(prefix, dict, base);
   }

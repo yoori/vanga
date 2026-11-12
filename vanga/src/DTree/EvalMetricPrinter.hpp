@@ -43,7 +43,7 @@ namespace Vanga
     virtual void print(std::ostream& ostr, const SVM<LabelType>* svm) const;
 
   protected:
-    virtual ~EvalMetricPrinter() throw();
+    virtual ~EvalMetricPrinter() noexcept;
 
   protected:
     const std::string prefix_;
@@ -51,7 +51,7 @@ namespace Vanga
   };
 
   template <typename LabelType, typename MetricEvaluatorType>
-  EvalMetricPrinter<LabelType, MetricEvaluatorType>::~EvalMetricPrinter() throw()
+  EvalMetricPrinter<LabelType, MetricEvaluatorType>::~EvalMetricPrinter() noexcept
   {
   }
 

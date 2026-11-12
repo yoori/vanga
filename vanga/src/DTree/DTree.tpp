@@ -33,7 +33,7 @@ namespace Vanga
   std::string DTree::to_string_ext_(const char* prefix, const FeatureDictionary* dict, double base,
     const SVM<LabelType>* svm, unsigned long full_size,
     const MetricPrinter<LabelType>* metric_printer, const FeatureNameDictionary* name_dict) const
-    throw()
+    noexcept
   {
     std::ostringstream ostr;
     ostr << prefix << "{" << tree_id << "}";
@@ -115,7 +115,7 @@ namespace Vanga
     return ostr.str();
   }
 
-  template <typename FunType> void DTree::reindex(const FunType& fun) throw()
+  template <typename FunType> void DTree::reindex(const FunType& fun) noexcept
   {
     for (auto branch_it = branches_.begin(); branch_it != branches_.end(); ++branch_it)
     {
@@ -135,7 +135,7 @@ namespace Vanga
 
   template <typename LabelType>
   std::string DTree::to_string_ext(const char* prefix, const FeatureDictionary* dict, double base,
-    const SVM<LabelType>* svm, const FeatureNameDictionary* name_dict) const throw()
+    const SVM<LabelType>* svm, const FeatureNameDictionary* name_dict) const noexcept
   {
     return to_string_ext_<LabelType>(prefix, dict, base, svm, svm ? svm->size() : 0, 0, name_dict);
   }
@@ -143,21 +143,21 @@ namespace Vanga
   template <typename LabelType>
   std::string DTree::to_string_ext(const char* prefix, const FeatureDictionary* dict, double base,
     const SVM<LabelType>* svm, const MetricPrinter<LabelType>* metric_printer,
-    const FeatureNameDictionary* name_dict) const throw()
+    const FeatureNameDictionary* name_dict) const noexcept
   {
     return to_string_ext_(prefix, dict, base, svm, svm ? svm->size() : 0, metric_printer,
       name_dict);
   }
 
   template <typename LabelType>
-  DTree_var DTree::filter(double min_cover, const SVM<LabelType>* svm) throw()
+  DTree_var DTree::filter(double min_cover, const SVM<LabelType>* svm) noexcept
   {
     return filter_(min_cover, svm, svm ? svm->size() : 0);
   }
 
   template <typename LabelType>
   DTree_var DTree::
-    filter_(double min_cover, const SVM<LabelType>* svm, unsigned long full_size) throw()
+    filter_(double min_cover, const SVM<LabelType>* svm, unsigned long full_size) noexcept
   {
     const double cover = static_cast<double>(svm->size()) / full_size;
 
@@ -199,7 +199,7 @@ namespace Vanga
   }
 
   template <typename FeatureSetType>
-  double DTree::fpredict(const FeatureSetType& feature_set) const throw()
+  double DTree::fpredict(const FeatureSetType& feature_set) const noexcept
   {
     double res = delta_prob;
 

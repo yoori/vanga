@@ -37,10 +37,10 @@ namespace Vanga
     virtual void print(std::ostream& ostr, const SVM<LabelType>* svm) const = 0;
 
   protected:
-    virtual ~MetricPrinter() throw();
+    virtual ~MetricPrinter() noexcept;
   };
 
-  template <typename LabelType> MetricPrinter<LabelType>::~MetricPrinter() throw()
+  template <typename LabelType> MetricPrinter<LabelType>::~MetricPrinter() noexcept
   {
   }
 
@@ -55,13 +55,13 @@ namespace Vanga
     virtual void print(std::ostream& ostr, const SVM<LabelType>* svm) const;
 
   protected:
-    virtual ~ComposeMetricPrinter() throw();
+    virtual ~ComposeMetricPrinter() noexcept;
 
   protected:
     std::vector<Gears::IntrusivePtr<MetricPrinter<LabelType>>> printers_;
   };
 
-  template <typename LabelType> ComposeMetricPrinter<LabelType>::~ComposeMetricPrinter() throw()
+  template <typename LabelType> ComposeMetricPrinter<LabelType>::~ComposeMetricPrinter() noexcept
   {
   }
 

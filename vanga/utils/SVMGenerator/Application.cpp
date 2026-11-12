@@ -65,11 +65,11 @@ void parse_config(Config& res_config, const Gears::SubString& str)
 }
 
 // Application
-Application_::Application_() throw()
+Application_::Application_() noexcept
 {
 }
 
-Application_::~Application_() throw()
+Application_::~Application_() noexcept
 {
 }
 

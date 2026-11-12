@@ -26,7 +26,9 @@
 #include <iomanip>
 #include <algorithm>
 #include <fstream>
-//#include <cmath>
+#include <cstdio>
+#include <cmath>
+#include <limits>
 #include <unordered_set>
 
 #include <Gears/Basic/Rand.hpp>
@@ -35,8 +37,6 @@
 #include <Gears/String/Csv.hpp>
 #include <Gears/Threading/TaskRunner.hpp>
 
-//#include <Commons/Algs.hpp>
-
 #include <DTree/DTree.hpp>
 #include <DTree/PredictorSet.hpp>
 #include <DTree/LogRegPredictor.hpp>
@@ -44,7 +44,6 @@
 #include <DTree/Utils.hpp>
 #include <DTree/Gain.hpp>
 #include <DTree/EvalMetricPrinter.hpp>
-//#include <DTree/LogLossMetricEvaluator.hpp>
 #include <DTree/RSquareMetricEvaluator.hpp>
 #include <DTree/ActExpectedValueMetricEvaluator.hpp>
 #include <DTree/PredExpectedValueMetricEvaluator.hpp>
@@ -55,6 +54,7 @@
 
 #include <DTree/FastFeatureSet.hpp>
 #include <DTree/FloatFeatures.hpp>
+#include <DTree/NumericTreeLearner.hpp>
 
 #include "Application.hpp"
 
@@ -70,6 +70,9 @@ namespace
     "  train <MODEL> <TRAIN> [TEST ...]: train a new model\n"
     "  train-add <MODEL> <TRAIN> [TEST ...]: continue an existing model\n"
     "  train-trees <MODEL> <TRAIN> [TEST ...]: continue if MODEL exists, otherwise train anew\n"
+    "  --feature-type=auto|binary|float: auto preserves binary training for 0/1 data\n"
+    "  Numeric training: --steps=N --depth=N --border-count=N --min-leaf-size=N\n"
+    "    --alpha=RATE --numeric-l2=L2 --threads=N; objective: logloss\n"
     "  import-catboost <JSON> <MODEL>: import scalar float-feature oblivious trees\n"
     "  predict[-raw] <MODEL> <LIBSVM>: probabilities or raw scores; JSON is detected "
     "automatically\n"
@@ -80,11 +83,11 @@ namespace
   public:
     void report_error(Gears::ActiveObjectCallback::Severity severity,
       const Gears::SubString& description,
-      const Gears::SubString& error_code = Gears::SubString()) throw();
+      const Gears::SubString& error_code = Gears::SubString()) noexcept;
   };
 
   void Callback::report_error(Gears::ActiveObjectCallback::Severity severity,
-    const Gears::SubString& description, const Gears::SubString& error_code) throw()
+    const Gears::SubString& description, const Gears::SubString& error_code) noexcept
   {
     try
     {
@@ -97,14 +100,70 @@ namespace
 
   using LogRegDTreePredictor = LogRegPredictor<DTree>;
   using LogRegDTreePredictor_var = Gears::IntrusivePtr<LogRegDTreePredictor>;
+
+  void save_model(const std::string& path, const DTree& tree)
+  {
+    const std::string partial = path + ".partial";
+    try
+    {
+      std::ofstream output(partial);
+      if (!output)
+      {
+        throw DTree::Exception("cannot create model file: " + partial);
+      }
+      tree.save(output);
+      output.close();
+      if (!output || std::rename(partial.c_str(), path.c_str()) != 0)
+      {
+        throw DTree::Exception("cannot save model file: " + path);
+      }
+    }
+    catch (...)
+    {
+      std::remove(partial.c_str());
+      throw;
+    }
+  }
+
+  Application_::SVMImpl_var binary_dataset(NumericDataset& data)
+  {
+    Application_::SVMImpl_var result = new Application_::SVMImpl();
+    for (std::size_t i = 0; i < data.rows.size(); ++i)
+    {
+      if (data.labels[i] != 0 && data.labels[i] != 1)
+      {
+        throw DTree::Exception("binary training requires 0/1 labels");
+      }
+
+      Row_var row = new Row();
+      for (const auto& feature : data.rows[i])
+      {
+        if (feature.second > 0.0000001f)
+        {
+          row->features.emplace_back(feature.first, 1);
+        }
+      }
+      const double prior = data.prior_predictions.empty() ? 0 : data.prior_predictions[i];
+      result->add_row(row, PredictedBoolLabel(data.labels[i] == 1, prior));
+      FloatFeatureArray().swap(data.rows[i]);
+    }
+    data.rows.clear();
+    data.rows.shrink_to_fit();
+    data.labels.clear();
+    data.labels.shrink_to_fit();
+    data.prior_predictions.clear();
+    data.prior_predictions.shrink_to_fit();
+    result->sort_();
+    return result;
+  }
 }
 
 // Application
-Application_::Application_() throw()
+Application_::Application_() noexcept
 {
 }
 
-Application_::~Application_() throw()
+Application_::~Application_() noexcept
 {
 }
 
@@ -141,18 +200,20 @@ void Application_::ensemble_(double& min_logloss, double& logloss1, double& logl
     {
       logloss2 = local_logloss;
     }
-
-    // std::cerr << "c1 = " << local_coef1 << ", c2 = " << local_coef2 << ": " << local_logloss <<
-    // std::endl;
   }
 
   coef1 = min_coef1;
   coef2 = min_coef2;
 }
 
-void Application_::
-  deep_print_(std::ostream& ostr, DTree* dtree, const char* prefix, const FeatureDictionary* dict,
-    double base, const SVMImpl* svm, const FeatureNameDictionary* name_dict) const throw()
+void Application_::deep_print_(
+  std::ostream& ostr,
+  DTree* dtree,
+  const char* prefix,
+  const FeatureDictionary* dict,
+  double base,
+  const SVMImpl* svm,
+  const FeatureNameDictionary* name_dict) const noexcept
 {
   Gears::IntrusivePtr<MetricPrinter<PredictedBoolLabel>>
     ll_metric_printer(new EvalMetricPrinter<PredictedBoolLabel, LogLossMetricEvaluator>("ll = ",
@@ -166,19 +227,13 @@ void Application_::
   Gears::IntrusivePtr<MetricPrinter<PredictedBoolLabel>> disc_metric_printer(new EvalMetricPrinter<
     PredictedBoolLabel, ActDiscrepancyMetricEvaluator>("d = "));
 
-  //Gears::IntrusivePtr<MetricPrinter<PredictedBoolLabel> > actual_absloss_metric_printer(
-  //  new EvalMetricPrinter<PredictedBoolLabel, ActAbsLossMetricEvaluator>("aal = "));
   Gears::IntrusivePtr<MetricPrinter<PredictedBoolLabel>>
     pred_absloss_metric_printer(new EvalMetricPrinter<PredictedBoolLabel,
       PredAbsLossMetricEvaluator>("pal = "));
 
-  //Gears::IntrusivePtr<MetricPrinter<PredictedBoolLabel> > lc_metric_printer(
-  //  new EvalMetricPrinter<PredictedBoolLabel, LabelCountMetricEvaluator>("lc = "));
-
   Gears::IntrusivePtr<MetricPrinter<PredictedBoolLabel>>
     metric_printer(new ComposeMetricPrinter<PredictedBoolLabel>(ll_metric_printer,
       disc_metric_printer, aev_metric_printer, pred_metric_printer,
-      //actual_absloss_metric_printer,
       pred_absloss_metric_printer));
 
   LogRegDTreePredictor_var log_reg_predictor = new LogRegPredictor<DTree>(dtree);
@@ -196,7 +251,7 @@ void Application_::
 }
 
 void Application_::main(int& argc, char** argv)
-/*throw(Gears::Exception)*/
+  /*throw(Gears::Exception)*/
 {
   Gears::AppUtils::CheckOption opt_help;
   Gears::AppUtils::Option<unsigned long> opt_max_features(10);
@@ -209,6 +264,10 @@ void Application_::main(int& argc, char** argv)
   Gears::AppUtils::Option<unsigned long> opt_super_iterations(10);
   Gears::AppUtils::Option<unsigned long> opt_num_trees(10);
   Gears::AppUtils::Option<unsigned long> opt_threads(1);
+  Gears::AppUtils::Option<std::string> opt_feature_type("auto");
+  Gears::AppUtils::Option<unsigned long> opt_border_count(32);
+  Gears::AppUtils::Option<unsigned long> opt_min_leaf_size(1);
+  Gears::AppUtils::Option<double> opt_numeric_l2(1.0);
   Gears::AppUtils::Option<unsigned long> opt_train_bags_number(10);
   Gears::AppUtils::Option<unsigned long> opt_test_bags_number(3);
   //Gears::AppUtils::Option<double> opt_add_tree_coef(1.0);
@@ -255,6 +314,10 @@ void Application_::main(int& argc, char** argv)
   args.add(Gears::AppUtils::equal_name("dict"), opt_feature_dictionary);
   args.add(Gears::AppUtils::equal_name("name-dict"), opt_feature_name_dictionary);
   args.add(Gears::AppUtils::equal_name("threads") || Gears::AppUtils::short_name("t"), opt_threads);
+  args.add(Gears::AppUtils::equal_name("feature-type"), opt_feature_type);
+  args.add(Gears::AppUtils::equal_name("border-count"), opt_border_count);
+  args.add(Gears::AppUtils::equal_name("min-leaf-size"), opt_min_leaf_size);
+  args.add(Gears::AppUtils::equal_name("numeric-l2"), opt_numeric_l2);
   args.add(Gears::AppUtils::equal_name("train-bags"), opt_train_bags_number);
   args.add(Gears::AppUtils::equal_name("gain-check-bags"), opt_gain_check_bags_number);
   args.add(Gears::AppUtils::equal_name("test-bags"), opt_test_bags_number);
@@ -360,38 +423,41 @@ void Application_::main(int& argc, char** argv)
     std::ifstream train_file(train_file_path.c_str());
     if (!train_file.is_open())
     {
-      std::cerr << "can't open train file: " << train_file_path << std::endl;
-      return;
+      throw Exception("can't open train file: " + train_file_path);
     }
 
-    SVMImpl_var train_svm = SVMImpl::load(train_file);
-
-    if (!filter_features.empty())
+    if (*opt_feature_type != "auto" && *opt_feature_type != "binary" &&
+        *opt_feature_type != "float")
     {
-      train_svm = train_svm->filter(filter_features);
+      throw Exception("feature-type must be auto, binary or float");
     }
+
+    if (command == "train-add" && !Gears::FileManip::file_exists(result_file_path))
+    {
+      throw Exception("train-add requires an existing model file");
+    }
+    DTree_var tree;
+    if (command != "train" && Gears::FileManip::file_exists(result_file_path))
+    {
+      std::ifstream model(result_file_path);
+      tree = DTree::load(model);
+    }
+    auto train_data = NumericDataset::load(train_file, filter_features);
+    bool numeric = !train_data.binary || (tree && tree->uses_numeric_features());
+    std::vector<NumericDataset> numeric_tests;
 
     // load test files
-    std::list<SVMImpl_var> test_svms;
-
     for (++command_it; command_it != commands.end(); ++command_it)
     {
       const std::string test_file_path = *command_it;
       std::ifstream test_file(test_file_path.c_str());
       if (!test_file.is_open())
       {
-        std::cerr << "can't open test file: " << test_file_path << std::endl;
-        return;
+        throw Exception("can't open test file: " + test_file_path);
       }
 
-      SVMImpl_var test_svm = SVMImpl::load(test_file);
-
-      if (!filter_features.empty())
-      {
-        test_svm = test_svm->filter(filter_features);
-      }
-
-      test_svms.push_back(test_svm);
+      numeric_tests.push_back(NumericDataset::load(test_file, filter_features));
+      numeric = numeric || !numeric_tests.back().binary;
     }
 
     if (*opt_iterations == 0)
@@ -404,38 +470,65 @@ void Application_::main(int& argc, char** argv)
       throw Exception("at least one training metric must have a nonzero weight");
     }
 
-    if (command == "train-add" && !Gears::FileManip::file_exists(result_file_path))
+    if (*opt_feature_type == "float" || (*opt_feature_type == "auto" && numeric))
     {
-      throw Exception("train-add requires an existing model file");
+      if (*opt_logloss_choose_prob == 0 ||
+          (opt_square_diviation_choose_prob.installed() && *opt_square_diviation_choose_prob) ||
+          (opt_train_bags_number.installed() && *opt_train_bags_number) ||
+          *opt_gain_check_bags_number || opt_anneal.enabled() ||
+          opt_allow_negative_gain.enabled() ||
+          *opt_step_depth != 1 || *opt_check_depth != 1)
+      {
+        throw Exception("numeric training uses logloss on the full training set; use "
+          "--metric-sqd=0 --metric-logloss=1 --train-bags=0 --step-depth=1 --check-depth=1");
+      }
+      NumericTreeLearner::Options options;
+      options.steps = *opt_iterations;
+      options.max_depth = *opt_depth;
+      options.border_count = *opt_border_count;
+      options.min_leaf_size = *opt_min_leaf_size;
+      options.learning_rate = *opt_alpha_coef;
+      options.l2 = *opt_numeric_l2;
+      options.threads = *opt_threads;
+      std::cout << (tree ? "loaded model: " : "start train: ")
+        << "numeric features, " << train_data.rows.size() << " rows" << std::endl;
+      const auto progress = [&](const NumericTreeLearner::Progress& step, const DTree& model)
+      {
+        std::cout << "step " << step.step << ": train-ll = " << step.train_logloss;
+        for (std::size_t i = 0; i < step.validation_logloss.size(); ++i)
+        {
+          std::cout << ", etest-" << i << "-ll = " << step.validation_logloss[i];
+        }
+        std::cout << ", nodes count = " << model.node_count() << std::endl;
+        if (!opt_step_model_out->empty())
+        {
+          save_model(*opt_step_model_out + std::to_string(step.step - 1) + ".dtf", model);
+        }
+      };
+      NumericTreeLearner learner(options);
+      const auto result = learner.fit(train_data, numeric_tests, tree, progress);
+      save_model(result_file_path, *result.model);
+      if (!opt_save_best_model_file->empty())
+      {
+        save_model(*opt_save_best_model_file, *result.best_model);
+      }
+      std::cout << "LOGLOSS: " << result.best_loss << std::endl;
+      return;
     }
 
-    DTree_var tree;
-
-    if (command != "train" && Gears::FileManip::file_exists(result_file_path))
+    if (tree && tree->uses_numeric_features())
     {
-      std::ifstream result_file(result_file_path.c_str());
-      if (result_file.fail())
-      {
-        Gears::ErrorStream ostr;
-        ostr << "can't open model file '" << result_file_path << "'" << std::endl;
-        throw Exception(ostr.str());
-      }
+      throw Exception("cannot continue a numeric model with --feature-type=binary");
+    }
+    SVMImpl_var train_svm = binary_dataset(train_data);
+    std::list<SVMImpl_var> test_svms;
+    for (auto& test : numeric_tests)
+    {
+      test_svms.push_back(binary_dataset(test));
+    }
 
-      tree = DTree::load(result_file);
-
-      if (tree && tree->uses_numeric_features())
-      {
-        throw Exception("train-add/train-trees do not support numeric models; the trainer uses "
-                        "binary features");
-      }
-
-      if (!tree)
-      {
-        Gears::ErrorStream ostr;
-        ostr << "incorrect file, it contains non dtree model";
-        throw Exception(ostr.str());
-      }
-
+    if (tree)
+    {
       const double train_logloss = Utils::log_reg_logloss(tree.in(), train_svm.in());
       const double abs_train_logloss = Utils::log_reg_absloss(tree.in(), train_svm.in());
 
@@ -447,17 +540,17 @@ void Application_::main(int& argc, char** argv)
         const double ext_test_logloss = Utils::log_reg_logloss(tree.in(), test_svm_it->in());
         const double abs_ext_test_logloss = Utils::log_reg_absloss(tree.in(), test_svm_it->in());
         test_ostr << ", etest-" << test_svm_i << "-ll(" << (*test_svm_it)->size() << ","
-                  << (*test_svm_it)->grouped_rows.size() << ") = " << ext_test_logloss
-                  << ", abs-etest-" << test_svm_i << "-ll = " << abs_ext_test_logloss;
+          << (*test_svm_it)->grouped_rows.size() << ") = " << ext_test_logloss
+          << ", abs-etest-" << test_svm_i << "-ll = " << abs_ext_test_logloss;
       }
 
       std::cout << "loaded model: "
-                   "train-ll("
-                << train_svm->size() << "," << train_svm->grouped_rows.size()
-                << ") = " << train_logloss << ", abs-train-ll = " << abs_train_logloss
-                << test_ostr.str() << ", nodes count = " << tree->node_count() << "("
-                << Gears::Time::get_time_of_day().gm_ft() << ")" << std::endl
-                << tree->to_string("  ") << std::endl;
+           "train-ll("
+        << train_svm->size() << "," << train_svm->grouped_rows.size()
+        << ") = " << train_logloss << ", abs-train-ll = " << abs_train_logloss
+        << test_ostr.str() << ", nodes count = " << tree->node_count() << "("
+        << Gears::Time::get_time_of_day().gm_ft() << ")" << std::endl
+        << tree->to_string("  ") << std::endl;
     }
     else
     {
@@ -502,13 +595,6 @@ void Application_::main(int& argc, char** argv)
 
     SVMImpl_var cover_svm;
 
-    if (command_it != commands.end())
-    {
-      // cover file
-      std::ifstream cover_file(command_it->c_str());
-      cover_svm = SVMImpl::load(cover_file);
-    }
-
     FeatureDictionary feature_dictionary;
     FeatureNameDictionary feature_name_dictionary;
     if (!opt_feature_dictionary->empty())
@@ -532,6 +618,25 @@ void Application_::main(int& argc, char** argv)
     }
 
     DTree_var loaded_predictor = DTree::load(result_file);
+
+    if (loaded_predictor->uses_numeric_features())
+    {
+      std::cout << loaded_predictor->to_string("", &feature_dictionary) << std::endl;
+      if (command_it != commands.end())
+      {
+        std::ifstream cover_file(*command_it);
+        const auto data = NumericDataset::load(cover_file);
+        std::cout << "cover-logloss = " << NumericTreeLearner::logloss(*loaded_predictor, data)
+          << std::endl;
+      }
+      return;
+    }
+
+    if (command_it != commands.end())
+    {
+      std::ifstream cover_file(*command_it);
+      cover_svm = SVMImpl::load(cover_file);
+    }
 
     deep_print_(std::cout, loaded_predictor, "", &feature_dictionary, 0.0, cover_svm,
       &feature_name_dictionary);
@@ -587,6 +692,7 @@ void Application_::main(int& argc, char** argv)
         {
           rows.push_back(features);
         }
+
         if (command == "predict-perf-fastset")
         {
           FastFeatureSet fast_feature_set;
@@ -730,23 +836,66 @@ void Application_::main(int& argc, char** argv)
     DTree_var tree2 = DTree::load(predictor2_file);
 
     std::ifstream svm_file(svm_file_path.c_str());
-    SVMImpl_var svm = SVMImpl::load(svm_file);
+    const auto data = NumericDataset::load(svm_file);
 
     double coef1;
     double coef2;
     double min_logloss;
     double logloss1;
     double logloss2;
-    ensemble_(min_logloss, logloss1, logloss2, coef1, coef2, tree1, tree2, svm);
+    std::vector<double> first, second;
+    const auto probability = [](double raw)
+    {
+      if (!std::isfinite(raw))
+      {
+        throw Exception("non-finite ensemble prediction");
+      }
+      const double exponent = std::exp(-std::abs(raw));
+      return raw >= 0 ? 1 / (1 + exponent) : exponent / (1 + exponent);
+    };
+    for (const auto& row : data.rows)
+    {
+      first.push_back(probability(tree1->fpredict(row)));
+      second.push_back(probability(tree2->fpredict(row)));
+    }
+    min_logloss = std::numeric_limits<double>::infinity();
+    for (int step = 0; step <= 100; ++step)
+    {
+      const double weight = step / 100.0;
+      double current = 0;
+      for (std::size_t row = 0; row < data.rows.size(); ++row)
+      {
+        const double p = std::clamp(weight * first[row] + (1 - weight) * second[row],
+          1e-15, 1 - 1e-15);
+        current -= data.labels[row] * std::log(p) + (1 - data.labels[row]) * std::log1p(-p);
+      }
+      current /= data.rows.size();
+      if (step == 0)
+      {
+        logloss2 = current;
+      }
+
+      if (step == 100)
+      {
+        logloss1 = current;
+      }
+
+      if (current < min_logloss)
+      {
+        min_logloss = current;
+        coef1 = weight;
+        coef2 = 1 - weight;
+      }
+    }
 
     std::cout.setf(std::ios::fixed, std::ios::floatfield);
     std::cout.precision(7);
 
     std::cout << "coef1 = " << coef1 << std::endl
-              << "coef2 = " << coef2 << std::endl
-              << "logloss1 = " << logloss1 << std::endl
-              << "logloss2 = " << logloss1 << std::endl
-              << "min_logloss = " << min_logloss << std::endl;
+      << "coef2 = " << coef2 << std::endl
+      << "logloss1 = " << logloss1 << std::endl
+      << "logloss2 = " << logloss2 << std::endl
+      << "min_logloss = " << min_logloss << std::endl;
   }
   else if (command == "filter")
   {
@@ -761,13 +910,6 @@ void Application_::main(int& argc, char** argv)
     ++command_it;
 
     SVMImpl_var cover_svm;
-
-    if (command_it != commands.end())
-    {
-      // cover file
-      std::ifstream cover_file(command_it->c_str());
-      cover_svm = SVMImpl::load(cover_file);
-    }
 
     DTree_var tree;
 
@@ -792,23 +934,39 @@ void Application_::main(int& argc, char** argv)
         throw Exception(ostr.str());
       }
 
+      if (command_it == commands.end())
+      {
+        throw Exception("filter requires a cover dataset");
+      }
+
+      if (tree->uses_numeric_features())
+      {
+        std::ifstream cover_file(*command_it);
+        const auto data = NumericDataset::load(cover_file);
+        const auto modified = NumericTreeLearner::prune(*tree, data, *opt_min_cover);
+        save_model(result_file_path, *modified);
+        std::cout << "logloss = " << NumericTreeLearner::logloss(*tree, data) << std::endl
+          << "res logloss = " << NumericTreeLearner::logloss(*modified, data) << std::endl;
+        return;
+      }
+      std::ifstream cover_file(*command_it);
+      cover_svm = SVMImpl::load(cover_file);
       DTree_var modified_dtree = tree->filter(*opt_min_cover, cover_svm.in());
 
       std::ofstream result_file(result_file_path.c_str());
       modified_dtree->save(result_file);
 
       std::cout << "logloss = " << eval_reg_logloss_(tree, cover_svm.in()) << std::endl
-                << "res logloss = " << eval_reg_logloss_(modified_dtree, cover_svm.in())
-                << std::endl;
+        << "res logloss = " << eval_reg_logloss_(modified_dtree, cover_svm.in())
+        << std::endl;
     }
   }
   else
   {
     Gears::ErrorStream ostr;
     ostr << "unknown command '" << command
-         << "', "
-            "see help for more info"
-         << std::endl;
+      << "', see help for more info"
+      << std::endl;
     throw Exception(ostr.str());
   }
 }
@@ -1016,7 +1174,7 @@ void Application_::train_dtree_set_(double& best_test0_logloss, DTree_var& best_
   const std::list<SVMImpl_var>& ext_test_svms, unsigned long max_global_iterations,
   unsigned long step_depth, unsigned long check_depth, double alpha_coef, unsigned long train_bags,
   unsigned long gain_check_bags, const char* opt_step_model_out, unsigned long threads, bool anneal,
-  bool allow_negative_gain, const MetricSelection& metric_selection) throw()
+  bool allow_negative_gain, const MetricSelection& metric_selection) noexcept
 {
   //const bool USE_NEGATIVE_GAIN = true;
 
@@ -1122,8 +1280,8 @@ void Application_::train_dtree_set_(double& best_test0_logloss, DTree_var& best_
         const double abs_ext_test_logloss = Utils::
           log_reg_absloss(cur_dtree.in(), test_svm_it->in());
         test_ostr << ", etest-" << test_svm_i << "-ll(" << (*test_svm_it)->size()
-                  << ") = " << ext_test_logloss << ", abs-etest-" << test_svm_i
-                  << "-ll = " << abs_ext_test_logloss;
+          << ") = " << ext_test_logloss << ", abs-etest-" << test_svm_i
+          << "-ll = " << abs_ext_test_logloss;
 
         if (test_svm_i == 0)
         {
@@ -1139,11 +1297,11 @@ void Application_::train_dtree_set_(double& best_test0_logloss, DTree_var& best_
       const double train_logloss = Utils::log_reg_logloss(cur_dtree.in(), train_svm.in());
 
       std::cout << "[" << gi << "]: " << "train-ll(" << train_svm->size() << ","
-                << train_svm->grouped_rows.size() << ") = " << train_logloss << test_ostr.str()
-                << ", nodes count = " << cur_dtree->node_count() << ", metric = " << selected_metric
-                << " (" << Gears::Time::get_time_of_day().gm_ft() << ")" << (optimized ? " *" : "")
-                << std::endl
-                << cur_dtree->to_string("  ") << std::endl;
+        << train_svm->grouped_rows.size() << ") = " << train_logloss << test_ostr.str()
+        << ", nodes count = " << cur_dtree->node_count() << ", metric = " << selected_metric
+        << " (" << Gears::Time::get_time_of_day().gm_ft() << ")" << (optimized ? " *" : "")
+        << std::endl
+        << cur_dtree->to_string("  ") << std::endl;
     }
 
     //prev_logloss = test_logloss;
@@ -1222,9 +1380,9 @@ double Application_::train_on_bags_(DTree_var& res_tree, std::string& selected_m
       const double ext_test_logloss = Utils::log_reg_logloss(res_tree.in(), test_svm_it->in());
       const double abs_ext_test_logloss = Utils::log_reg_absloss(res_tree.in(), test_svm_it->in());
       test_ostr << ", etest-" << test_svm_i << "-ll(" << (*test_svm_it)->size() << ","
-                << (*test_svm_it)->grouped_rows.size() << ") = " << ext_test_logloss
-                << ", abs-etest-" << test_svm_i << "-ll = " << abs_ext_test_logloss
-                << ", best-etest-0-ll = " << best_test_logloss << " // " << selected_metric;
+        << (*test_svm_it)->grouped_rows.size() << ") = " << ext_test_logloss
+        << ", abs-etest-" << test_svm_i << "-ll = " << abs_ext_test_logloss
+        << ", best-etest-0-ll = " << best_test_logloss << " // " << selected_metric;
 
       if (test_svm_i == 0)
       {
@@ -1242,9 +1400,8 @@ double Application_::train_on_bags_(DTree_var& res_tree, std::string& selected_m
     if (print_trace)
     {
       std::cout << "[" << iter_i
-                << "]: "
-                   "train-loss = "
-                << train_logloss << test_ostr.str() << std::endl;
+        << "]: train-loss = " << train_logloss
+        << test_ostr.str() << std::endl;
     }
 
     //std::cout << cur_dtree->to_string("", 0) << std::endl;
@@ -1427,7 +1584,7 @@ Application_::construct_best_forest_(
   const std::vector<std::pair<DTree_var, DTreeProp_var> >& check_trees,
   unsigned long max_trees,
   const SVMImpl* svm)
-  throw()
+  noexcept
 {
   std::vector<PredArrayHolder_var> preds;
 

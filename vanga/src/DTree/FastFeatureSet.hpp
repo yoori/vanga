@@ -23,8 +23,11 @@
 
 #include <cstddef>
 #include <vector>
+#include <type_traits>
+#include <unordered_map>
 
 #include "FloatFeatures.hpp"
+#include "SVM.hpp"
 
 namespace Vanga
 {
@@ -39,10 +42,13 @@ namespace Vanga
 
     void set(unsigned long feature_id, uint32_t value);
 
+    template <typename ValueType> void set(unsigned long feature_id, ValueType value);
+
     void set(const FeatureArray& features);
 
     template <typename IteratorType>
-    void set(const IteratorType& begin_it, const IteratorType& end_it);
+    std::enable_if_t<!std::is_arithmetic_v<IteratorType>>
+    set(const IteratorType& begin_it, const IteratorType& end_it);
 
     void rollback(unsigned long feature_id);
 
@@ -58,7 +64,10 @@ namespace Vanga
     std::pair<bool, float> get(uint32_t feature_id) const;
 
   protected:
+    void put_(unsigned long feature_id, float value);
+
     std::vector<float> eval_feature_indexes_;
+    std::unordered_map<unsigned long, float> overflow_;
   };
 
   inline FastFeatureSet::FastFeatureSet() : eval_feature_indexes_(SIZE + 1, 0.0f)
@@ -76,36 +85,71 @@ namespace Vanga
       }
     }
 
+    for (const auto& feature : overflow_)
+    {
+      if (feature.second != value)
+      {
+        return false;
+      }
+    }
+
     return true;
+  }
+
+  inline void FastFeatureSet::put_(unsigned long feature_id, float value)
+  {
+    if (feature_id <= SIZE)
+    {
+      eval_feature_indexes_[feature_id] = value;
+    }
+    else if (value == 0)
+    {
+      overflow_.erase(feature_id);
+    }
+    else
+    {
+      overflow_[feature_id] = value;
+    }
   }
 
   inline void FastFeatureSet::set(unsigned long feature_id, uint32_t value)
   {
-    eval_feature_indexes_[feature_id & SIZE] = static_cast<float>(value);
+    put_(feature_id, static_cast<float>(value));
+  }
+
+  template <typename ValueType> void FastFeatureSet::set(unsigned long feature_id, ValueType value)
+  {
+    put_(feature_id, static_cast<float>(value));
   }
 
   inline void FastFeatureSet::set(const FeatureArray& features)
   {
     for (auto feature_it = features.begin(); feature_it != features.end(); ++feature_it)
     {
-      eval_feature_indexes_[feature_it->first & SIZE] =
-        static_cast<float>(feature_it->second != 0);
+      put_(feature_it->first, static_cast<float>(feature_it->second != 0));
     }
   }
 
   template <typename IteratorType>
-  void FastFeatureSet::set(const IteratorType& begin_it, const IteratorType& end_it)
+  std::enable_if_t<!std::is_arithmetic_v<IteratorType>>
+  FastFeatureSet::set(const IteratorType& begin_it, const IteratorType& end_it)
   {
     for (auto feature_it = begin_it; feature_it != end_it; ++feature_it)
     {
-      eval_feature_indexes_[feature_it->first & SIZE] =
-        static_cast<float>(feature_it->second != 0);
+      if constexpr (std::is_floating_point_v<std::decay_t<decltype(feature_it->second)>>)
+      {
+        put_(feature_it->first, static_cast<float>(feature_it->second));
+      }
+      else
+      {
+        put_(feature_it->first, static_cast<float>(feature_it->second != 0));
+      }
     }
   }
 
   inline void FastFeatureSet::rollback(unsigned long feature_id)
   {
-    eval_feature_indexes_[feature_id & SIZE] = 0;
+    put_(feature_id, 0.0f);
   }
 
   template <typename IteratorType>
@@ -113,7 +157,7 @@ namespace Vanga
   {
     for (auto feature_it = begin_it; feature_it != end_it; ++feature_it)
     {
-      eval_feature_indexes_[feature_it->first & SIZE] = 0;
+      rollback(feature_it->first);
     }
   }
 
@@ -121,7 +165,7 @@ namespace Vanga
   {
     for (auto feature_it = features.begin(); feature_it != features.end(); ++feature_it)
     {
-      eval_feature_indexes_[feature_it->first & SIZE] = 0;
+      rollback(feature_it->first);
     }
   }
 
@@ -129,7 +173,7 @@ namespace Vanga
   {
     for (const auto& feature : features)
     {
-      eval_feature_indexes_[feature.first & SIZE] = feature.second;
+      put_(feature.first, feature.second);
     }
   }
 
@@ -137,13 +181,25 @@ namespace Vanga
   {
     for (const auto& feature : features)
     {
-      eval_feature_indexes_[feature.first & SIZE] = 0.0f;
+      rollback(feature.first);
     }
   }
 
   inline std::pair<bool, float> FastFeatureSet::get(uint32_t feature_id) const
   {
-    const float value = eval_feature_indexes_[feature_id & SIZE];
+    float value = 0;
+    if (feature_id <= SIZE)
+    {
+      value = eval_feature_indexes_[feature_id];
+    }
+    else
+    {
+      const auto it = overflow_.find(feature_id);
+      if (it != overflow_.end())
+      {
+        value = it->second;
+      }
+    }
     return std::make_pair(value > 0.0000001f, value);
   }
 

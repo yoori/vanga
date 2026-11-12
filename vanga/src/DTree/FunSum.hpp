@@ -30,7 +30,7 @@ namespace Vanga
   public:
     FunSum(const Fun1Type& fun1, const Fun2Type& fun2);
 
-    double eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const throw();
+    double eval_fun_and_grad(FloatArray& d_grads, const FloatArray& d_vars) const noexcept;
 
   protected:
     Fun1Type fun1_;
@@ -50,7 +50,7 @@ namespace Vanga
 {
   template <typename Fun1Type, typename Fun2Type>
   double FunSum<Fun1Type, Fun2Type>::
-    eval_fun_and_grad(FloatArray& grads, const FloatArray& point) const throw()
+    eval_fun_and_grad(FloatArray& grads, const FloatArray& point) const noexcept
   {
     grads2_.resize(point.size());
     double f1 = fun1_.eval_fun_and_grad(grads, point);

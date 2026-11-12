@@ -38,9 +38,9 @@ class Application_
 public:
   DECLARE_GEARS_EXCEPTION(Exception, Gears::DescriptiveException);
 
-  Application_() throw();
+  Application_() noexcept;
 
-  virtual ~Application_() throw();
+  virtual ~Application_() noexcept;
 
   void main(int& argc, char** argv) /*throw(Gears::Exception)*/;
 
@@ -69,7 +69,7 @@ protected:
   void print_profile_(const char* user_id, const char* filename)
     /*throw (Gears::Exception)*/;
 
-  void print_profile_from_buf_(const char* user_id, const Gears::MemBuf& buf) throw();
+  void print_profile_from_buf_(const char* user_id, const Gears::MemBuf& buf) noexcept;
 
   void make_profile_(std::istream& in, const char* filename, const char* columns,
     unsigned long level0_size)

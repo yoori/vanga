@@ -76,7 +76,7 @@ public:
     std::string to_string() const;
 
   protected:
-    virtual ~DTreeProp() throw();
+    virtual ~DTreeProp() noexcept;
   };
 
   using DTreeProp_var = Gears::IntrusivePtr<DTreeProp>;
@@ -88,9 +88,9 @@ public:
   using SVMImplArray = std::vector<SVMImpl_var>;
 
 public:
-  Application_() throw();
+  Application_() noexcept;
 
-  virtual ~Application_() throw();
+  virtual ~Application_() noexcept;
 
   void main(int& argc, char** argv)
     /*throw(Gears::Exception)*/;
@@ -107,7 +107,7 @@ protected:
     unsigned long max_global_iterations, unsigned long step_depth, unsigned long check_depth,
     double alpha_coef, unsigned long train_bags, unsigned long gain_check_bags,
     const char* opt_step_model_out, unsigned long threads, bool anneal, bool allow_negative_gain,
-    const MetricSelection& metric_selection) throw();
+    const MetricSelection& metric_selection) noexcept;
 
   double train_on_bags_(DTree_var& res_tree, std::string& selected_metric,
     TreeLearner<PredictedBoolLabel>::Context* context, SVMImpl* train_svm,
@@ -140,7 +140,7 @@ protected:
 
   void deep_print_(std::ostream& ostr, DTree* predictor, const char* prefix,
     const FeatureDictionary* dict, double base, const SVMImpl* svm,
-    const FeatureNameDictionary* name_dict) const throw();
+    const FeatureNameDictionary* name_dict) const noexcept;
 
   void ensemble_(double& min_logloss, double& logloss1, double& logloss2, double& coef1,
     double& coef2, DTree* predictor1, DTree* predictor2, const SVMImpl* svm);
@@ -158,7 +158,7 @@ inline std::string Application_::DTreeProp::to_string() const
   return ss.str();
 }
 
-inline Application_::DTreeProp::~DTreeProp() throw()
+inline Application_::DTreeProp::~DTreeProp() noexcept
 {
 }
 

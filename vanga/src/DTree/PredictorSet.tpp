@@ -27,14 +27,15 @@ namespace Vanga
   }
 
   template <typename PredictorType>
-  double PredictorSet::PredictorHolder<PredictorType>::predict(const FeatureArray& features) throw()
+  double PredictorSet::PredictorHolder<PredictorType>::predict(const FeatureArray& features)
+    noexcept
   {
     return predictor_->fpredict(features);
   }
 
   template <typename PredictorType>
   double PredictorSet::PredictorHolder<PredictorType>::
-    predict(const FloatFeatureArray& features) throw()
+    predict(const FloatFeatureArray& features) noexcept
   {
     return predictor_->fpredict(features);
   }
@@ -47,12 +48,12 @@ namespace Vanga
 
   template <typename PredictorType>
   std::string PredictorSet::PredictorHolder<PredictorType>::
-    to_string(const char* prefix, const FeatureDictionary* dict, double base) const throw()
+    to_string(const char* prefix, const FeatureDictionary* dict, double base) const noexcept
   {
     return predictor_->to_string(prefix, dict, base);
   }
 
-  inline PredictorSet::~PredictorSet() throw()
+  inline PredictorSet::~PredictorSet() noexcept
   {
   }
 
@@ -75,7 +76,7 @@ namespace Vanga
   }
 
   template <typename FeatureSetType>
-  double PredictorSet::fpredict(const FeatureSetType& features) const throw()
+  double PredictorSet::fpredict(const FeatureSetType& features) const noexcept
   {
     double sum = 0.0;
     for (auto it = predictors_.begin(); it != predictors_.end(); ++it)
@@ -162,7 +163,7 @@ namespace Vanga
   }
 
   std::string PredictorSet::
-    to_string(const char* prefix, const FeatureDictionary* dict, double base) const throw()
+    to_string(const char* prefix, const FeatureDictionary* dict, double base) const noexcept
   {
     std::ostringstream ostr;
 

@@ -85,10 +85,10 @@ namespace Vanga
     FeatureArray features;
 
   protected:
-    virtual ~Row() throw();
+    virtual ~Row() noexcept;
   };
 
-  inline Row::~Row() throw()
+  inline Row::~Row() noexcept
   {
   }
 
@@ -103,10 +103,10 @@ namespace Vanga
     RowArray rows;
 
   protected:
-    virtual ~PredictGroup() throw();
+    virtual ~PredictGroup() noexcept;
   };
 
-  template <typename LabelType> PredictGroup<LabelType>::~PredictGroup() throw() = default;
+  template <typename LabelType> PredictGroup<LabelType>::~PredictGroup() noexcept = default;
   // SVM
   template <typename LabelType> struct SVM : public Gears::AtomicRefCountable
   {
@@ -123,38 +123,38 @@ namespace Vanga
   public:
     void dump() const;
 
-    Gears::IntrusivePtr<SVM<LabelType>> copy() const throw();
+    Gears::IntrusivePtr<SVM<LabelType>> copy() const noexcept;
 
     template <typename LabelAdapterType>
     Gears::IntrusivePtr<SVM<typename LabelAdapterType::ResultType>>
-    copy(const LabelAdapterType& label_adapter) const throw();
+    copy(const LabelAdapterType& label_adapter) const noexcept;
 
     template <typename LabelAdapterType>
     Gears::IntrusivePtr<SVM<typename LabelAdapterType::ResultType>>
-    copy_pred(const LabelAdapterType& label_adapter) const throw();
+    copy_pred(const LabelAdapterType& label_adapter) const noexcept;
 
     static void cross(Gears::IntrusivePtr<SVM>& cross_svm, Gears::IntrusivePtr<SVM>& diff_svm,
-      const SVM* left_svm, const SVM* right_svm) throw();
+      const SVM* left_svm, const SVM* right_svm) noexcept;
 
     static void cross_count(unsigned long& cross_count, unsigned long& left_diff_count,
       unsigned long& right_diff_count, const SVM<LabelType>* left_svm,
-      const SVM<LabelType>* right_svm) throw();
+      const SVM<LabelType>* right_svm) noexcept;
 
-    Gears::IntrusivePtr<SVM<LabelType>> part(unsigned long res_size) const throw();
+    Gears::IntrusivePtr<SVM<LabelType>> part(unsigned long res_size) const noexcept;
 
     std::pair<Gears::IntrusivePtr<SVM<LabelType>>, Gears::IntrusivePtr<SVM<LabelType>>>
-    div(unsigned long res_size) const throw();
+    div(unsigned long res_size) const noexcept;
 
     void portions_div(std::vector<Gears::IntrusivePtr<SVM<LabelType>>>& res,
-      unsigned long portions_num) const throw();
+      unsigned long portions_num) const noexcept;
 
-    PredictGroup_var add_row(Row* row, const LabelType& label) throw();
+    PredictGroup_var add_row(Row* row, const LabelType& label) noexcept;
 
-    double label_float_sum() const throw();
+    double label_float_sum() const noexcept;
 
-    unsigned long size() const throw();
+    unsigned long size() const noexcept;
 
-    void print_labels(std::ostream& ostr) throw();
+    void print_labels(std::ostream& ostr) noexcept;
 
     static Gears::IntrusivePtr<SVM<LabelType>> load(std::istream& in, unsigned long lines = 0)
       /*throw(Exception)*/;
@@ -172,7 +172,7 @@ namespace Vanga
     Gears::IntrusivePtr<SVM<LabelType>> filter(const ContainerType& features) const;
 
   public:
-    void sort_() throw();
+    void sort_() noexcept;
 
     static void
     save_line_(std::ostream& out, const LabelType& label_value, const FeatureArray& features);
@@ -183,13 +183,13 @@ namespace Vanga
     static Row_var load_line_(std::istream& in, LabelType& label_value, FeatureArray& features);
 
   protected:
-    Row_var get_row_(LabelType& label_value, unsigned long pos) const throw();
+    Row_var get_row_(LabelType& label_value, unsigned long pos) const noexcept;
 
   protected:
-    virtual ~SVM() throw();
+    virtual ~SVM() noexcept;
   };
 
-  template <typename LabelType> SVM<LabelType>::~SVM() throw()
+  template <typename LabelType> SVM<LabelType>::~SVM() noexcept
   {
   }
 
